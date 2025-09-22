@@ -1,173 +1,200 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
-  <head>
-    <meta charset="UTF-8" />
-    <title>منصة المستر</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
-    />
-  </head>
-  <body class="bg-gray-100 text-gray-900">
-    <!-- Header -->
-    <header class="p-6 bg-blue-600 text-white shadow-lg text-center">
-      <h1 class="text-3xl font-bold animate__animated animate__fadeInDown">
-        منصة المستر ✨
-      </h1>
-    </header>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>📚 موقع السنتر</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: "Tahoma", sans-serif;
+      direction: rtl;
+      margin: 0;
+      background: #f9fafb;
+      color: #333;
+    }
+    header {
+      background: #2563eb;
+      color: #fff;
+      padding: 15px;
+      text-align: center;
+      font-size: 1.3rem;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      padding: 20px;
+    }
+    .section-title {
+      font-size: 1.2rem;
+      margin-top: 25px;
+      color: #2563eb;
+      border-right: 5px solid #2563eb;
+      padding-right: 10px;
+    }
+    .card {
+      background: white;
+      padding: 15px;
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      margin-top: 15px;
+    }
+    .search-box {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    .search-box input {
+      flex: 1;
+      padding: 12px;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+    }
+    .search-box button {
+      padding: 12px 20px;
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 0.95rem;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+    }
+    th {
+      background: #f1f5f9;
+    }
+    a.video-link {
+      display: block;
+      padding: 12px;
+      margin: 8px 0;
+      background: #2563eb;
+      color: #fff;
+      text-align: center;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+    a.video-link:hover { background: #1e3a8a; }
+    @media (max-width: 480px) {
+      table, th, td { font-size: 0.8rem; }
+    }
+  </style>
+</head>
+<body>
+  <header>📚 موقع السنتر</header>
+  <div class="container">
 
-    <main class="p-6 space-y-10">
-      <!-- بحث الطالب -->
-      <section class="bg-white p-6 rounded-2xl shadow-md">
-        <h2 class="text-xl font-bold mb-4">🔍 بحث عن الطالب</h2>
-        <div class="flex gap-2">
-          <input
-            id="studentCode"
-            type="text"
-            placeholder="ادخل كود الطالب"
-            class="flex-1 p-2 border rounded-lg"
-          />
-          <button
-            onclick="searchStudent()"
-            class="px-4 py-2 bg-blue-600 text-white rounded-lg"
-          >
-            بحث
-          </button>
-        </div>
+    <!-- الطلاب -->
+    <h2 class="section-title">🧑‍🎓 الطلاب</h2>
+    <div class="card">
+      <div class="search-box">
+        <input type="text" id="studentCode" placeholder="ادخل الكود">
+        <button onclick="searchStudent()">بحث</button>
+      </div>
+      <div id="info" style="display:none;"></div>
+      <div id="grades" style="display:none; margin-top:15px;"></div>
+    </div>
 
-        <div id="studentInfo" class="mt-6 hidden"></div>
-      </section>
+    <!-- الفيديوهات -->
+    <h2 class="section-title">🎥 الفيديوهات</h2>
+    <div id="videoList" class="card">⏳ جاري التحميل...</div>
 
-      <!-- الفيديوهات -->
-      <section>
-        <h2 class="text-xl font-bold mb-4">🎥 الفيديوهات</h2>
-        <div id="videos" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
-      </section>
+    <!-- التواصل -->
+    <h2 class="section-title">☎️ التواصل</h2>
+    <div id="contactInfo" class="card">⏳ جاري التحميل...</div>
 
-      <!-- التواصل -->
-      <section>
-        <h2 class="text-xl font-bold mb-4">📞 للتواصل</h2>
-        <div id="contacts" class="flex gap-4 flex-wrap"></div>
-      </section>
-    </main>
+  </div>
 
-    <script>
-      // روابط CSV من Google Sheets (بدل XXX باللينكات عندك)
-      const SHEET_STUDENTS =
-        "https://docs.google.com/spreadsheets/d/e/2PACX-1vRj2ajSLPIBsAwHwv8qSVX7_5q5I_LATlqKEWkzOIdF_3Em9PmTTWZ8BnXNau0yCNeF1XAx9KX3PLrN/pub?gid=0&single=true&output=csv";
-      const SHEET_VIDEOS =
-        "https://docs.google.com/spreadsheets/d/e/2PACX-1vRj2ajSLPIBsAwHwv8qSVX7_5q5I_LATlqKEWkzOIdF_3Em9PmTTWZ8BnXNau0yCNeF1XAx9KX3PLrN/pub?gid=849351073&single=true&output=csv";
-      const SHEET_CONTACTS =
-        "https://docs.google.com/spreadsheets/d/e/2PACX-1vRj2ajSLPIBsAwHwv8qSVX7_5q5I_LATlqKEWkzOIdF_3Em9PmTTWZ8BnXNau0yCNeF1XAx9KX3PLrN/pub?gid=218257892&single=true&output=csv";
+  <script>
+    // 🔹 روابط الشيتات (CSV منشورة)
+    const sheetStudents = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRj2ajSLPIBsAwHwv8qSVX7_5q5I_LATlqKEWkzOIdF_3Em9PmTTWZ8BnXNau0yCNeF1XAx9KX3PLrN/pub?gid=0&single=true&output=csv";
+    const sheetVideos   = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRj2ajSLPIBsAwHwv8qSVX7_5q5I_LATlqKEWkzOIdF_3Em9PmTTWZ8BnXNau0yCNeF1XAx9KX3PLrN/pub?gid=849351073&single=true&output=csv";
+    const sheetContact  = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRj2ajSLPIBsAwHwv8qSVX7_5q5I_LATlqKEWkzOIdF_3Em9PmTTWZ8BnXNau0yCNeF1XAx9KX3PLrN/pub?gid=218257892&single=true&output=csv";
 
-      let students = [];
-      let videos = [];
-      let contacts = [];
+    // --- قسم الطلاب ---
+    async function searchStudent() {
+      const code = document.getElementById("studentCode").value.trim();
+      if (!code) { alert("⚠️ من فضلك ادخل الكود"); return; }
 
-      // تحويل CSV ل JSON
-      async function fetchCSV(url) {
-        const res = await fetch(url);
-        const text = await res.text();
-        const [headerLine, ...lines] = text.trim().split("\n");
-        const headers = headerLine.split(",");
-        return lines.map((line) => {
-          const values = line.split(",");
-          return headers.reduce((obj, h, i) => {
-            obj[h.trim()] = values[i]?.trim();
-            return obj;
-          }, {});
-        });
-      }
+      const res = await fetch(sheetStudents);
+      const data = await res.text();
+      const rows = data.split("\n").map(r => r.split(","));
+      const headers = rows[0];
+      const students = rows.slice(1);
 
-      // تحميل البيانات
-      async function loadData() {
-        students = await fetchCSV(SHEET_STUDENTS);
-        videos = await fetchCSV(SHEET_VIDEOS);
-        contacts = await fetchCSV(SHEET_CONTACTS);
+      let student = students.find(row => row[0] === code);
 
-        renderVideos();
-        renderContacts();
-      }
+      if (student) {
+        const name = student[1];
+        const group = student[2];
+        const className = student[3];
 
-      // البحث عن الطالب
-      function searchStudent() {
-        const code = document.getElementById("studentCode").value.trim();
-        const student = students.find((s) => s.code === code);
-        const info = document.getElementById("studentInfo");
+        document.getElementById("info").style.display = "block";
+        document.getElementById("info").innerHTML = `
+          <p><b>👤 الاسم:</b> ${name}</p>
+          <p><b>👥 المجموعة:</b> ${group}</p>
+          <p><b>📚 الصف:</b> ${className}</p>
+        `;
 
-        if (!student) {
-          info.innerHTML =
-            '<p class="text-red-500 font-bold">⚠️ الطالب غير موجود</p>';
-          info.classList.remove("hidden");
-          return;
+        let gradeHTML = "<h3>📝 التقييم</h3><table><tr>";
+        for (let i = 4; i < headers.length; i++) {
+          gradeHTML += `<th>${headers[i]}</th>`;
         }
+        gradeHTML += "</tr><tr>";
+        for (let i = 4; i < student.length; i++) {
+          gradeHTML += `<td>${student[i]}</td>`;
+        }
+        gradeHTML += "</tr></table>";
 
-        let grades = "";
-        Object.keys(student)
-          .filter((k) => k.startsWith("week") || k.startsWith("exam"))
-          .forEach((k) => {
-            grades += `<td class="border px-2 py-1 ${
-              k.startsWith("exam") ? "bg-yellow-100 font-bold" : ""
-            }">${student[k]}</td>`;
-          });
-
-        info.innerHTML = `
-          <div class="p-4 border rounded-lg bg-gray-50 animate__animated animate__fadeIn">
-            <p><b>الاسم:</b> ${student.name}</p>
-            <p><b>المجموعة:</b> ${student.group}</p>
-            <p><b>الصف:</b> ${student.class}</p>
-
-            <div class="mt-4 overflow-x-auto">
-              <table class="w-full border text-center">
-                <thead class="bg-gray-200">
-                  <tr>
-                    ${Object.keys(student)
-                      .filter((k) => k.startsWith("week") || k.startsWith("exam"))
-                      .map((k) => `<th class="border px-2 py-1">${k}</th>`)
-                      .join("")}
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>${grades}</tr>
-                </tbody>
-              </table>
-            </div>
-          </div>`;
-        info.classList.remove("hidden");
+        document.getElementById("grades").style.display = "block";
+        document.getElementById("grades").innerHTML = gradeHTML;
+      } else {
+        document.getElementById("info").style.display = "block";
+        document.getElementById("info").innerHTML = "<p style='color:red;'>⚠️ الكود غير موجود!</p>";
+        document.getElementById("grades").style.display = "none";
       }
+    }
 
-      // عرض الفيديوهات
-      function renderVideos() {
-        const container = document.getElementById("videos");
-        container.innerHTML = videos
-          .map(
-            (v) => `
-          <a href="${v.url}" target="_blank" class="p-4 bg-white rounded-xl shadow hover:shadow-lg animate__animated animate__zoomIn">
-            <h3 class="font-semibold">${v.title}</h3>
-            <p class="text-sm text-gray-500">${v.notes || ""}</p>
-          </a>`
-          )
-          .join("");
-      }
+    // --- قسم الفيديوهات ---
+    async function loadVideos() {
+      const res = await fetch(sheetVideos);
+      const data = await res.text();
+      const rows = data.split("\n").map(r => r.split(",")).slice(1);
+      let html = "";
+      rows.forEach(row => {
+        if (row[0] && row[1]) {
+          html += `<a class="video-link" href="${row[1]}" target="_blank">🎬 ${row[0]}</a>`;
+        }
+      });
+      document.getElementById("videoList").innerHTML = html || "⚠️ لا توجد فيديوهات متاحة.";
+    }
 
-      // عرض التواصل
-      function renderContacts() {
-        const container = document.getElementById("contacts");
-        container.innerHTML = contacts
-          .map((c) => {
-            const link =
-              c.type === "whatsapp"
-                ? `https://wa.me/${c.number}`
-                : `tel:${c.number}`;
-            return `<a href="${link}" target="_blank" class="px-4 py-2 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 animate__animated animate__fadeInUp">
-              ${c.label}
-            </a>`;
-          })
-          .join("");
-      }
+    // --- قسم التواصل ---
+    async function loadContact() {
+      const res = await fetch(sheetContact);
+      const data = await res.text();
+      const rows = data.split("\n").map(r => r.split(",")).slice(1);
+      let html = "<h3>📞 بيانات التواصل</h3>";
+      rows.forEach(row => {
+        if (row[0] && row[1]) {
+          html += `<p><b>${row[0]}:</b> ${row[1]}</p>`;
+        }
+      });
+      document.getElementById("contactInfo").innerHTML = html || "⚠️ لا توجد بيانات تواصل.";
+    }
 
-      loadData();
-    </script>
-  </body>
+    // تحميل الفيديوهات والتواصل عند فتح الموقع
+    loadVideos();
+    loadContact();
+  </script>
+</body>
 </html>

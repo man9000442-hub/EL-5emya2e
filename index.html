@@ -83,6 +83,16 @@
       return (val === "" || isNaN(parseFloat(val))) ? 0 : parseFloat(val);
     }
 
+    // Helper: consider a sheet cell empty when it's empty string, null, undefined or spaces-only
+    function isEmptyCell(val) {
+      return val === null || val === undefined || (typeof val === 'string' && val.trim() === '');
+    }
+
+    // For display: if the original raw cell is empty show '-' else show the numeric value
+    function displayFromRaw(raw, numeric) {
+      return isEmptyCell(raw) ? '-' : numeric;
+    }
+
     async function searchStudent() {
       const code = document.getElementById("studentCode").value.trim();
       if (!code) {
@@ -140,14 +150,14 @@
               </tr>
             </thead>
             <tbody>
-              <tr class="border-b"><td>1</td><td>${w1_exam}</td><td>${w1_homework}</td><td>${w1_tesmie3}</td></tr>
-              <tr class="border-b bg-gray-50"><td>2</td><td>${w2_exam}</td><td>${w2_homework}</td><td>${w2_tesmie3}</td></tr>
-              <tr class="border-b"><td>3</td><td>${w3_exam}</td><td>${w3_homework}</td><td>${w3_tesmie3}</td></tr>
-              <tr class="border-b bg-gray-50"><td>4</td><td>${w4_exam}</td><td>${w4_homework}</td><td>${w4_tesmie3}</td></tr>
+              <tr class="border-b"><td>1</td><td>${displayFromRaw(student.w1_exam, w1_exam)}</td><td>${displayFromRaw(student.w1_homework, w1_homework)}</td><td>${displayFromRaw(student.w1_tesmie3, w1_tesmie3)}</td></tr>
+              <tr class="border-b bg-gray-50"><td>2</td><td>${displayFromRaw(student.w2_exam, w2_exam)}</td><td>${displayFromRaw(student.w2_homework, w2_homework)}</td><td>${displayFromRaw(student.w2_tesmie3, w2_tesmie3)}</td></tr>
+              <tr class="border-b"><td>3</td><td>${displayFromRaw(student.w3_exam, w3_exam)}</td><td>${displayFromRaw(student.w3_homework, w3_homework)}</td><td>${displayFromRaw(student.w3_tesmie3, w3_tesmie3)}</td></tr>
+              <tr class="border-b bg-gray-50"><td>4</td><td>${displayFromRaw(student.w4_exam, w4_exam)}</td><td>${displayFromRaw(student.w4_homework, w4_homework)}</td><td>${displayFromRaw(student.w4_tesmie3, w4_tesmie3)}</td></tr>
             </tbody>
           </table>
         </div>
-        <p class="mt-4 font-semibold">الامتحان الشامل: <span class="text-indigo-700">${finalExam}/20</span></p>
+  <p class="mt-4 font-semibold">الامتحان الشامل: <span class="text-indigo-700">${isEmptyCell(student.finalExam) ? '-' : finalExam + '/20'}</span></p>
         <p class="mt-2 font-bold ${percentClass}">النسبة النهائية: ${percent}%</p>
       `;
     }

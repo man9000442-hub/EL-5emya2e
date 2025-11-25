@@ -1,215 +1,296 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>نظام متابعة الطلاب</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام متابعة الطلاب - منصة الخيميائي</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <style>
+        /* إضافة خط عربي حديث (اختياري، يفترض أنه متاح في النظام) */
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
+        body {
+            font-family: 'Cairo', sans-serif;
+        }
+        /* لضمان عمل نمط RTL بشكل أفضل مع Flexbox/Grid */
+        .grid {
+            display: grid;
+        }
+        /* تعديل بسيط لنمط تمرير الفيديوهات */
+        #videosContainer {
+            scrollbar-width: thin; /* Firefox */
+            scrollbar-color: #4f46e5 #e0e7ff; /* Firefox */
+        }
+        #videosContainer::-webkit-scrollbar {
+            width: 8px;
+        }
+        #videosContainer::-webkit-scrollbar-track {
+            background: #e0e7ff; /* indigo-100 */
+            border-radius: 10px;
+        }
+        #videosContainer::-webkit-scrollbar-thumb {
+            background-color: #4f46e5; /* indigo-600 */
+            border-radius: 10px;
+        }
+    </style>
 </head>
-<body class="bg-fixed bg-cover bg-center text-gray-900" style="background-image: url('bg.png');">
-  
-    <div class="bg-white shadow-lg rounded-2xl p-4 w-full max-w-md mx-auto text-center mb-6 animate__animated animate__fadeInDown">
-    <h1 class="text-3xl font-bold text-indigo-700">
-      🧬منصة الخيميائي<br>
-      📘 نظام متابعة الطلاب
-    </h1>
-  </div>
+<body class="bg-fixed bg-cover bg-center text-gray-900 min-h-screen p-4" style="background-image: url('bg.png');">
+    
+    <div class="bg-white/90 backdrop-blur-sm shadow-xl rounded-3xl p-6 w-full max-w-lg mx-auto text-center mb-8 animate__animated animate__fadeInDown border-t-4 border-indigo-600">
+        <h1 class="text-4xl font-extrabold text-indigo-800 mb-1">
+            <span class="text-5xl">🧪</span> منصة الخيميائي
+        </h1>
+        <p class="text-xl font-semibold text-gray-600">
+            📘 نظام متابعة الطلاب
+        </p>
+    </div>
 
-    <div class="bg-white shadow-lg rounded-2xl p-4 w-full max-w-md mx-auto mb-6 animate__animated animate__fadeInUp">
-    <label for="studentCode" class="block mb-2 text-lg font-semibold text-gray-700">ادخل كود الطالب:</label>
-    <input id="studentCode" type="text" 
-      class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-indigo-400 focus:outline-none mb-3">
-    <button onclick="searchStudent()" 
-      class="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition">
-      🔍 بحث
-    </button>
-  </div>
+    <div class="bg-white shadow-2xl rounded-3xl p-6 w-full max-w-lg mx-auto mb-8 animate__animated animate__fadeInUp">
+        <label for="studentCode" class="block mb-3 text-xl font-bold text-gray-700">أدخل كود الطالب:</label>
+        <input id="studentCode" type="text" placeholder="مثال: 12345"
+            class="w-full border-2 border-indigo-300 bg-indigo-50 rounded-xl p-3 text-lg focus:ring-4 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition duration-300 mb-4 text-center placeholder-gray-500"
+            onkeypress="if(event.key === 'Enter') searchStudent()">
+        <button onclick="searchStudent()"
+            class="w-full bg-indigo-600 text-white font-bold text-lg py-3 rounded-xl hover:bg-indigo-700 transition duration-300 transform hover:scale-[1.01] shadow-lg shadow-indigo-300">
+            <span class="ml-2">🔍</span> بحث
+        </button>
+    </div>
 
-    <div id="studentInfo" class="w-full max-w-2xl bg-white shadow-md rounded-2xl p-4 mx-auto animate__animated animate__fadeIn"></div>
+    <div id="studentInfo" class="w-full max-w-3xl bg-white shadow-2xl rounded-3xl p-6 mx-auto mb-8 animate__animated animate__zoomIn"></div>
 
-    <button onclick="openVideosModal()" class="bg-white shadow-lg rounded-2xl p-4 w-full max-w-md mx-auto text-center mt-8 mb-4 hover:bg-indigo-50 transition block">
-    <h2 class="text-xl font-bold text-indigo-700">🎬 الفيديوهات</h2>
-  </button>
+    <button onclick="openVideosModal()" class="bg-white shadow-xl rounded-3xl p-5 w-full max-w-lg mx-auto text-center mt-8 mb-4 hover:bg-indigo-50 transition duration-300 transform hover:translate-y-[-2px] block border-r-8 border-indigo-500">
+        <h2 class="text-2xl font-extrabold text-indigo-700">🎬 الفيديوهات التعليمية</h2>
+    </button>
 
-    <button onclick="openContactsModal()" class="bg-white shadow-lg rounded-2xl p-4 w-full max-w-md mx-auto text-center mt-8 mb-4 hover:bg-green-50 transition block">
-    <h2 class="text-xl font-bold text-indigo-700">📞 وسائل التواصل</h2>
-  </button>
+    <button onclick="openContactsModal()" class="bg-white shadow-xl rounded-3xl p-5 w-full max-w-lg mx-auto text-center mt-4 mb-8 hover:bg-green-50 transition duration-300 transform hover:translate-y-[-2px] block border-r-8 border-green-500">
+        <h2 class="text-2xl font-extrabold text-green-700">📞 وسائل التواصل والدعم</h2>
+    </button>
 
-    <div id="videosModal" class="fixed inset-0 bg-black bg-opacity-60 hidden items-center justify-center z-50">
-    <div class="bg-white rounded-2xl p-6 w-full max-w-lg shadow-lg relative animate__animated animate__fadeInUp max-h-[90vh] overflow-hidden">
-      <button onclick="closeVideosModal()" class="absolute top-2 left-2 text-red-600 font-bold text-xl">✖</button>
-      <h2 class="text-2xl font-bold text-indigo-700 mb-4 text-center">📽️ الفيديوهات</h2>
-      <select id="videoClassSelect" class="w-full border p-2 rounded mb-4 text-gray-700" onchange="filterVideosByClass()">
-        <option value="">اختر الصف</option>
-      </select>
-      <div id="videosContainer" class="grid gap-3 overflow-y-auto max-h-80"></div>
-    </div>
-  </div>
+    <div id="videosModal" class="fixed inset-0 bg-black bg-opacity-70 hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-3xl p-8 w-full max-w-2xl shadow-2xl relative animate__animated animate__fadeInDown max-h-[90vh] overflow-hidden border-t-8 border-indigo-600">
+            <button onclick="closeVideosModal()" class="absolute top-4 left-4 text-red-600 hover:text-red-800 font-bold text-2xl transition">
+                <span class="inline-block transform hover:rotate-90 duration-300">✖</span>
+            </button>
+            <h2 class="text-3xl font-extrabold text-indigo-800 mb-6 text-center">📽️ الفيديوهات</h2>
+            <select id="videoClassSelect" class="w-full border-2 border-indigo-300 bg-indigo-50 p-3 rounded-xl mb-4 text-gray-700 focus:ring-2 focus:ring-indigo-400 focus:outline-none transition" onchange="filterVideosByClass()">
+                <option value="">اختر الصف لعرض الفيديوهات</option>
+            </select>
+            <div id="videosContainer" class="grid gap-4 overflow-y-auto max-h-80 pr-2"></div>
+        </div>
+    </div>
 
-    <div id="contactsModal" class="fixed inset-0 bg-black bg-opacity-60 hidden items-center justify-center z-50">
-    <div class="bg-white rounded-2xl p-6 w-full max-w-lg shadow-lg relative animate__animated animate__fadeInUp">
-      <button onclick="closeContactsModal()" class="absolute top-2 left-2 text-red-600 font-bold text-xl">✖</button>
-      <h2 class="text-2xl font-bold text-indigo-700 mb-4 text-center">📞 وسائل التواصل</h2>
-      <div id="contactsContainer" class="grid gap-3"></div>
-    </div>
-  </div>
+    <div id="contactsModal" class="fixed inset-0 bg-black bg-opacity-70 hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-3xl p-8 w-full max-w-2xl shadow-2xl relative animate__animated animate__fadeInDown border-t-8 border-green-600">
+            <button onclick="closeContactsModal()" class="absolute top-4 left-4 text-red-600 hover:text-red-800 font-bold text-2xl transition">
+                <span class="inline-block transform hover:rotate-90 duration-300">✖</span>
+            </button>
+            <h2 class="text-3xl font-extrabold text-green-800 mb-6 text-center">📞 وسائل التواصل</h2>
+            <div id="contactsContainer" class="grid gap-4"></div>
+        </div>
+    </div>
 
-  <script>
-    const SHEET_STUDENTS = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRj2ajSLPIBsAwHwv8qSVX7_5q5I_LATlqKEWkzOIdF_3Em9PmTTWZ8BnXNau0yCNeF1XAx9KX3PLrN/pub?gid=635336311&single=true&output=csv";
-    const SHEET_VIDEOS   = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRj2ajSLPIBsAwHwv8qSVX7_5q5I_LATlqKEWkzOIdF_3Em9PmTTWZ8BnXNau0yCNeF1XAx9KX3PLrN/pub?gid=849351073&single=true&output=csv";
-    const SHEET_CONTACTS = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRj2ajSLPIBsAwHwv8qSVX7_5q5I_LATlqKEWkzOIdF_3Em9PmTTWZ8BnXNau0yCNeF1XAx9KX3PLrN/pub?gid=218257892&single=true&output=csv";
+    <script>
+        const SHEET_STUDENTS = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRj2ajSLPIBsAwHwv8qSVX7_5q5I_LATlqKEWkzOIdF_3Em9PmTTWZ8BnXNau0yCNeF1XAx9KX3PLrN/pub?gid=635336311&single=true&output=csv";
+        const SHEET_VIDEOS   = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRj2ajSLPIBsAwHwv8qSVX7_5q5I_LATlqKEWkzOIdF_3Em9PmTTWZ8BnXNau0yCNeF1XAx9KX3PLrN/pub?gid=849351073&single=true&output=csv";
+        const SHEET_CONTACTS = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRj2ajSLPIBsAwHwv8qSVX7_5q5I_LATlqKEWkzOIdF_3Em9PmTTWZ8BnXNau0yCNeF1XAx9KX3PLrN/pub?gid=218257892&single=true&output=csv";
 
-    async function fetchCSV(url) {
-      const res = await fetch(url);
-      const text = await res.text();
-      const rows = text.trim().split("\n").map(r => r.split(","));
-      const headers = rows[0].map(h => h.trim());
-      return rows.slice(1).map(row => {
-        let obj = {};
-        headers.forEach((h, i) => obj[h] = row[i] ? row[i].trim() : "");
-        return obj;
-      });
-    }
+        async function fetchCSV(url) {
+            const res = await fetch(url);
+            const text = await res.text();
+            const rows = text.trim().split("\n").map(r => r.split(","));
+            const headers = rows[0].map(h => h.trim());
+            return rows.slice(1).map(row => {
+                let obj = {};
+                headers.forEach((h, i) => obj[h] = row[i] ? row[i].trim() : "");
+                return obj;
+            });
+        }
 
-    function safeNumber(val) {
-      return (val === "" || isNaN(parseFloat(val))) ? 0 : parseFloat(val);
-    }
+        function safeNumber(val) {
+            return (val === "" || isNaN(parseFloat(val))) ? 0 : parseFloat(val);
+        }
 
-    // Helper: consider a sheet cell empty when it's empty string, null, undefined or spaces-only
-    function isEmptyCell(val) {
-      return val === null || val === undefined || (typeof val === 'string' && val.trim() === '');
-    }
+        function isEmptyCell(val) {
+            return val === null || val === undefined || (typeof val === 'string' && val.trim() === '');
+        }
 
-    // For display: if the original raw cell is empty show '-' else show the numeric value
-    function displayFromRaw(raw, numeric) {
-      return isEmptyCell(raw) ? '-' : numeric;
-    }
+        function displayFromRaw(raw, numeric) {
+            return isEmptyCell(raw) ? '—' : numeric; // تغيير الشرطة إلى شرطة أطول
+        }
 
-    async function searchStudent() {
-      const code = document.getElementById("studentCode").value.trim();
-      if (!code) {
-        document.getElementById("studentInfo").innerHTML = `<p class="text-red-600 font-bold">اكتب كود الطالب</p>`;
-        return;
-      }
+        async function searchStudent() {
+            const code = document.getElementById("studentCode").value.trim();
+            const infoDiv = document.getElementById("studentInfo");
+            
+            // إضافة حركة بسيطة قبل البحث
+            infoDiv.classList.remove("animate__zoomIn");
+            infoDiv.classList.add("animate__pulse");
+            infoDiv.innerHTML = `<p class="text-indigo-600 font-bold text-center">جاري البحث...</p>`;
 
-      const students = await fetchCSV(SHEET_STUDENTS);
-      const student = students.find(s => (s.code || "") === code);
 
-      if (!student) {
-        document.getElementById("studentInfo").innerHTML =
-          `<p class="text-red-600 font-bold">⚠️ الطالب غير موجود</p>`;
-        return;
-      }
+            if (!code) {
+                infoDiv.innerHTML = `<p class="text-red-600 font-bold text-center">⚠️ يرجى إدخال كود الطالب</p>`;
+                infoDiv.classList.remove("animate__pulse");
+                infoDiv.classList.add("animate__headShake");
+                setTimeout(() => infoDiv.classList.remove("animate__headShake"), 1000);
+                return;
+            }
 
-      const w1_exam = safeNumber(student.w1_exam);
-      const w1_homework = safeNumber(student.w1_homework);
-      const w1_tesmie3 = safeNumber(student.w1_tesmie3);
-      const w2_exam = safeNumber(student.w2_exam);
-      const w2_homework = safeNumber(student.w2_homework);
-      const w2_tesmie3 = safeNumber(student.w2_tesmie3);
-      const w3_exam = safeNumber(student.w3_exam);
-      const w3_homework = safeNumber(student.w3_homework);
-      const w3_tesmie3 = safeNumber(student.w3_tesmie3);
-      const w4_exam = safeNumber(student.w4_exam);
-      const w4_homework = safeNumber(student.w4_homework);
-      const w4_tesmie3 = safeNumber(student.w4_tesmie3);
-      const finalExam = safeNumber(student.finalExam);
+            const students = await fetchCSV(SHEET_STUDENTS);
+            const student = students.find(s => (s.code || "") === code);
 
-      const total = w1_exam + w1_homework + w1_tesmie3 +
-                    w2_exam + w2_homework + w2_tesmie3 +
-                    w3_exam + w3_homework + w3_tesmie3 +
-                    w4_exam + w4_homework + w4_tesmie3 +
-                    finalExam;
+            infoDiv.classList.remove("animate__pulse");
 
-      const maxTotal = (4 * 10) + (4 * 10) + (4 * 10) + 20;
-      const percent = ((total / maxTotal) * 100).toFixed(2);
-      const percentClass = percent >= 75 ? "text-green-700" : percent >= 50 ? "text-yellow-700" : "text-red-700";
 
-      document.getElementById("studentInfo").innerHTML = `
-        <h2 class="text-2xl font-bold text-indigo-700 mb-4">📄 بيانات الطالب</h2>
-        <p><strong>الاسم:</strong> ${student.name || "-"}</p>
-        <p><strong>الصف:</strong> ${student.class || "-"}</p>
-        <p><strong>المجموعة:</strong> ${student.group || "-"}</p>
-        <h3 class="text-xl font-semibold text-gray-700 mt-4 mb-2">📊 التقييم</h3>
-        <div class="overflow-x-auto">
-          <table class="w-full border border-gray-300 rounded-lg overflow-hidden text-center">
-            <thead class="bg-indigo-600 text-white">
-              <tr>
-                <th class="p-2">الأسبوع</th>
-                <th class="p-2">امتحان (10)</th>
-                <th class="p-2">واجب (10)</th>
-                <th class="p-2">تسميع (10)</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr class="border-b"><td>1</td><td>${displayFromRaw(student.w1_exam, w1_exam)}</td><td>${displayFromRaw(student.w1_homework, w1_homework)}</td><td>${displayFromRaw(student.w1_tesmie3, w1_tesmie3)}</td></tr>
-              <tr class="border-b bg-gray-50"><td>2</td><td>${displayFromRaw(student.w2_exam, w2_exam)}</td><td>${displayFromRaw(student.w2_homework, w2_homework)}</td><td>${displayFromRaw(student.w2_tesmie3, w2_tesmie3)}</td></tr>
-              <tr class="border-b"><td>3</td><td>${displayFromRaw(student.w3_exam, w3_exam)}</td><td>${displayFromRaw(student.w3_homework, w3_homework)}</td><td>${displayFromRaw(student.w3_tesmie3, w3_tesmie3)}</td></tr>
-              <tr class="border-b bg-gray-50"><td>4</td><td>${displayFromRaw(student.w4_exam, w4_exam)}</td><td>${displayFromRaw(student.w4_homework, w4_homework)}</td><td>${displayFromRaw(student.w4_tesmie3, w4_tesmie3)}</td></tr>
-            </tbody>
-          </table>
-        </div>
-  <p class="mt-4 font-semibold">الامتحان الشامل: <span class="text-indigo-700">${isEmptyCell(student.finalExam) ? '-' : finalExam + '/20'}</span></p>
-        <p class="mt-2 font-bold ${percentClass}">النسبة النهائية: ${percent}%</p>
-      `;
-    }
+            if (!student) {
+                infoDiv.innerHTML =
+                    `<p class="text-red-600 font-bold text-center">🚫 الطالب غير موجود. تأكد من إدخال الكود الصحيح.</p>`;
+                infoDiv.classList.add("animate__headShake");
+                setTimeout(() => infoDiv.classList.remove("animate__headShake"), 1000);
+                return;
+            }
 
-    let videosData = [];
+            const w1_exam = safeNumber(student.w1_exam);
+            const w1_homework = safeNumber(student.w1_homework);
+            const w1_tesmie3 = safeNumber(student.w1_tesmie3);
+            const w2_exam = safeNumber(student.w2_exam);
+            const w2_homework = safeNumber(student.w2_homework);
+            const w2_tesmie3 = safeNumber(student.w2_tesmie3);
+            const w3_exam = safeNumber(student.w3_exam);
+            const w3_homework = safeNumber(student.w3_homework);
+            const w3_tesmie3 = safeNumber(student.w3_tesmie3);
+            const w4_exam = safeNumber(student.w4_exam);
+            const w4_homework = safeNumber(student.w4_homework);
+            const w4_tesmie3 = safeNumber(student.w4_tesmie3);
+            const finalExam = safeNumber(student.finalExam);
 
-    async function openVideosModal() {
-      document.getElementById("videosModal").classList.remove("hidden");
-      const videos = await fetchCSV(SHEET_VIDEOS);
-      videosData = videos;
-      const classes = [...new Set(videos.map(v => v.class).filter(v => v))];
-      const select = document.getElementById("videoClassSelect");
-      select.innerHTML = `<option value="">اختر الصف</option>` + classes.map(c => `<option value="${c}">${c}</option>`).join("");
-      // عرض الفيديوهات عند فتح النافذة لأول مرة
-      filterVideosByClass(); 
-    }
+            const total = w1_exam + w1_homework + w1_tesmie3 +
+                            w2_exam + w2_homework + w2_tesmie3 +
+                            w3_exam + w3_homework + w3_tesmie3 +
+                            w4_exam + w4_homework + w4_tesmie3 +
+                            finalExam;
 
-    function closeVideosModal() {
-      document.getElementById("videosModal").classList.add("hidden");
-    }
+            const maxTotal = (4 * 10) + (4 * 10) + (4 * 10) + 20;
+            const percent = ((total / maxTotal) * 100).toFixed(2);
+            const percentClass = percent >= 85 ? "text-green-600 bg-green-100 p-1 rounded-lg" : percent >= 60 ? "text-yellow-600 bg-yellow-100 p-1 rounded-lg" : "text-red-600 bg-red-100 p-1 rounded-lg";
+            
+            infoDiv.innerHTML = `
+                <h2 class="text-3xl font-extrabold text-indigo-800 mb-4 border-b-2 pb-2 border-indigo-200">✨ بيانات الطالب</h2>
+                <div class="grid grid-cols-2 gap-4 text-lg mb-4">
+                    <p><strong>الاسم:</strong> <span class="text-gray-700 font-semibold">${student.name || "—"}</span></p>
+                    <p><strong>الصف:</strong> <span class="text-gray-700 font-semibold">${student.class || "—"}</span></p>
+                    <p><strong>المجموعة:</strong> <span class="text-gray-700 font-semibold">${student.group || "—"}</span></p>
+                    <p><strong>الكود:</strong> <span class="text-indigo-600 font-bold">${student.code || "—"}</span></p>
+                </div>
 
-    function filterVideosByClass() {
-      const selected = document.getElementById("videoClassSelect").value;
-      const container = document.getElementById("videosContainer");
-      // في حالة عدم اختيار صف، نعرض جميع الفيديوهات
-      const filtered = selected === "" ? videosData : videosData.filter(v => v.class === selected);
-            
-      if (filtered.length === 0) {
-        container.innerHTML = `<p class="text-gray-500 text-center mt-4">لا توجد فيديوهات لهذا الصف حاليًا.</p>`;
-        return;
-      }
+                <h3 class="text-2xl font-bold text-gray-700 mt-6 mb-3 border-b pb-1">📊 تفاصيل التقييم</h3>
+                <div class="overflow-x-auto shadow-md rounded-xl">
+                    <table class="w-full border-collapse text-center text-sm md:text-base">
+                        <thead class="bg-indigo-700 text-white shadow-lg">
+                            <tr>
+                                <th class="p-3 rounded-tr-xl">الأسبوع</th>
+                                <th class="p-3">امتحان /10</th>
+                                <th class="p-3">واجب /10</th>
+                                <th class="p-3 rounded-tl-xl">تسميع /10</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b hover:bg-indigo-50 transition"><td>1</td><td>${displayFromRaw(student.w1_exam, w1_exam)}</td><td>${displayFromRaw(student.w1_homework, w1_homework)}</td><td>${displayFromRaw(student.w1_tesmie3, w1_tesmie3)}</td></tr>
+                            <tr class="border-b bg-gray-50 hover:bg-indigo-50 transition"><td>2</td><td>${displayFromRaw(student.w2_exam, w2_exam)}</td><td>${displayFromRaw(student.w2_homework, w2_homework)}</td><td>${displayFromRaw(student.w2_tesmie3, w2_tesmie3)}</td></tr>
+                            <tr class="border-b hover:bg-indigo-50 transition"><td>3</td><td>${displayFromRaw(student.w3_exam, w3_exam)}</td><td>${displayFromRaw(student.w3_homework, w3_homework)}</td><td>${displayFromRaw(student.w3_tesmie3, w3_tesmie3)}</td></tr>
+                            <tr class="border-b bg-gray-50 hover:bg-indigo-50 transition"><td>4</td><td>${displayFromRaw(student.w4_exam, w4_exam)}</td><td>${displayFromRaw(student.w4_homework, w4_homework)}</td><td>${displayFromRaw(student.w4_tesmie3, w4_tesmie3)}</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="mt-6 flex justify-between items-center bg-indigo-50 p-4 rounded-xl shadow-inner">
+                    <p class="font-bold text-lg text-indigo-700">الامتحان الشامل: <span class="text-xl">${isEmptyCell(student.finalExam) ? '—' : finalExam + '<span class="text-sm">/20</span>'}</span></p>
+                    <p class="font-extrabold text-xl">النسبة النهائية: <span class="${percentClass} text-2xl">${percent}%</span></p>
+                </div>
+            `;
+            infoDiv.classList.add("animate__zoomIn");
+            setTimeout(() => infoDiv.classList.remove("animate__zoomIn"), 1000); // لإعادة تفعيل الحركة عند البحث التالي
+        }
 
-      container.innerHTML = filtered.map(v => `
-        <div class="bg-white shadow rounded-lg p-3 border hover:bg-indigo-50 transition">
-          <p class="font-semibold text-indigo-700">${v.title}</p>
-          <p class="text-sm text-gray-600">${v.note || ""}</p>
-          <a href="${v.link}" target="_blank" class="text-blue-600 underline">مشاهدة</a>
-        </div>
-      `).join("");
-    }
+        let videosData = [];
 
-    async function openContactsModal() {
-      document.getElementById("contactsModal").classList.remove("hidden");
-      const contacts = await fetchCSV(SHEET_CONTACTS);
-      const container = document.getElementById("contactsContainer");
-      container.innerHTML = contacts.map(c => {
-        let link = (c.type === "whatsapp") ? `https://wa.me/${c.number}` : `tel:${c.number}`;
-        return `
-          <div class="bg-white shadow rounded-lg p-3 border hover:bg-green-50 transition">
-            <p class="font-semibold">${c.label}</p>
-            <a href="${link}" target="_blank" class="text-green-600 underline">تواصل</a>
-          </div>
-        `;
-      }).join("");
-    }
+        async function openVideosModal() {
+            document.getElementById("videosModal").classList.remove("hidden");
+            document.getElementById("videosModal").style.display = "flex"; // لتطبيق الفليكس بوكس
 
-    function closeContactsModal() {
-      document.getElementById("contactsModal").classList.add("hidden");
-    }
-  </script>
+            if (videosData.length === 0) {
+                 // عرض رسالة تحميل
+                document.getElementById("videosContainer").innerHTML = `<p class="text-indigo-600 text-center mt-4 font-semibold">جاري تحميل الفيديوهات...</p>`;
+
+                const videos = await fetchCSV(SHEET_VIDEOS);
+                videosData = videos;
+                const classes = [...new Set(videos.map(v => v.class).filter(v => v))];
+                const select = document.getElementById("videoClassSelect");
+                select.innerHTML = `<option value="">اختر الصف لعرض الفيديوهات</option>` + classes.map(c => `<option value="${c}">${c}</option>`).join("");
+            }
+            filterVideosByClass();
+        }
+
+        function closeVideosModal() {
+            document.getElementById("videosModal").classList.add("hidden");
+            document.getElementById("videosModal").style.display = "none";
+        }
+
+        function filterVideosByClass() {
+            const selected = document.getElementById("videoClassSelect").value;
+            const container = document.getElementById("videosContainer");
+            const filtered = selected === "" ? videosData : videosData.filter(v => v.class === selected);
+                        
+            if (filtered.length === 0) {
+                container.innerHTML = `<p class="text-gray-500 text-center mt-4 font-semibold">لا توجد فيديوهات لهذا الصف حاليًا.</p>`;
+                return;
+            }
+
+            container.innerHTML = filtered.map(v => `
+                <div class="bg-indigo-50 shadow-md rounded-xl p-4 border border-indigo-200 hover:bg-indigo-100 transition duration-300 transform hover:scale-[1.01]">
+                    <p class="font-bold text-lg text-indigo-700 mb-1">${v.title}</p>
+                    <p class="text-sm text-gray-600 mb-2">${v.note || "بدون ملاحظات"}</p>
+                    <a href="${v.link}" target="_blank" class="inline-flex items-center text-blue-600 font-semibold hover:text-blue-800 transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-1" viewBox="0 0 20 20" fill="currentColor">
+                          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+                        </svg>
+                        مشاهدة الفيديو
+                    </a>
+                </div>
+            `).join("");
+        }
+
+        async function openContactsModal() {
+            document.getElementById("contactsModal").classList.remove("hidden");
+            document.getElementById("contactsModal").style.display = "flex"; // لتطبيق الفليكس بوكس
+
+            const container = document.getElementById("contactsContainer");
+            container.innerHTML = `<p class="text-green-600 text-center mt-4 font-semibold">جاري تحميل وسائل التواصل...</p>`;
+            
+            const contacts = await fetchCSV(SHEET_CONTACTS);
+            
+            container.innerHTML = contacts.map(c => {
+                let link = (c.type === "whatsapp") ? `https://wa.me/${c.number}` : `tel:${c.number}`;
+                let icon = (c.type === "whatsapp") ? 
+                    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="h-6 w-6 ml-2 text-green-500" fill="currentColor"><path d="M380.9 97.1C339.4 55.4 283.4 32 224 32 119.4 32 32 119.4 32 224c0 48.7 17.5 96.6 48.7 137.9l-11.7 43.1 44.8-11.5c40 28.5 86.8 44.5 136.2 44.5 104.6 0 192-87.4 192-192 0-59.4-23.4-115.4-65.1-156.9zm-136 348.8c-45.7 0-90.1-12.2-128.5-35.4l-9.1-5.5-34.5 8.9 9.3-34.1-6.1-9.6c-24.9-38.6-38.3-83.3-38.3-128.3C40 137.4 127.4 50 224 50c48.6 0 94.6 18.9 128.8 53.2 34.2 34.2 53.1 80.2 53.1 128.8 0 96.6-77.4 174-174 174zM320.6 280.9c-2.3-1.1-13.6-6.7-15.7-7.5-2.2-.8-3.7-1.1-5.2 1.1s-6 7.5-7.4 9c-1.5 1.6-3 1.8-5.6.8-2.6-1.1-11-4-21-13.1-7.8-7-13-16-14.7-18.5-1.7-2.5-.2-3.8 1.5-5.3 1.3-1.2 3-3 4.5-5.1 1.5-2 .7-3.8-.2-5.3-1.2-2-11.4-27.4-15.6-37.5-4.1-10-8.3-8.6-11-8.7-2.6-.1-5.6-.1-8.6-.1-2.9 0-7.7 1.1-11.7 5.7s-15.1 14.7-15.1 35.8 15.6 41.5 17.8 44.6c2.2 3 30.6 47.3 74.3 65.5 10.6 4.4 19 7 25.5 9 10.6 3.4 20.3 2.9 28.5 1.8 9.3-1.3 27.4-11.1 31.3-21.8 3.9-10.7 3.9-19.9 2.7-21.8-1.2-1.9-4.5-3-9.5-5.5z"/></svg>` : 
+                    `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 ml-2 text-indigo-500" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 3.184c.731.066 1.486.096 2.247.086v-1.11a1 1 0 011-1h.007a1 1 0 011 1v1.11c.761-.01 1.516.02 2.247.086l.74-3.184a1 1 0 01.986-.836H17a1 1 0 011 1v14a1 1 0 01-1 1h-2.153a1 1 0 01-.986-.836l-.74-3.184c-.731-.066-1.486-.096-2.247-.086v1.11a1 1 0 01-1 1h-.007a1 1 0 01-1-1v-1.11c-.761.01-1.516-.02-2.247-.086l-.74 3.184A1 1 0 013.153 18H3a1 1 0 01-1-1V3z"/>
+                        </svg>`;
+                return `
+                    <div class="bg-gray-50 shadow-md rounded-xl p-4 border border-gray-200 hover:bg-green-50 transition duration-300 transform hover:scale-[1.01]">
+                        <p class="font-bold text-lg text-gray-700 mb-2">${c.label}</p>
+                        <a href="${link}" target="_blank" class="inline-flex items-center text-green-600 font-semibold hover:text-green-800 transition">
+                            ${icon}
+                            ${(c.type === "whatsapp") ? 'محادثة واتساب' : 'اتصال هاتفي'}
+                        </a>
+                    </div>
+                `;
+            }).join("");
+        }
+
+        function closeContactsModal() {
+            document.getElementById("contactsModal").classList.add("hidden");
+            document.getElementById("contactsModal").style.display = "none";
+        }
+    </script>
 </body>
 </html>

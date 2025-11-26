@@ -1,41 +1,59 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>نظام متابعة الطلاب - منصة الخيميائي</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
     <style>
-        /* إضافة خط عربي حديث (اختياري، يفترض أنه متاح في النظام) */
+        /* إضافة خط عربي حديث */
+        
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
         body {
             font-family: 'Cairo', sans-serif;
+            background-color: #f7f9fb;
+            /* افتراضي إذا لم يتم تحميل الخلفية */
         }
-        /* لضمان عمل نمط RTL بشكل أفضل مع Flexbox/Grid */
+        
         .grid {
             display: grid;
         }
-        /* تعديل بسيط لنمط تمرير الفيديوهات */
-        #videosContainer {
-            scrollbar-width: thin; /* Firefox */
-            scrollbar-color: #4f46e5 #e0e7ff; /* Firefox */
+        /* نمط الخلفية (افترض وجود bg.png) */
+        
+        body {
+            background-image: url('bg.png');
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: cover;
+            background-position: center;
         }
+        /* تعديل بسيط لنمط تمرير الفيديوهات */
+        
+        #videosContainer {
+            scrollbar-width: thin;
+            scrollbar-color: #4f46e5 #e0e7ff;
+        }
+        
         #videosContainer::-webkit-scrollbar {
             width: 8px;
         }
+        
         #videosContainer::-webkit-scrollbar-track {
-            background: #e0e7ff; /* indigo-100 */
+            background: #e0e7ff;
             border-radius: 10px;
         }
+        
         #videosContainer::-webkit-scrollbar-thumb {
-            background-color: #4f46e5; /* indigo-600 */
+            background-color: #4f46e5;
             border-radius: 10px;
         }
     </style>
 </head>
-<body class="bg-fixed bg-cover bg-center text-gray-900 min-h-screen p-4" style="background-image: url('bg.png');">
-    
+
+<body class="bg-fixed bg-cover bg-center text-gray-900 min-h-screen p-4">
+
     <div class="bg-white/90 backdrop-blur-sm shadow-xl rounded-3xl p-6 w-full max-w-lg mx-auto text-center mb-8 animate__animated animate__fadeInDown border-t-4 border-indigo-600">
         <h1 class="text-4xl font-extrabold text-indigo-800 mb-1">
             <span class="text-5xl">🧪</span> منصة الخيميائي
@@ -47,16 +65,19 @@
 
     <div class="bg-white shadow-2xl rounded-3xl p-6 w-full max-w-lg mx-auto mb-8 animate__animated animate__fadeInUp">
         <label for="studentCode" class="block mb-3 text-xl font-bold text-gray-700">أدخل كود الطالب:</label>
-        <input id="studentCode" type="text" placeholder="مثال: 12345"
-            class="w-full border-2 border-indigo-300 bg-indigo-50 rounded-xl p-3 text-lg focus:ring-4 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition duration-300 mb-4 text-center placeholder-gray-500"
+        <input id="studentCode" type="text" placeholder="مثال: 12345" class="w-full border-2 border-indigo-300 bg-indigo-50 rounded-xl p-3 text-lg focus:ring-4 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition duration-300 mb-4 text-center placeholder-gray-500"
             onkeypress="if(event.key === 'Enter') searchStudent()">
-        <button onclick="searchStudent()"
-            class="w-full bg-indigo-600 text-white font-bold text-lg py-3 rounded-xl hover:bg-indigo-700 transition duration-300 transform hover:scale-[1.01] shadow-lg shadow-indigo-300">
+        <button onclick="searchStudent()" class="w-full bg-indigo-600 text-white font-bold text-lg py-3 rounded-xl hover:bg-indigo-700 transition duration-300 transform hover:scale-[1.01] shadow-lg shadow-indigo-300">
             <span class="ml-2">🔍</span> بحث
         </button>
     </div>
 
-    <div id="studentInfo" class="w-full max-w-3xl bg-white shadow-2xl rounded-3xl p-6 mx-auto mb-8 animate__animated animate__zoomIn"></div>
+    <div id="studentInfo" class="w-full max-w-4xl bg-white shadow-2xl rounded-3xl p-6 mx-auto mb-8 animate__animated animate__zoomIn"></div>
+
+    <button onclick="quiz.html" class="bg-white shadow-xl rounded-3xl p-5 w-full max-w-lg mx-auto text-center mt-8 mb-4 hover:bg-indigo-50 transition duration-300 transform hover:translate-y-[-2px] block border-r-8 border-indigo-500">
+        <h2 class="text-2xl font-extrabold text-indigo-700">صفحه الاختبارات</h2>
+    </button>
+
 
     <button onclick="openVideosModal()" class="bg-white shadow-xl rounded-3xl p-5 w-full max-w-lg mx-auto text-center mt-8 mb-4 hover:bg-indigo-50 transition duration-300 transform hover:translate-y-[-2px] block border-r-8 border-indigo-500">
         <h2 class="text-2xl font-extrabold text-indigo-700">🎬 الفيديوهات التعليمية</h2>
@@ -68,9 +89,7 @@
 
     <div id="videosModal" class="fixed inset-0 bg-black bg-opacity-70 hidden items-center justify-center z-50 p-4">
         <div class="bg-white rounded-3xl p-8 w-full max-w-2xl shadow-2xl relative animate__animated animate__fadeInDown max-h-[90vh] overflow-hidden border-t-8 border-indigo-600">
-            <button onclick="closeVideosModal()" class="absolute top-4 left-4 text-red-600 hover:text-red-800 font-bold text-2xl transition">
-                <span class="inline-block transform hover:rotate-90 duration-300">✖</span>
-            </button>
+            <button onclick="closeVideosModal()" class="absolute top-4 left-4 text-red-600 hover:text-red-800 font-bold text-2xl transition"><span class="inline-block transform hover:rotate-90 duration-300">✖</span></button>
             <h2 class="text-3xl font-extrabold text-indigo-800 mb-6 text-center">📽️ الفيديوهات</h2>
             <select id="videoClassSelect" class="w-full border-2 border-indigo-300 bg-indigo-50 p-3 rounded-xl mb-4 text-gray-700 focus:ring-2 focus:ring-indigo-400 focus:outline-none transition" onchange="filterVideosByClass()">
                 <option value="">اختر الصف لعرض الفيديوهات</option>
@@ -81,66 +100,56 @@
 
     <div id="contactsModal" class="fixed inset-0 bg-black bg-opacity-70 hidden items-center justify-center z-50 p-4">
         <div class="bg-white rounded-3xl p-8 w-full max-w-2xl shadow-2xl relative animate__animated animate__fadeInDown border-t-8 border-green-600">
-            <button onclick="closeContactsModal()" class="absolute top-4 left-4 text-red-600 hover:text-red-800 font-bold text-2xl transition">
-                <span class="inline-block transform hover:rotate-90 duration-300">✖</span>
-            </button>
+            <button onclick="closeContactsModal()" class="absolute top-4 left-4 text-red-600 hover:text-red-800 font-bold text-2xl transition"><span class="inline-block transform hover:rotate-90 duration-300">✖</span></button>
             <h2 class="text-3xl font-extrabold text-green-800 mb-6 text-center">📞 وسائل التواصل</h2>
             <div id="contactsContainer" class="grid gap-4"></div>
         </div>
     </div>
 
-
-        <!-- Footer -->
-<footer style="
-  position: relative;
-  z-index: 9999;
-  text-align: center;
-  padding: 40px 0;
-  margin-top: 50px;
-  background: transparent;
-">
-  <div style="
-    background: rgba(255, 255, 255, 0.95);
-    color: #111;
-    max-width: 400px;
-    margin: 0 auto;
-    border-radius: 20px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-    border: 1px solid #ddd;
-    padding: 25px;
-  ">
-    <p style="font-weight: 600; margin-bottom: 15px; font-size: 16px;">
-      صُمّم بواسطة 
-      <span style="color: #2563eb; font-weight: 700;">Abdelrahman Tarek</span>
-    </p>
-    <a href="https://wa.me/201094724932" target="_blank" 
-       style="
-         display: inline-flex;
-         align-items: center;
-         gap: 8px;
-         background: linear-gradient(to right, #2563eb, #3b82f6);
-         color: #fff;
-         font-weight: 600;
-         font-size: 14px;
-         padding: 10px 18px;
-         border-radius: 9999px;
-         text-decoration: none;
-         box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-         transition: all 0.3s;
-       "
-       onmouseover="this.style.background='linear-gradient(to right,#3b82f6,#60a5fa)'"
-       onmouseout="this.style.background='linear-gradient(to right,#2563eb,#3b82f6)'">
-      <i class="fa-solid fa-envelope"></i>
-      تواصل معنا
-    </a>
-  </div>
-</footer>
-
+    <footer>
+        <div class="max-w-4xl mx-auto text-center" style="padding: 40px 0; margin-top: 50px;">
+            <div style="background: rgba(255, 255, 255, 0.95); color: #111; max-width: 400px; margin: 0 auto; border-radius: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); border: 1px solid #ddd; padding: 25px;">
+                <p style="font-weight: 600; margin-bottom: 15px; font-size: 16px;">صُمّم بواسطة <span style="color: #2563eb; font-weight: 700;">Abdelrahman Tarek</span></p>
+                <a href="https://wa.me/201094724932" target="_blank" style="display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(to right, #2563eb, #3b82f6); color: #fff; font-weight: 600; font-size: 14px; padding: 10px 18px; border-radius: 9999px; text-decoration: none; box-shadow: 0 2px 10px rgba(0,0,0,0.2); transition: all 0.3s;"
+                    onmouseover="this.style.background='linear-gradient(to right,#3b82f6,#60a5fa)'" onmouseout="this.style.background='linear-gradient(to right,#2563eb,#3b82f6)'"><i class="fa-solid fa-envelope"></i> تواصل معنا</a>
+            </div>
+        </div>
+    </footer>
 
     <script>
-        const SHEET_STUDENTS = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRj2ajSLPIBsAwHwv8qSVX7_5q5I_LATlqKEWkzOIdF_3Em9PmTTWZ8BnXNau0yCNeF1XAx9KX3PLrN/pub?gid=635336311&single=true&output=csv";
-        const SHEET_VIDEOS   = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRj2ajSLPIBsAwHwv8qSVX7_5q5I_LATlqKEWkzOIdF_3Em9PmTTWZ8BnXNau0yCNeF1XAx9KX3PLrN/pub?gid=849351073&single=true&output=csv";
+        // *************************************************************
+        // ** 🚨 بيانات الاتصال بـ Supabase (يجب ملء المفاتيح هنا) 🚨 **
+        // *************************************************************
+        const SUPABASE_URL = "https://arbbxmnjviryxkmhwdgk.supabase.co";
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyYmJ4bW5qdmlyeXhrbWh3ZGdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI2OTU1NDEsImV4cCI6MjA3ODI3MTU0MX0.G-MsJtbQ1LlPZO-Vob6nKzdClHmOYu6RFOKi62FKKNk";
+
+        const TABLE_STUDENTS = "alchemiya_students";
+        const TABLE_RECORDS = "alchemiya_records";
+        const TABLE_GROUPS = "alchemiya_groups";
+
+        const SHEET_VIDEOS = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRj2ajSLPIBsAwHwv8qSVX7_5q5I_LATlqKEWkzOIdF_3Em9PmTTWZ8BnXNau0yCNeF1XAx9KX3PLrN/pub?gid=849351073&single=true&output=csv";
         const SHEET_CONTACTS = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRj2ajSLPIBsAwHwv8qSVX7_5q5I_LATlqKEWkzOIdF_3Em9PmTTWZ8BnXNau0yCNeF1XAx9KX3PLrN/pub?gid=218257892&single=true&output=csv";
+
+        async function supabaseFetchAnon(table, query = '') {
+            const url = `${SUPABASE_URL}/rest/v1/${table}${query}`;
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'apikey': SUPABASE_ANON_KEY,
+                    'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                }
+            });
+            if (!response.ok) throw new Error("Connection Error");
+            return response.json();
+        }
+
+        function safeNumber(val) {
+            return (val === "" || val === null || isNaN(parseFloat(val))) ? 0 : parseFloat(val);
+        }
+
+        function isEmptyCell(val) {
+            return val === null || val === undefined || (typeof val === 'string' && val.trim() === '');
+        }
 
         async function fetchCSV(url) {
             const res = await fetch(url);
@@ -154,128 +163,197 @@
             });
         }
 
-        function safeNumber(val) {
-            return (val === "" || isNaN(parseFloat(val))) ? 0 : parseFloat(val);
-        }
-
-        function isEmptyCell(val) {
-            return val === null || val === undefined || (typeof val === 'string' && val.trim() === '');
-        }
-
-        function displayFromRaw(raw, numeric) {
-            return isEmptyCell(raw) ? '—' : numeric; // تغيير الشرطة إلى شرطة أطول
-        }
-
         async function searchStudent() {
             const code = document.getElementById("studentCode").value.trim();
             const infoDiv = document.getElementById("studentInfo");
-            
-            // إضافة حركة بسيطة قبل البحث
+
             infoDiv.classList.remove("animate__zoomIn");
             infoDiv.classList.add("animate__pulse");
             infoDiv.innerHTML = `<p class="text-indigo-600 font-bold text-center">جاري البحث...</p>`;
 
 
             if (!code) {
-                infoDiv.innerHTML = `<p class="text-red-600 font-bold text-center">⚠️ يرجى إدخال كود الطالب</p>`;
-                infoDiv.classList.remove("animate__pulse");
-                infoDiv.classList.add("animate__headShake");
-                setTimeout(() => infoDiv.classList.remove("animate__headShake"), 1000);
+                infoDiv.innerHTML = `<p class="text-red-600 font-bold text-center">⚠️ يرجى إدخال كود الطالب</p> يتم تشغيله بعد الإدخال`;
                 return;
             }
 
-            const students = await fetchCSV(SHEET_STUDENTS);
-            const student = students.find(s => (s.code || "") === code);
+            let student;
+            try {
+                const studentQuery = `?select=id,student_name,group_id,phone_parent,student_code,${TABLE_GROUPS}(group_name,class_name)&student_code=eq.${code}&limit=1`;
+                const studentData = await supabaseFetchAnon(TABLE_STUDENTS, studentQuery);
+
+                if (studentData.length === 0) throw new Error("Not Found");
+                student = studentData[0];
+            } catch (error) {
+                infoDiv.innerHTML = `<p class="text-red-600 font-bold text-center">🚫 الطالب غير موجود. تأكد من إدخال الكود الصحيح.</p>`;
+                return;
+            }
+
+            const studentId = student.id;
+
+            // 2. جلب سجلات الأداء (النتائج)
+            let records = [];
+            try {
+                // 🚨 جلب الأعمدة الجديدة (recitation_degree, comprehensive_exam_degree)
+                const recordsQuery = `?select=lesson_number,attendance,homework_done,exam_degree,recitation_degree,comprehensive_exam_degree,lesson_month,lesson_date&student_id=eq.${studentId}&order=lesson_date.desc`;
+                records = await supabaseFetchAnon(TABLE_RECORDS, recordsQuery);
+            } catch (error) {
+                console.error("Failed to fetch records:", error);
+            }
 
             infoDiv.classList.remove("animate__pulse");
 
+            // 3. تجميع البيانات وتحليلها للعرض
+            let totalScoreObtained = 0;
+            let totalMaxScore = 0;
+            let totalAttendance = 0;
 
-            if (!student) {
-                infoDiv.innerHTML =
-                    `<p class="text-red-600 font-bold text-center">🚫 الطالب غير موجود. تأكد من إدخال الكود الصحيح.</p>`;
-                infoDiv.classList.add("animate__headShake");
-                setTimeout(() => infoDiv.classList.remove("animate__headShake"), 1000);
-                return;
-            }
+            records.forEach(r => {
+                const exam = safeNumber(r.exam_degree);
+                const recitation = safeNumber(r.recitation_degree);
+                const comprehensive = safeNumber(r.comprehensive_exam_degree);
 
-            const w1_exam = safeNumber(student.w1_exam);
-            const w1_homework = safeNumber(student.w1_homework);
-            const w1_tesmie3 = safeNumber(student.w1_tesmie3);
-            const w2_exam = safeNumber(student.w2_exam);
-            const w2_homework = safeNumber(student.w2_homework);
-            const w2_tesmie3 = safeNumber(student.w2_tesmie3);
-            const w3_exam = safeNumber(student.w3_exam);
-            const w3_homework = safeNumber(student.w3_homework);
-            const w3_tesmie3 = safeNumber(student.w3_tesmie3);
-            const w4_exam = safeNumber(student.w4_exam);
-            const w4_homework = safeNumber(student.w4_homework);
-            const w4_tesmie3 = safeNumber(student.w4_tesmie3);
-            const finalExam = safeNumber(student.finalExam);
+                totalScoreObtained += (exam + recitation + comprehensive);
 
-            const total = w1_exam + w1_homework + w1_tesmie3 +
-                            w2_exam + w2_homework + w2_tesmie3 +
-                            w3_exam + w3_homework + w3_tesmie3 +
-                            w4_exam + w4_homework + w4_tesmie3 +
-                            finalExam;
+                // حساب النهاية العظمى (Max Score) لهذه الحصة
+                let currentSessionMax = 0;
+                if (exam > 0 || exam === 0) currentSessionMax += 10; // كل حصة فيها امتحان يومي /10
+                if (recitation > 0 || recitation === 0) currentSessionMax += 10; // كل حصة فيها تسميع /10
 
-            const maxTotal = (4 * 10) + (4 * 10) + (4 * 10) + 20;
-            const percent = ((total / maxTotal) * 100).toFixed(2);
-            const percentClass = percent >= 85 ? "text-green-600 bg-green-100 p-1 rounded-lg" : percent >= 60 ? "text-yellow-600 bg-yellow-100 p-1 rounded-lg" : "text-red-600 bg-red-100 p-1 rounded-lg";
-            
+                // إذا كان هناك امتحان شامل مسجل (درجته ليست null أو 0)، نضيف 20 درجة للنهاية العظمى
+                if (!isEmptyCell(r.comprehensive_exam_degree)) {
+                    // نضيف 20 للامتحان الشامل فقط إذا كان مسجل
+                    currentSessionMax += 20;
+                }
+
+                totalMaxScore += currentSessionMax;
+
+                if (r.attendance === 'حضر') totalAttendance += 1;
+            });
+
+            const groupInfo = student[TABLE_GROUPS] || {
+                group_name: "—",
+                class_name: "—"
+            };
+
+            const totalRecordsCount = records.length;
+            const percent = totalMaxScore > 0 ? ((totalScoreObtained / totalMaxScore) * 100).toFixed(1) : 0;
+
+            const percentClass = percent >= 85 ? "text-green-600 bg-green-100" : percent >= 60 ? "text-yellow-600 bg-yellow-100" : "text-red-600 bg-red-100";
+
+            const recordsHtml = buildRecordsTable(records);
+
             infoDiv.innerHTML = `
                 <h2 class="text-3xl font-extrabold text-indigo-800 mb-4 border-b-2 pb-2 border-indigo-200">✨ بيانات الطالب</h2>
                 <div class="grid grid-cols-2 gap-4 text-lg mb-4">
-                    <p><strong>الاسم:</strong> <span class="text-gray-700 font-semibold">${student.name || "—"}</span></p>
-                    <p><strong>الصف:</strong> <span class="text-gray-700 font-semibold">${student.class || "—"}</span></p>
-                    <p><strong>المجموعة:</strong> <span class="text-gray-700 font-semibold">${student.group || "—"}</span></p>
-                    <p><strong>الكود:</strong> <span class="text-indigo-600 font-bold">${student.code || "—"}</span></p>
+                    <p><strong>الاسم:</strong> <span class="text-gray-700 font-semibold">${student.student_name || "—"}</span></p>
+                    <p><strong>الصف:</strong> <span class="text-gray-700 font-semibold">${groupInfo.class_name || "—"}</span></p>
+                    <p><strong>المجموعة:</strong> <span class="text-gray-700 font-semibold">${groupInfo.group_name || "—"}</span></p>
+                    <p><strong>الكود:</strong> <span class="text-indigo-600 font-bold">${student.student_code || student.id}</span></p>
+                    
                 </div>
 
-                <h3 class="text-2xl font-bold text-gray-700 mt-6 mb-3 border-b pb-1">📊 تفاصيل التقييم</h3>
-                <div class="overflow-x-auto shadow-md rounded-xl">
-                    <table class="w-full border-collapse text-center text-sm md:text-base">
-                        <thead class="bg-indigo-700 text-white shadow-lg">
-                            <tr>
-                                <th class="p-3 rounded-tr-xl">الأسبوع</th>
-                                <th class="p-3">امتحان /10</th>
-                                <th class="p-3">واجب /10</th>
-                                <th class="p-3 rounded-tl-xl">تسميع /10</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="border-b hover:bg-indigo-50 transition"><td>1</td><td>${displayFromRaw(student.w1_exam, w1_exam)}</td><td>${displayFromRaw(student.w1_homework, w1_homework)}</td><td>${displayFromRaw(student.w1_tesmie3, w1_tesmie3)}</td></tr>
-                            <tr class="border-b bg-gray-50 hover:bg-indigo-50 transition"><td>2</td><td>${displayFromRaw(student.w2_exam, w2_exam)}</td><td>${displayFromRaw(student.w2_homework, w2_homework)}</td><td>${displayFromRaw(student.w2_tesmie3, w2_tesmie3)}</td></tr>
-                            <tr class="border-b hover:bg-indigo-50 transition"><td>3</td><td>${displayFromRaw(student.w3_exam, w3_exam)}</td><td>${displayFromRaw(student.w3_homework, w3_homework)}</td><td>${displayFromRaw(student.w3_tesmie3, w3_tesmie3)}</td></tr>
-                            <tr class="border-b bg-gray-50 hover:bg-indigo-50 transition"><td>4</td><td>${displayFromRaw(student.w4_exam, w4_exam)}</td><td>${displayFromRaw(student.w4_homework, w4_homework)}</td><td>${displayFromRaw(student.w4_tesmie3, w4_tesmie3)}</td></tr>
-                        </tbody>
-                    </table>
+                <h3 class="text-2xl font-bold text-gray-700 mt-6 mb-3 border-b pb-1">📚 سجل الحضور والدرجات</h3>
+                <div class="overflow-x-auto shadow-md rounded-xl mb-4">
+                    ${recordsHtml}
                 </div>
-                <div class="mt-6 flex justify-between items-center bg-indigo-50 p-4 rounded-xl shadow-inner">
-                    <p class="font-bold text-lg text-indigo-700">الامتحان الشامل: <span class="text-xl">${isEmptyCell(student.finalExam) ? '—' : finalExam + '<span class="text-sm">/20</span>'}</span></p>
-                    <p class="font-extrabold text-xl">النسبة النهائية: <span class="${percentClass} text-2xl">${percent}%</span></p>
+                
+                <div class="mt-6 flex flex-col md:flex-row justify-between items-center bg-indigo-50 p-4 rounded-xl shadow-inner gap-4">
+                    <p class="font-bold text-lg text-indigo-700">مجموع الدرجات: <span class="text-xl text-black">${totalScoreObtained.toFixed(0)}</span> <span class="text-sm text-gray-500">من ${totalMaxScore.toFixed(0)}</span></p>
+                    <p class="font-bold text-lg text-indigo-700">عدد الحضور: <span class="text-xl text-black">${totalAttendance}</span></p>
+                    <p class="font-bold text-lg text-gray-700">النسبة العامة: <span class="${percentClass} px-2 py-1 rounded-lg text-xl font-bold">${percent}%</span></p>
                 </div>
             `;
             infoDiv.classList.add("animate__zoomIn");
-            setTimeout(() => infoDiv.classList.remove("animate__zoomIn"), 1000); // لإعادة تفعيل الحركة عند البحث التالي
+        }
+
+        function buildRecordsTable(records) {
+            if (records.length === 0) return `<p class="text-gray-500 p-4 text-center">لا توجد سجلات.</p>`;
+
+            const groupedByMonth = records.reduce((acc, record) => {
+                const month = record.lesson_month || 'عام';
+                if (!acc[month]) acc[month] = [];
+                acc[month].push(record);
+                return acc;
+            }, {});
+
+            let tableHtml = `
+                <table class="w-full border-collapse text-center text-sm">
+                    <thead class="bg-indigo-700 text-white shadow-lg">
+                        <tr>
+                            <th class="p-3">الشهر</th>
+                            <th class="p-3">التاريخ</th>
+                            <th class="p-3">حصة</th>
+                            <th class="p-3">حضور</th>
+                            <th class="p-3">واجب</th>
+                            <th class="p-3">تسميع (10)</th>
+                            <th class="p-3">امتحان (10)</th>
+                            <th class="p-3">شامل (20)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            let rowCounter = 0;
+
+            for (const month in groupedByMonth) {
+                groupedByMonth[month].forEach(record => {
+                    const dateDisplay = new Date(record.lesson_date).toLocaleDateString('ar-EG', {
+                        day: 'numeric',
+                        month: 'numeric'
+                    });
+                    const attendanceClass = record.attendance === 'حضر' ? 'text-green-600 font-bold' : 'text-red-600 font-bold';
+                    const homeworkText = record.homework_done === true ? '✅' : '❌';
+
+                    // 🚨 عرض الحقول الجديدة
+                    const recDegree = !isEmptyCell(record.recitation_degree) ? record.recitation_degree : '—';
+                    const examDegree = !isEmptyCell(record.exam_degree) ? record.exam_degree : '—';
+                    const compDegree = !isEmptyCell(record.comprehensive_exam_degree) ? `<span class="text-purple-700 font-bold">${record.comprehensive_exam_degree}</span>` : '—';
+
+                    rowCounter++;
+                    const rowClass = rowCounter % 2 === 0 ? 'bg-gray-50' : 'bg-white';
+
+                    tableHtml += `
+                        <tr class="border-b ${rowClass} hover:bg-indigo-50 transition">
+                            <td class="p-2 font-semibold">${month}</td>
+                            <td class="p-2 text-gray-600">${dateDisplay}</td>
+                            <td class="p-2">${record.lesson_number || '—'}</td>
+                            <td class="p-2 ${attendanceClass}">${record.attendance}</td>
+                            <td class="p-2">${homeworkText}</td>
+                            <td class="p-2 font-medium">${recDegree}</td>
+                            <td class="p-2 font-medium">${examDegree}</td>
+                            <td class="p-2">${compDegree}</td>
+                        </tr>
+                    `;
+                });
+            }
+
+            tableHtml += `</tbody></table>`;
+            return tableHtml;
         }
 
         let videosData = [];
-
         async function openVideosModal() {
             document.getElementById("videosModal").classList.remove("hidden");
-            document.getElementById("videosModal").style.display = "flex"; // لتطبيق الفليكس بوكس
-
+            document.getElementById("videosModal").style.display = "flex";
             if (videosData.length === 0) {
-                 // عرض رسالة تحميل
-                document.getElementById("videosContainer").innerHTML = `<p class="text-indigo-600 text-center mt-4 font-semibold">جاري تحميل الفيديوهات...</p>`;
-
-                const videos = await fetchCSV(SHEET_VIDEOS);
-                videosData = videos;
-                const classes = [...new Set(videos.map(v => v.class).filter(v => v))];
-                const select = document.getElementById("videoClassSelect");
-                select.innerHTML = `<option value="">اختر الصف لعرض الفيديوهات</option>` + classes.map(c => `<option value="${c}">${c}</option>`).join("");
+                document.getElementById("videosContainer").innerHTML = `<p class="text-indigo-600 text-center mt-4 font-semibold">جاري التحميل...</p>`;
+                try {
+                    const videos = await fetchCSV(SHEET_VIDEOS);
+                    videosData = videos;
+                    const uniqueClasses = [...new Set(videos.map(v => v.class ? v.class.trim() : "").filter(c => c !== ""))];
+                    let optionsHtml = `<option value="">عرض جميع الفيديوهات</option>`;
+                    uniqueClasses.forEach(cls => {
+                        optionsHtml += `<option value="${cls}">${cls}</option>`;
+                    });
+                    document.getElementById("videoClassSelect").innerHTML = optionsHtml;
+                    filterVideosByClass();
+                } catch (error) {
+                    document.getElementById("videosContainer").innerHTML = `<p class="text-red-500 text-center mt-4">حدث خطأ في تحميل الفيديوهات. تأكد من رابط الشيت.</p>`;
+                }
+            } else {
+                filterVideosByClass();
             }
-            filterVideosByClass();
         }
 
         function closeVideosModal() {
@@ -286,52 +364,25 @@
         function filterVideosByClass() {
             const selected = document.getElementById("videoClassSelect").value;
             const container = document.getElementById("videosContainer");
-            const filtered = selected === "" ? videosData : videosData.filter(v => v.class === selected);
-                        
+            const filtered = selected === "" ?
+                videosData :
+                videosData.filter(v => v.class && v.class.trim() === selected);
             if (filtered.length === 0) {
-                container.innerHTML = `<p class="text-gray-500 text-center mt-4 font-semibold">لا توجد فيديوهات لهذا الصف حاليًا.</p>`;
+                container.innerHTML = `<p class="text-gray-500 text-center mt-4">لا توجد فيديوهات.</p>`;
                 return;
             }
-
-            container.innerHTML = filtered.map(v => `
-                <div class="bg-indigo-50 shadow-md rounded-xl p-4 border border-indigo-200 hover:bg-indigo-100 transition duration-300 transform hover:scale-[1.01]">
-                    <p class="font-bold text-lg text-indigo-700 mb-1">${v.title}</p>
-                    <p class="text-sm text-gray-600 mb-2">${v.note || "بدون ملاحظات"}</p>
-                    <a href="${v.link}" target="_blank" class="inline-flex items-center text-blue-600 font-semibold hover:text-blue-800 transition">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-1" viewBox="0 0 20 20" fill="currentColor">
-                          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
-                        </svg>
-                        مشاهدة الفيديو
-                    </a>
-                </div>
-            `).join("");
+            container.innerHTML = filtered.map(v => `<div class="bg-indigo-50 shadow p-4 rounded-xl border hover:bg-indigo-100 transition"><p class="font-bold text-indigo-700">${v.title}</p><p class="text-sm text-gray-600 mb-2">${v.note || ""}</p><a href="${v.link}" target="_blank" class="text-blue-600 font-bold">مشاهدة 📺</a></div>`).join("");
         }
 
         async function openContactsModal() {
             document.getElementById("contactsModal").classList.remove("hidden");
-            document.getElementById("contactsModal").style.display = "flex"; // لتطبيق الفليكس بوكس
-
+            document.getElementById("contactsModal").style.display = "flex";
             const container = document.getElementById("contactsContainer");
-            container.innerHTML = `<p class="text-green-600 text-center mt-4 font-semibold">جاري تحميل وسائل التواصل...</p>`;
-            
+            container.innerHTML = `<p class="text-green-600 text-center">جاري التحميل...</p>`;
             const contacts = await fetchCSV(SHEET_CONTACTS);
-            
             container.innerHTML = contacts.map(c => {
                 let link = (c.type === "whatsapp") ? `https://wa.me/${c.number}` : `tel:${c.number}`;
-                let icon = (c.type === "whatsapp") ? 
-                    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="h-6 w-6 ml-2 text-green-500" fill="currentColor"><path d="M380.9 97.1C339.4 55.4 283.4 32 224 32 119.4 32 32 119.4 32 224c0 48.7 17.5 96.6 48.7 137.9l-11.7 43.1 44.8-11.5c40 28.5 86.8 44.5 136.2 44.5 104.6 0 192-87.4 192-192 0-59.4-23.4-115.4-65.1-156.9zm-136 348.8c-45.7 0-90.1-12.2-128.5-35.4l-9.1-5.5-34.5 8.9 9.3-34.1-6.1-9.6c-24.9-38.6-38.3-83.3-38.3-128.3C40 137.4 127.4 50 224 50c48.6 0 94.6 18.9 128.8 53.2 34.2 34.2 53.1 80.2 53.1 128.8 0 96.6-77.4 174-174 174zM320.6 280.9c-2.3-1.1-13.6-6.7-15.7-7.5-2.2-.8-3.7-1.1-5.2 1.1s-6 7.5-7.4 9c-1.5 1.6-3 1.8-5.6.8-2.6-1.1-11-4-21-13.1-7.8-7-13-16-14.7-18.5-1.7-2.5-.2-3.8 1.5-5.3 1.3-1.2 3-3 4.5-5.1 1.5-2 .7-3.8-.2-5.3-1.2-2-11.4-27.4-15.6-37.5-4.1-10-8.3-8.6-11-8.7-2.6-.1-5.6-.1-8.6-.1-2.9 0-7.7 1.1-11.7 5.7s-15.1 14.7-15.1 35.8 15.6 41.5 17.8 44.6c2.2 3 30.6 47.3 74.3 65.5 10.6 4.4 19 7 25.5 9 10.6 3.4 20.3 2.9 28.5 1.8 9.3-1.3 27.4-11.1 31.3-21.8 3.9-10.7 3.9-19.9 2.7-21.8-1.2-1.9-4.5-3-9.5-5.5z"/></svg>` : 
-                    `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 ml-2 text-indigo-500" viewBox="0 0 20 20" fill="currentColor">
-                        <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 3.184c.731.066 1.486.096 2.247.086v-1.11a1 1 0 011-1h.007a1 1 0 011 1v1.11c.761-.01 1.516.02 2.247.086l.74-3.184a1 1 0 01.986-.836H17a1 1 0 011 1v14a1 1 0 01-1 1h-2.153a1 1 0 01-.986-.836l-.74-3.184c-.731-.066-1.486-.096-2.247-.086v1.11a1 1 0 01-1 1h-.007a1 1 0 01-1-1v-1.11c-.761.01-1.516-.02-2.247-.086l-.74 3.184A1 1 0 013.153 18H3a1 1 0 01-1-1V3z"/>
-                        </svg>`;
-                return `
-                    <div class="bg-gray-50 shadow-md rounded-xl p-4 border border-gray-200 hover:bg-green-50 transition duration-300 transform hover:scale-[1.01]">
-                        <p class="font-bold text-lg text-gray-700 mb-2">${c.label}</p>
-                        <a href="${link}" target="_blank" class="inline-flex items-center text-green-600 font-semibold hover:text-green-800 transition">
-                            ${icon}
-                            ${(c.type === "whatsapp") ? 'محادثة واتساب' : 'اتصال هاتفي'}
-                        </a>
-                    </div>
-                `;
+                return `<div class="bg-gray-50 shadow p-4 rounded-xl hover:bg-green-50 transition"><p class="font-bold text-gray-700 mb-1">${c.label}</p><a href="${link}" target="_blank" class="text-green-600 font-bold">${(c.type === "whatsapp") ? 'واتساب 💬' : 'اتصال 📞'}</a></div>`;
             }).join("");
         }
 
@@ -339,7 +390,11 @@
             document.getElementById("contactsModal").classList.add("hidden");
             document.getElementById("contactsModal").style.display = "none";
         }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // عند تحميل الصفحة، يبدأ الطالب بالبحث بنفسه
+        });
     </script>
 </body>
-</html>
 
+</html>

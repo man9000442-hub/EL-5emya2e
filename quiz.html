@@ -85,14 +85,17 @@
 <body class="bg-gray-50 text-gray-900 min-h-screen flex flex-col items-center p-4 sm:p-6">
 
     <header class="w-full max-w-4xl text-center bg-gradient-to-r from-blue-400 to-indigo-600 p-6 rounded-3xl shadow-xl mb-8 fade-in text-white">
-        <h1 class="text-4xl font-extrabold">امتحان الأريب</h1>
+        <h1 class="text-4xl font-extrabold">امتحان الخيميائي</h1>
         <p class="text-xl mt-2 opacity-95">بالتوفيق يا صديقي</p>
     </header>
 
     <main id="classSelection" class="w-full max-w-md bg-white p-8 rounded-2xl shadow-xl text-center fade-in border border-gray-200">
         <h2 class="text-2xl font-bold mb-6 text-gray-800">اختر الصف الدراسي</h2>
-        <select id="classSelect" class="w-full bg-gray-100 text-gray-800 p-3 rounded-lg border-2 border-gray-300 focus:outline-none focus:border-indigo-500 transition">
+        <select id="classSelect" class="w-full bg-gray-100... (إلخ)">
             <option value="">-- اختر الصف --</option>
+            <option value="g1">أولى إعدادي</option>
+            <option value="g2">تانية إعدادي</option>
+            <option value="g3">تالتة إعدادي</option>
             <option value="s1">أولى ثانوي</option>
             <option value="s2">تانية ثانوي</option>
             <option value="s3">تالتة ثانوي</option>
@@ -141,9 +144,9 @@
         // *************************************************************
         const SUPABASE_URL = "https://arbbxmnjviryxkmhwdgk.supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyYmJ4bW5qdmlyeXhrbWh3ZGdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI2OTU1NDEsImV4cCI6MjA3ODI3MTU0MX0.G-MsJtbQ1LlPZO-Vob6nKzdClHmOYu6RFOKi62FKKNk";
-        const TABLE_RESULTS = "quiz_results"; // جدول تسجيل النتائج
-        const TABLE_QUIZZES = "quizzes"; // جدول الامتحانات الرئيسية
-        const TABLE_QUESTIONS = "questions"; // جدول الأسئلة
+        const TABLE_RESULTS = "alchemiya_results";
+        const TABLE_QUIZZES = "alchemiya_quizzes";
+        const TABLE_QUESTIONS = "alchemiya_questions";
         // *************************************************************
 
         let questions = [];
@@ -152,6 +155,11 @@
         let selectedClass = "";
 
         const classNames = {
+            // 🚨 إضافة الصفوف الإعدادية
+            g1: "أولى إعدادي",
+            g2: "تانية إعدادي",
+            g3: "تالتة إعدادي",
+
             s1: "أولى ثانوي",
             s2: "تانية ثانوي",
             s3: "تالتة ثانوي"

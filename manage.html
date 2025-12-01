@@ -31,7 +31,7 @@
             background-color: #a0aec0;
             border-radius: 4px;
         }
-        /* لطباعة الكروت */
+        /* لطباعة جديد الكروت */
         
         @media print {
             body * {
@@ -495,9 +495,14 @@
             </div>
 
             <div id="studentRecordsView" class="bg-white p-6 sm:p-8 rounded-xl shadow-lg border border-yellow-200 border-l-4 hidden">
-                <button onclick="showTab('students')" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg transition mb-4">
-                    ← العودة لقائمة الطلاب
-                </button>
+                <div class="flex justify-between items-center mb-4">
+                    <button onclick="showTab('students')" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg transition">
+                        ← العودة لقائمة الطلاب
+                    </button>
+                    <button id="addNewRecordBtn" onclick="openAddRecordForm()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition">
+                        + إضافة سجل جديد
+                    </button>
+                </div>
                 <h3 class="text-xl font-bold mb-4 text-gray-800">سجلات أداء الطالب: <span id="recordsStudentName" class="text-indigo-600"></span></h3>
                 <div class="table-container overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
@@ -562,6 +567,10 @@
         let groups = [];
         let students = [];
         let selectedStudentIds = new Set();
+        let currentViewingStudent = {
+            id: null,
+            name: null
+        }; // 🆕 لتخزين بيانات الطالب المراد عرض سجلاته
 
 
         // -----------------------------------------------------------
@@ -588,6 +597,13 @@
             if (!response.ok) {
                 const errorText = await response.text();
                 throw new Error(`Supabase Error (${response.status}): ${response.statusText}. Details: ${errorText}`);
+            }
+
+            // DELETE requests may not return JSON, so handle that case
+            if (method === 'DELETE') {
+                return {
+                    success: true
+                };
             }
 
             return response.json();
@@ -1148,7 +1164,7 @@
                     <td class="px-4 py-2 text-sm text-gray-700">${student.phone_student || 'لا يوجد'}</td>
                     <td class="px-4 py-2 text-sm text-gray-700">${student.phone_parent || 'لا يوجد'}</td>
                     <td class="px-4 py-2 text-center whitespace-nowrap space-x-2 space-x-reverse">
-                        <button onclick="showRecordModal(${student.id}, '${student.student_name}')" class="text-blue-600 hover:text-blue-900 font-bold py-1 px-2 rounded-md transition text-sm">سجل الأداء</button>
+                        <button onclick="viewStudentRecords(${student.id}, '${student.student_name}')" class="text-blue-600 hover:text-blue-900 font-bold py-1 px-2 rounded-md transition text-sm">سجل الأداء</button>
                         <button onclick="editStudent(${student.id})" class="text-indigo-600 hover:text-indigo-900 font-bold py-1 px-2 rounded-md transition text-sm">تعديل</button>
                     </td>
                 `;
@@ -1175,13 +1191,20 @@
             const studentPhone = document.getElementById('studentPhone').value.trim() || null;
             const parentPhone = document.getElementById('parentPhone').value.trim() || null;
 
+            // إنشاء كود فريد للطالب (عند الإضافة الجديدة فقط)
+            const studentCode = studentId ? undefined : Math.random().toString(36).substring(2, 8).toUpperCase();
+
             const data = {
                 student_name: studentName,
                 group_id: parseInt(groupID),
                 phone_student: studentPhone,
                 phone_parent: parentPhone,
-                // الكود (id) سيتم إنشاؤه تلقائياً في حالة الإضافة
             };
+
+            // إضافة student_code فقط عند الإضافة الجديدة
+            if (!studentId) {
+                data.student_code = studentCode;
+            }
 
             const isEdit = !!studentId;
             const method = isEdit ? 'PATCH' : 'POST';
@@ -1323,11 +1346,10 @@
 
             try {
                 await supabaseFetch('POST', TABLE_RECORDS, '', data);
-                alert('تم حفظ سجل الأداء بنجاح.');
+                alert('تم حفظ سجل الأداء بنجاح! ✅');
                 document.getElementById('recordModal').classList.add('hidden');
-                // هنا يجب إضافة تحديث لعرض السجلات فوراً
-                const studentName = document.getElementById('recordModalStudentName').textContent;
-                viewStudentRecords(parseInt(studentId), studentName);
+                // 🆕 تحديث لعرض السجلات فوراً مع الحفاظ على الصفحة الحالية
+                viewStudentRecords(parseInt(studentId), document.getElementById('recordModalStudentName').textContent);
             } catch (error) {
                 alert(`فشل حفظ سجل الأداء: ${error.message}`);
                 console.error('Error saving record:', error);
@@ -1336,12 +1358,26 @@
 
 
         async function viewStudentRecords(studentId, studentName) {
+            // 🆕 تخزين بيانات الطالب الحالي
+            currentViewingStudent = {
+                id: studentId,
+                name: studentName
+            };
+
+            // التأكد من أن tab-content الرئيسي (students-content) معروض
+            document.getElementById('students-content').classList.remove('hidden');
+
+            // إخفاء جميع الأقسام الأخرى داخل students-content
+            document.getElementById('groupFormSection').classList.add('hidden');
+            document.getElementById('studentFormSection').classList.add('hidden');
+
+            // إظهار قسم السجلات
             document.getElementById('studentRecordsView').classList.remove('hidden');
-            document.getElementById('students-content').classList.add('hidden');
+
             document.getElementById('recordsStudentName').textContent = studentName;
 
             const recordsTableBody = document.getElementById('recordsTableBody');
-            recordsTableBody.innerHTML = '<tr><td colspan="7" class="px-6 py-4 text-center text-gray-500">... جاري تحميل السجلات ...</td></tr>';
+            recordsTableBody.innerHTML = '<tr><td colspan="9" class="px-6 py-4 text-center text-gray-500">... جاري تحميل السجلات ...</td></tr>';
 
             try {
                 // 🚨 التصحيح: يجب تحديد جميع الأعمدة المطلوبة هنا
@@ -1349,12 +1385,10 @@
 
                 recordsTableBody.innerHTML = '';
                 if (records.length === 0) {
-                    recordsTableBody.innerHTML = '<tr><td colspan="7" class="px-6 py-4 text-center text-gray-500">لا توجد سجلات لهذا الطالب.</td></tr>';
+                    recordsTableBody.innerHTML = '<tr><td colspan="9" class="px-6 py-4 text-center text-gray-500">لا توجد سجلات لهذا الطالب.</td></tr>';
                     return;
                 }
 
-                // ... داخل try بلوك في دالة viewStudentRecords
-                // ...
                 records.forEach(record => {
                     const row = document.createElement('tr');
                     row.className = 'hover:bg-gray-50 transition duration-150';
@@ -1364,33 +1398,56 @@
                         <td class="px-4 py-2 text-sm text-gray-700">${record.lesson_number}</td>
                         <td class="px-4 py-2 text-sm ${record.attendance === 'حضر' ? 'text-green-600' : 'text-red-600'} font-bold">${record.attendance}</td>
                         <td class="px-4 py-2 text-sm ${record.homework_done ? 'text-green-600' : 'text-red-600'} font-bold">${record.homework_done ? 'تم ✅' : 'لم يتم ❌'}</td>
-                        
                         <td class="px-4 py-2 text-sm text-gray-700">${record.recitation_degree || '—'}</td>
                         <td class="px-4 py-2 text-sm text-gray-700">${record.exam_degree || '—'}</td>
                         <td class="px-4 py-2 text-sm text-gray-700">${record.comprehensive_exam_degree || '—'}</td>
-                        <td class="px-4 py-2 text-center whitespace-nowrap">
-                            <button onclick="alert('خاصية التعديل غير متاحة حالياً، يمكنك حذف السجل وإعادة إدخاله.')" class="text-yellow-600 hover:text-yellow-900 font-bold py-1 px-2 rounded-md transition text-sm">تعديل</button>
+                        <td class="px-4 py-2 text-center whitespace-nowrap space-x-2 space-x-reverse">
+                            <button onclick="deleteRecord('${record.lesson_date}', ${currentViewingStudent.id})" class="text-red-600 hover:text-red-900 font-bold py-1 px-2 rounded-md transition text-sm">🗑️ حذف</button>
                         </td>
                     `;
                     recordsTableBody.appendChild(row);
                 });
-                // ...
-
             } catch (error) {
                 console.error('Error fetching records:', error);
-                recordsTableBody.innerHTML = `<tr><td colspan="7" class="px-6 py-4 text-center text-red-500 font-bold">خطأ في جلب السجلات: ${error.message}</td></tr>`;
+                recordsTableBody.innerHTML = `<tr><td colspan="9" class="px-6 py-4 text-center text-red-500 font-bold">خطأ في جلب السجلات: ${error.message}</td></tr>`;
             }
         }
 
-        // ربط زر "سجل الأداء" في قائمة الطلاب لوظيفة عرض السجلات
-        studentsTableBody.addEventListener('click', (e) => {
-            if (e.target.textContent === 'سجل الأداء') {
-                const row = e.target.closest('tr');
-                const studentId = parseInt(row.querySelector('td:nth-child(2)').textContent);
-                const studentName = row.querySelector('td:nth-child(3)').textContent;
-                viewStudentRecords(studentId, studentName);
+        // 🆕 دالة حذف السجل
+        async function deleteRecord(lessonDate, studentId) {
+            if (!confirm('هل أنت متأكد من حذف هذا السجل؟ لا يمكن التراجع عن هذه العملية.')) {
+                return;
             }
-        });
+
+            try {
+                await supabaseFetch('DELETE', TABLE_RECORDS, `?student_id=eq.${studentId}&lesson_date=eq.${lessonDate}`);
+                alert('تم حذف السجل بنجاح! ✅');
+                // تحديث قائمة السجلات
+                viewStudentRecords(studentId, currentViewingStudent.name);
+            } catch (error) {
+                alert(`فشل حذف السجل: ${error.message}`);
+                console.error('Error deleting record:', error);
+            }
+        }
+
+        // 🆕 دالة جديدة لفتح نموذج إضافة سجل من صفحة السجلات
+        function openAddRecordForm() {
+            const recordModal = document.getElementById('recordModal');
+            document.getElementById('recordModalStudentName').textContent = currentViewingStudent.name;
+            document.getElementById('recordStudentId').value = currentViewingStudent.id;
+            document.getElementById('recordForm').reset();
+
+            // تعيين التاريخ الحالي كافتراضي
+            document.getElementById('recordDate').valueAsDate = new Date();
+            // تعيين الشهر الحالي كافتراضي
+            document.getElementById('recordMonth').value = monthNames[new Date().getMonth()];
+
+            recordModal.classList.remove('hidden');
+        }
+
+        // ربط زر "سجل الأداء" في قائمة الطلاب لوظيفة عرض السجلات
+        // تم إزالة هذا الـ event listener لأن الزر الآن يحتوي على onclick مباشر
+        // وبالتالي لا نحتاج event listener إضافي
 
 
         // التحميل المبدئي

@@ -1190,10 +1190,6 @@
             const groupID = document.getElementById('studentGroup').value;
             const studentPhone = document.getElementById('studentPhone').value.trim() || null;
             const parentPhone = document.getElementById('parentPhone').value.trim() || null;
-
-            // إنشاء كود فريد للطالب (عند الإضافة الجديدة فقط)
-            const studentCode = studentId ? undefined : Math.random().toString(36).substring(2, 8).toUpperCase();
-
             const data = {
                 student_name: studentName,
                 group_id: parseInt(groupID),
@@ -1201,7 +1197,9 @@
                 phone_parent: parentPhone,
             };
 
-            // إضافة student_code فقط عند الإضافة الجديدة
+            // إنشاء كود مؤقت للطرفية لإرضاء قيد NOT NULL (سيتم استبداله لاحقاً بالـ id)
+            // هذا يحافظ على التوافق لو كان العمود مفروضاً كـ NOT NULL أو UNIQUE
+            const studentCode = studentId ? undefined : Math.random().toString(36).substring(2, 8).toUpperCase();
             if (!studentId) {
                 data.student_code = studentCode;
             }
@@ -1212,7 +1210,26 @@
             const action = isEdit ? 'تعديل' : 'إضافة';
 
             try {
-                await supabaseFetch(method, TABLE_STUDENTS, query, data);
+                const response = await supabaseFetch(method, TABLE_STUDENTS, query, data);
+
+                // عند الإضافة (POST) نحصل على الـ id المعاد من Supabase ونحدّث student_code ليطابقه
+                if (!studentId && Array.isArray(response) && response[0] && response[0].id) {
+                    const newId = response[0].id;
+                    try {
+                        await supabaseFetch('PATCH', TABLE_STUDENTS, `?id=eq.${newId}`, {
+                            student_code: newId
+                        });
+                    } catch (patchErr) {
+                        console.error('Failed to set student_code to id:', patchErr);
+                        // لا نوقف التدفق؛ نُبلغ المستخدم لكن عملية الإضافة نجحت
+                        alert(`تم إضافة الطالب ولكن فشل تعيين الكود (student_code). الرجاء التحقق يدوياً. Error: ${patchErr.message}`);
+                        newStudentForm.reset();
+                        hideStudentForm();
+                        fetchStudents();
+                        return;
+                    }
+                }
+
                 alert(`تم ${action} الطالب بنجاح.`);
                 newStudentForm.reset();
                 hideStudentForm();

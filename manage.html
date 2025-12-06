@@ -76,7 +76,7 @@
             <ul class="flex flex-wrap -mb-px" id="tabs" role="tablist">
                 <li class="mr-2" role="presentation">
                     <button id="results-tab" class="inline-block p-4 border-b-2 border-transparent rounded-t-lg font-bold text-gray-500 hover:text-indigo-600 hover:border-indigo-400 transition" type="button" role="tab" aria-selected="false" onclick="showTab('results')">
-                        عرض النتائج
+                        عرض نتائج الامتحانات
                     </button>
                 </li>
                 <li class="mr-2" role="presentation">
@@ -85,16 +85,21 @@
                     </button>
                 </li>
                 <li class="mr-2" role="presentation">
-                    <button id="students-tab" class="inline-block p-4 border-b-2 border-indigo-600 rounded-t-lg font-bold text-indigo-600 hover:text-indigo-700 hover:border-indigo-400 transition" type="button" role="tab" aria-selected="true" onclick="showTab('students')">
+                    <button id="students-tab" class="inline-block p-4 border-b-2 border-transparent rounded-t-lg font-bold text-gray-500 hover:text-indigo-600 hover:border-indigo-400 transition" type="button" role="tab" aria-selected="false" onclick="showTab('students')">
                         إدارة الطلاب والمجموعات 🧑‍🎓
                     </button>
                 </li>
-            </ul>
+                <li class="mr-2" role="presentation">
+                    <button id="ranking-tab" class="inline-block p-4 border-b-2 border-indigo-600 rounded-t-lg font-bold text-indigo-600 hover:text-indigo-700 hover:border-indigo-400 transition" type="button" role="tab" aria-selected="true" onclick="showTab('ranking')">
+                        ترتيب الطلاب 🏆
+                    </button>
+                </li>
+                </ul>
         </div>
 
         <div id="results-content" class="tab-content hidden">
             <div class="bg-white p-6 sm:p-8 rounded-xl shadow-lg border border-gray-100 mb-8">
-                <h2 class="text-xl font-bold mb-5 text-gray-800">تصفية النتائج</h2>
+                <h2 class="text-xl font-bold mb-5 text-gray-800">تصفية نتائج الامتحانات</h2>
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <div class="col-span-full md:col-span-1">
                         <label for="classFilter" class="block text-sm font-medium text-gray-700 mb-2">اختر الصف الدراسي</label>
@@ -529,7 +534,65 @@
             </div>
         </div>
 
-    </main>
+        <div id="ranking-content" class="tab-content hidden">
+            <div class="bg-white p-6 sm:p-8 rounded-xl shadow-lg border border-gray-100 mb-8">
+                <h2 class="text-xl font-bold mb-5 text-gray-800">تصفية وترتيب الطلاب (سجلات الأداء)</h2>
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                    <div class="col-span-full md:col-span-1">
+                        <label for="rankingMonthFilter" class="block text-sm font-medium text-gray-700 mb-2">اختر الشهر</label>
+                        <select id="rankingMonthFilter" class="w-full bg-gray-100 p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition">
+                            <option value="all">جميع الأشهر</option>
+                            </select>
+                    </div>
+                    <div class="col-span-full md:col-span-1">
+                        <label for="rankingGroupFilter" class="block text-sm font-medium text-gray-700 mb-2">اختر المجموعة</label>
+                        <select id="rankingGroupFilter" class="w-full bg-gray-100 p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition">
+                            <option value="all">جميع المجموعات</option>
+                            </select>
+                    </div>
+                    <div class="col-span-full md:col-span-1">
+                        <label for="rankingNameSearch" class="block text-sm font-medium text-gray-700 mb-2">البحث بالاسم</label>
+                        <input type="text" id="rankingNameSearch" placeholder="اسم الطالب كاملاً" class="w-full bg-gray-100 p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition">
+                    </div>
+                    <div class="col-span-full md:col-span-1">
+                        <label for="rankingPhoneSearch" class="block text-sm font-medium text-gray-700 mb-2">البحث برقم الهاتف</label>
+                        <input type="text" id="rankingPhoneSearch" placeholder="رقم الهاتف" class="w-full bg-gray-100 p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition">
+                    </div>
+                    <div class="col-span-full md:col-span-1 flex items-end">
+                        <button id="applyRankingFilterBtn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition shadow-md">
+                            تطبيق التصفية
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 sm:p-8 rounded-xl shadow-lg border border-gray-100">
+                <h2 class="text-2xl font-bold mb-4 text-gray-800">قائمة الترتيب (الدرجة الكلية القصوى: <span id="rankingTotalScore">0</span> نقطة)</h2>
+                <div class="table-container overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider text-right">الترتيب 👑</th>
+                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider text-right">الاسم</th>
+                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider text-right">المجموعة</th>
+                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider text-right">هاتف الطالب</th>
+                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider text-right">حضر (حصة)</th>
+                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider text-right">واجب (✅)</th>
+                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider text-right">التسميع (الإجمالي)</th>
+                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider text-right">الامتحانات (الإجمالي)</th>
+                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider text-right">الدرجة الكلية 💯</th>
+                            </tr>
+                        </thead>
+                        <tbody id="rankingTableBody" class="bg-white divide-y divide-gray-200">
+                            <tr>
+                                <td colspan="9" class="px-6 py-4 text-center text-gray-500">... جاري تحميل الترتيب ...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        </main>
 
     <script>
         // *************************************************************
@@ -570,7 +633,7 @@
         let currentViewingStudent = {
             id: null,
             name: null
-        }; // 🆕 لتخزين بيانات الطالب المراد عرض سجلاته
+        }; // لتخزين بيانات الطالب المراد عرض سجلاته
 
 
         // -----------------------------------------------------------
@@ -637,16 +700,17 @@
             } else if (tabName === 'students') {
                 fetchGroups();
                 fetchStudents();
+            } else if (tabName === 'ranking') { // 🆕 استدعاء دالة الترتيب
+                fetchGroups(); // تأكد من جلب المجموعات لفلترة الترتيب
+                fetchRankingData();
             } else {
                 fetchResults();
             }
         }
 
         // -----------------------------------------------------------
-        // 2. إدارة النتائج (Results Management) - (تم تعديلها لاستخدام دالة المساعدة)
+        // 2. إدارة النتائج (Results Management)
         // -----------------------------------------------------------
-
-        // ... (كود fetchResults و displayResults يظل كما هو تقريباً مع استخدام دالة supabaseFetch) ...
 
         async function fetchResults() {
             const resultsTableBody = document.getElementById('resultsTableBody');
@@ -734,7 +798,7 @@
 
 
         // -----------------------------------------------------------
-        // 3. إدارة الامتحانات (Quizzes Management) - (بدون تغيير)
+        // 3. إدارة الامتحانات (Quizzes Management)
         // -----------------------------------------------------------
 
         async function fetchQuizzes() {
@@ -940,7 +1004,7 @@
 
 
         // -----------------------------------------------------------
-        // 4. إدارة المجموعات والطلاب والسجلات (Students Management) 🆕
+        // 4. إدارة المجموعات والطلاب والسجلات (Students Management)
         // -----------------------------------------------------------
 
         const groupsTableBody = document.getElementById('groupsTableBody');
@@ -1025,10 +1089,15 @@
         function populateGroupSelects(groupsList) {
             studentGroupSelect.innerHTML = '<option value="">-- اختر المجموعة --</option>';
             studentFilterGroupSelect.innerHTML = '<option value="all">جميع المجموعات</option>';
+            // 🆕 تعبئة قائمة تصفية الترتيب
+            document.getElementById('rankingGroupFilter').innerHTML = '<option value="all">جميع المجموعات</option>';
+            // /🆕
+
             groupsList.forEach(group => {
                 const option = `<option value="${group.id}">${group.class_name} - ${group.group_name} (${group.day_of_week})</option>`;
                 studentGroupSelect.insertAdjacentHTML('beforeend', option);
                 studentFilterGroupSelect.insertAdjacentHTML('beforeend', option);
+                document.getElementById('rankingGroupFilter').insertAdjacentHTML('beforeend', `<option value="${group.id}">${group.class_name} - ${group.group_name}</option>`);
             });
         }
 
@@ -1367,6 +1436,8 @@
                 document.getElementById('recordModal').classList.add('hidden');
                 // 🆕 تحديث لعرض السجلات فوراً مع الحفاظ على الصفحة الحالية
                 viewStudentRecords(parseInt(studentId), document.getElementById('recordModalStudentName').textContent);
+                // 🆕 تحديث قائمة الترتيب في الخلفية
+                fetchRankingData(true);
             } catch (error) {
                 alert(`فشل حفظ سجل الأداء: ${error.message}`);
                 console.error('Error saving record:', error);
@@ -1441,6 +1512,8 @@
                 alert('تم حذف السجل بنجاح! ✅');
                 // تحديث قائمة السجلات
                 viewStudentRecords(studentId, currentViewingStudent.name);
+                // 🆕 تحديث قائمة الترتيب في الخلفية
+                fetchRankingData(true);
             } catch (error) {
                 alert(`فشل حذف السجل: ${error.message}`);
                 console.error('Error deleting record:', error);
@@ -1462,14 +1535,263 @@
             recordModal.classList.remove('hidden');
         }
 
-        // ربط زر "سجل الأداء" في قائمة الطلاب لوظيفة عرض السجلات
-        // تم إزالة هذا الـ event listener لأن الزر الآن يحتوي على onclick مباشر
-        // وبالتالي لا نحتاج event listener إضافي
+        // -----------------------------------------------------------
+        // 5. نظام ترتيب الطلاب (Ranking System) 🆕
+        // -----------------------------------------------------------
+
+        let rankingData = [];
+        let allRecords = [];
+
+        function populateMonthFilter() {
+            const monthFilter = document.getElementById('rankingMonthFilter');
+            monthFilter.innerHTML = '<option value="all">جميع الأشهر</option>';
+            monthNames.forEach(month => {
+                monthFilter.insertAdjacentHTML('beforeend', `<option value="${month}">${month}</option>`);
+            });
+            // تحديد الشهر الحالي كافتراضي في البداية
+            monthFilter.value = monthNames[new Date().getMonth()];
+        }
+
+
+        async function fetchRankingData(silent = false) {
+            const rankingTableBody = document.getElementById('rankingTableBody');
+            if (!silent) {
+                rankingTableBody.innerHTML = '<tr><td colspan="9" class="px-6 py-4 text-center text-gray-500">... جاري تحميل الترتيب وحساب الدرجات ...</td></tr>';
+            }
+
+            try {
+                // جلب جميع الطلاب مع معلومات مجموعاتهم
+                const studentsWithGroups = await supabaseFetch('GET', TABLE_STUDENTS, `?select=id,student_name,phone_student,group_id,${TABLE_GROUPS}(group_name)`);
+
+                // جلب جميع السجلات
+                allRecords = await supabaseFetch('GET', TABLE_RECORDS, `?select=student_id,lesson_month,attendance,homework_done,recitation_degree,exam_degree,comprehensive_exam_degree`);
+
+                // دمج وحساب الدرجات لكل طالب
+                rankingData = calculateScores(studentsWithGroups, allRecords); // تخزين البيانات الناتجة في rankingData
+                
+                // تطبيق الفلاتر قبل العرض
+                filterAndDisplayRanking(rankingData);
+
+            } catch (error) {
+                console.error('Error fetching ranking data:', error);
+                if (!silent) {
+                    rankingTableBody.innerHTML = `<tr><td colspan="9" class="px-6 py-4 text-center text-red-500 font-bold">خطأ في جلب بيانات الترتيب: ${error.message}</td></tr>`;
+                }
+            }
+        }
+
+        function calculateScores(studentsList, recordsList) {
+            const scoresMap = new Map();
+
+            // 1. تهيئة الخريطة للطلاب (تم إضافة group_id هنا)
+            studentsList.forEach(student => {
+                const groupName = student[TABLE_GROUPS] ? student[TABLE_GROUPS].group_name : 'غير محدد';
+                scoresMap.set(student.id, {
+                    id: student.id,
+                    name: student.student_name,
+                    phone: student.phone_student || '—',
+                    group_id: student.group_id, // 🚨 تم الإضافة: لتسهيل التصفية
+                    group: groupName,
+                    totalAttendance: 0,
+                    totalHomework: 0,
+                    totalRecitation: 0, 
+                    totalExam: 0,
+                    totalComprehensiveExam: 0,
+                    overallScore: 0,
+                    records: [], 
+                });
+            });
+
+            // 2. معالجة السجلات 
+            recordsList.forEach(record => {
+                if (scoresMap.has(record.student_id)) {
+                    const studentScore = scoresMap.get(record.student_id);
+
+                    if (record.attendance === 'حضر') {
+                        studentScore.totalAttendance++;
+                    }
+                    if (record.homework_done) {
+                        studentScore.totalHomework++;
+                    }
+
+                    if (record.recitation_degree !== null && typeof record.recitation_degree === 'number') {
+                        studentScore.totalRecitation += record.recitation_degree;
+                    }
+
+                    if (record.comprehensive_exam_degree !== null && typeof record.comprehensive_exam_degree === 'number') {
+                        studentScore.totalComprehensiveExam += record.comprehensive_exam_degree;
+                    } 
+                    else if (record.exam_degree !== null && typeof record.exam_degree === 'number') {
+                        studentScore.totalExam += record.exam_degree;
+                    }
+                }
+            });
+
+            // 3. حساب الدرجة النهائية (مثال لآلية حساب الدرجة النهائية)
+            const calculatedScores = Array.from(scoresMap.values()).map(student => {
+                const attendanceBonus = student.totalAttendance * 1; 
+                const homeworkBonus = student.totalHomework * 1; 
+
+                // 🚨 تصحيح طفيف: للتأكد من استخدام اسم المجموعة بشكل صحيح للعرض
+                const groupInfo = studentsList.find(s => s.id === student.id);
+                student.group = groupInfo && groupInfo[TABLE_GROUPS] ? groupInfo[TABLE_GROUPS].group_name : 'غير محدد';
+                
+                student.overallScore = student.totalRecitation + student.totalExam + student.totalComprehensiveExam + attendanceBonus + homeworkBonus;
+                return student;
+            });
+
+            return calculatedScores;
+        }
+
+        function filterAndDisplayRanking(scores) {
+            const monthFilter = document.getElementById('rankingMonthFilter').value;
+            const groupFilter = document.getElementById('rankingGroupFilter').value;
+            const nameSearch = document.getElementById('rankingNameSearch').value.trim().toLowerCase();
+            const phoneSearch = document.getElementById('rankingPhoneSearch').value.trim();
+
+            let filteredScores = scores.map(student => ({ ...student })); // نسخ الطلاب للحفاظ على الأصل
+
+            // 1. التصفية حسب الشهر أولاً (لإعادة حساب الإجماليات للشهر المحدد فقط)
+            if (monthFilter !== 'all') {
+                filteredScores = filteredScores.map(student => {
+                    const filteredRecords = allRecords.filter(record => 
+                        record.student_id === student.id && record.lesson_month === monthFilter
+                    );
+                    
+                    // إعادة حساب الإجماليات للشهر المختار فقط
+                    let totalAttendance = 0;
+                    let totalHomework = 0;
+                    let totalRecitation = 0;
+                    let totalExam = 0;
+                    let totalComprehensiveExam = 0;
+
+                    filteredRecords.forEach(record => {
+                        if (record.attendance === 'حضر') {
+                            totalAttendance++;
+                        }
+                        if (record.homework_done) {
+                            totalHomework++;
+                        }
+                        if (record.recitation_degree !== null && typeof record.recitation_degree === 'number') {
+                            totalRecitation += record.recitation_degree;
+                        }
+                        if (record.comprehensive_exam_degree !== null && typeof record.comprehensive_exam_degree === 'number') {
+                            totalComprehensiveExam += record.comprehensive_exam_degree;
+                        } else if (record.exam_degree !== null && typeof record.exam_degree === 'number') {
+                            totalExam += record.exam_degree;
+                        }
+                    });
+
+                    // إعادة حساب الدرجة الكلية للشهر
+                    const attendanceBonus = totalAttendance * 1; 
+                    const homeworkBonus = totalHomework * 1; 
+                    const overallScore = totalRecitation + totalExam + totalComprehensiveExam + attendanceBonus + homeworkBonus;
+
+                    return {
+                        ...student,
+                        totalAttendance,
+                        totalHomework,
+                        totalRecitation,
+                        totalExam,
+                        totalComprehensiveExam,
+                        overallScore
+                    };
+                });
+
+                // إزالة الطلاب الذين ليس لديهم أي سجلات في الشهر المختار
+                filteredScores = filteredScores.filter(student => student.totalAttendance > 0 || student.totalHomework > 0 || student.overallScore > 0);
+            }
+            
+            // 2. التصفية حسب المجموعة 🚨 تم تعديل هذا الجزء للاعتماد على group_id الرقمي
+            if (groupFilter !== 'all' && groupFilter) {
+                const filterGroupId = parseInt(groupFilter);
+                filteredScores = filteredScores.filter(student => student.group_id === filterGroupId);
+            }
+
+            // 3. التصفية حسب الاسم (يظل كما هو)
+            if (nameSearch) {
+                filteredScores = filteredScores.filter(student => student.name.toLowerCase().includes(nameSearch));
+            }
+            
+            // 4. التصفية حسب الهاتف (يظل كما هو)
+            if (phoneSearch) {
+                filteredScores = filteredScores.filter(student => student.phone.includes(phoneSearch) || student.phone_parent.includes(phoneSearch));
+            }
+
+            // 5. الترتيب النهائي (تنازلي حسب الدرجة الكلية)
+            filteredScores.sort((a, b) => b.overallScore - a.overallScore);
+            
+            displayRanking(filteredScores);
+        }
+        
+        function displayRanking(studentsRanks) {
+            const rankingTableBody = document.getElementById('rankingTableBody');
+            const rankingTotalScoreSpan = document.getElementById('rankingTotalScore');
+            rankingTableBody.innerHTML = '';
+
+            // إيجاد أعلى درجة في المجموعة المفلترة
+            const maxScore = studentsRanks.length > 0 ? studentsRanks[0].overallScore : 0;
+            rankingTotalScoreSpan.textContent = maxScore;
+            
+            if (studentsRanks.length === 0) {
+                rankingTableBody.innerHTML = '<tr><td colspan="9" class="px-6 py-4 text-center text-gray-500">لا توجد طلاب مطابقة لشروط التصفية أو بدرجة إجمالية.</td></tr>';
+                return;
+            }
+
+            studentsRanks.forEach((student, index) => {
+                // تحديد الترتيب مع مراعاة التعادل في الدرجات
+                let rank = index + 1;
+                if (index > 0 && student.overallScore === studentsRanks[index - 1].overallScore) {
+                    rank = studentsRanks[index - 1].rank;
+                } else {
+                    student.rank = rank;
+                }
+                
+                let rankDisplay = rank;
+                let rankColor = 'text-gray-800 font-bold';
+                if (rank === 1) {
+                    rankDisplay = '🥇';
+                    rankColor = 'text-yellow-600 font-extrabold text-xl';
+                } else if (rank === 2) {
+                    rankDisplay = '🥈';
+                    rankColor = 'text-gray-500 font-extrabold text-xl';
+                } else if (rank === 3) {
+                    rankDisplay = '🥉';
+                    rankColor = 'text-amber-700 font-extrabold text-xl';
+                }
+                
+                // التأكد من استخدام اسم المجموعة المحفوظ
+                const groupDisplay = student.group || 'غير محدد';
+
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-gray-50 transition duration-150';
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap ${rankColor}">${rankDisplay}</td>
+                    <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900">${student.name}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-indigo-600">${groupDisplay}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${student.phone}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600 font-bold">${student.totalAttendance}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600 font-bold">${student.totalHomework}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-bold">${student.totalRecitation}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-bold">${student.totalExam + student.totalComprehensiveExam}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-xl text-red-700 font-extrabold">${student.overallScore}</td>
+                `;
+                rankingTableBody.appendChild(row);
+            });
+        }
+        
+        // ربط أحداث التصفية
+        document.getElementById('applyRankingFilterBtn').addEventListener('click', () => filterAndDisplayRanking(rankingData));
+        document.getElementById('rankingNameSearch').addEventListener('input', () => filterAndDisplayRanking(rankingData));
+        document.getElementById('rankingPhoneSearch').addEventListener('input', () => filterAndDisplayRanking(rankingData));
+        document.getElementById('rankingGroupFilter').addEventListener('change', () => filterAndDisplayRanking(rankingData));
+        document.getElementById('rankingMonthFilter').addEventListener('change', fetchRankingData);
 
 
         // التحميل المبدئي
         document.addEventListener('DOMContentLoaded', () => {
-            window.showTab('students'); // البدء بعرض إدارة الطلاب لكي يتم تحميل المجموعات أولاً
+            populateMonthFilter(); // 🆕 تعبئة قائمة الأشهر
+            window.showTab('ranking'); // البدء بعرض الترتيب
         });
     </script>
 </body>

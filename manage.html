@@ -54,10 +54,12 @@
                 border: 1px solid #333;
                 margin: 5mm;
                 padding: 5mm;
-                display: inline-block;
                 box-sizing: border-box;
                 page-break-inside: avoid;
                 text-align: center;
+                /* تعديل بسيط للطباعة */
+                display: block; /* لضمان ظهور الكروت بشكل رأسي في الطباعة */
+                float: left; /* للمساعدة في ترتيب الكروت جنبًا إلى جنب */
             }
         }
     </style>
@@ -302,7 +304,7 @@
                                 <option value="تالتة ثانوي">تالتة ثانوي</option>
                             </select>
                         </div>
-                        </div>
+                    </div>
                     <button type="submit" id="addGroupBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition">
                         حفظ المجموعة
                     </button>
@@ -326,7 +328,7 @@
                         </thead>
                         <tbody id="groupsTableBody" class="bg-white divide-y divide-gray-200">
                             <tr>
-                                <td colspan="5" class="px-6 py-4 text-center text-gray-500">... جاري تحميل المجموعات ...</td>
+                                <td colspan="4" class="px-6 py-4 text-center text-gray-500">... جاري تحميل المجموعات ...</td>
                             </tr>
                         </tbody>
                     </table>
@@ -337,22 +339,26 @@
                 <h3 class="text-xl font-bold mb-4 text-gray-800">إضافة / تعديل بيانات طالب</h3>
                 <form id="newStudentForm" class="space-y-4">
                     <input type="hidden" id="studentIdToEdit">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div class="col-span-full md:col-span-1">
+                            <label for="studentCode" class="block text-sm font-medium text-gray-700 mb-2">كود الطالب</label>
+                            <input type="text" id="studentCode" required class="w-full bg-gray-100 p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500">
+                        </div>
+                        <div class="col-span-full md:col-span-1">
                             <label for="studentName" class="block text-sm font-medium text-gray-700 mb-2">اسم الطالب كاملاً</label>
                             <input type="text" id="studentName" required class="w-full bg-gray-100 p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500">
                         </div>
-                        <div>
+                        <div class="col-span-full md:col-span-2">
                             <label for="studentGroup" class="block text-sm font-medium text-gray-700 mb-2">المجموعة</label>
                             <select id="studentGroup" required class="w-full bg-gray-100 p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500">
                                 <option value="">-- اختر المجموعة --</option>
                                 </select>
                         </div>
-                        <div>
+                        <div class="col-span-full md:col-span-2">
                             <label for="studentPhone" class="block text-sm font-medium text-gray-700 mb-2">رقم تليفون الطالب</label>
                             <input type="text" id="studentPhone" class="w-full bg-gray-100 p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500">
                         </div>
-                        <div>
+                        <div class="col-span-full md:col-span-2">
                             <label for="parentPhone" class="block text-sm font-medium text-gray-700 mb-2">رقم تليفون ولي الأمر</label>
                             <input type="text" id="parentPhone" class="w-full bg-gray-100 p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500">
                         </div>
@@ -368,10 +374,14 @@
 
             <div class="bg-white p-6 sm:p-8 rounded-xl shadow-lg border border-gray-100 mb-8">
                 <h3 class="text-xl font-bold mb-4 text-gray-800">تصفية وبحث الطلاب</h3>
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
                     <div>
                         <label for="studentFilterName" class="block text-sm font-medium text-gray-700 mb-2">البحث بالاسم</label>
                         <input type="text" id="studentFilterName" placeholder="اسم الطالب" class="w-full bg-gray-100 p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <div>
+                        <label for="studentFilterCode" class="block text-sm font-medium text-gray-700 mb-2">البحث بالكود</label>
+                        <input type="text" id="studentFilterCode" placeholder="كود الطالب" class="w-full bg-gray-100 p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500">
                     </div>
                     <div>
                         <label for="studentFilterGroup" class="block text-sm font-medium text-gray-700 mb-2">التصفية بالمجموعة</label>
@@ -1006,6 +1016,9 @@
         const newStudentForm = document.getElementById('newStudentForm');
         const exportCardsBtn = document.getElementById('exportCardsBtn');
         const selectAllStudents = document.getElementById('selectAllStudents');
+        const studentCodeInput = document.getElementById('studentCode');
+        // 🆕 تعريف حقل بحث الكود
+        const studentFilterCode = document.getElementById('studentFilterCode'); 
 
         // ---- A. وظائف المجموعات (Groups) ----
 
@@ -1014,7 +1027,6 @@
             const groupIdToEdit = document.getElementById('groupIdToEdit');
             const groupNameInput = document.getElementById('groupName');
             const groupClassSelect = document.getElementById('groupClass');
-            // const groupDaySelect = document.getElementById('groupDay'); // ❌ تم حذفه
             const addGroupBtn = document.getElementById('addGroupBtn');
 
             groupFormSection.classList.remove('hidden');
@@ -1023,7 +1035,6 @@
                 groupIdToEdit.value = group.id;
                 groupNameInput.value = group.group_name;
                 groupClassSelect.value = group.class_name;
-                // groupDaySelect.value = group.day_of_week; // ❌ تم حذفه
                 addGroupBtn.textContent = 'حفظ التعديلات';
             } else {
                 groupIdToEdit.value = '';
@@ -1037,7 +1048,6 @@
         }
 
         async function fetchGroups() {
-            // 💡 ملاحظة: يجب تعديل استعلام supabase لحذف day_of_week إن لم يعد موجوداً في الجدول
             groupsTableBody.innerHTML = '<tr><td colspan="4" class="px-6 py-4 text-center text-gray-500">... جاري تحميل المجموعات ...</td></tr>';
             try {
                 // ⚠️ تم تغيير الاستعلام لحذف day_of_week والتأكد من الترتيب
@@ -1099,14 +1109,12 @@
             const groupId = document.getElementById('groupIdToEdit').value;
             const groupName = document.getElementById('groupName').value.trim();
             const groupClass = document.getElementById('groupClass').value;
-            // ❌ تم حذف groupDay
-
+            
             const data = {
                 group_name: groupName,
                 class_name: groupClass,
-                // 💡 إذا كان عمود day_of_week في قاعدة البيانات (Supabase) مطلوباً (NOT NULL)، يجب أن ترسل له قيمة افتراضية مثل 'لا يوجد' هنا.
-                // 💡 إذا لم يكن مطلوباً (NOT NULL)، يمكن حذفه تماماً. بافتراض أنه لم يعد مطلوباً:
-                // day_of_week: 'لا يوجد' 
+                // إذا كان عمود day_of_week في Supabase لا يزال موجوداً ومطلوباً (NOT NULL)،
+                // يجب إرسال قيمة افتراضية له هنا.
             };
 
             const isEdit = !!groupId;
@@ -1129,7 +1137,7 @@
 
 
         // ---- B. وظائف الطلاب (Students) ----
-        // ... (هذه الدوال لم تتغير بشكل جوهري) ...
+        
         function showStudentForm(student = null) {
             const studentFormSection = document.getElementById('studentFormSection');
             const studentIdToEdit = document.getElementById('studentIdToEdit');
@@ -1138,11 +1146,14 @@
             const studentPhoneInput = document.getElementById('studentPhone');
             const parentPhoneInput = document.getElementById('parentPhone');
             const addStudentBtn = document.getElementById('addStudentBtn');
+            const studentCodeInput = document.getElementById('studentCode');
+
 
             studentFormSection.classList.remove('hidden');
 
             if (student) {
                 studentIdToEdit.value = student.id;
+                studentCodeInput.value = student.student_code || ''; // عرض الكود الحالي
                 studentNameInput.value = student.student_name;
                 studentGroupSelect.value = student.group_id;
                 studentPhoneInput.value = student.phone_student || '';
@@ -1165,15 +1176,26 @@
             studentsTableBody.innerHTML = '<tr><td colspan="8" class="px-6 py-4 text-center text-gray-500">... جاري تحميل الطلاب ...</td></tr>';
 
             const filterName = studentFilterName.value.trim();
+            const filterCode = studentFilterCode.value.trim(); // 🆕 جلب قيمة بحث الكود
             const filterGroup = studentFilterGroup.value;
             const filterPhone = studentFilterPhone.value.trim();
 
-            // ⚠️ تم تغيير الاستعلام لجلب group_name فقط (لا نحتاج day_of_week)
             let query = `?select=id,student_name,group_id,phone_student,phone_parent,student_code,${TABLE_GROUPS}(class_name,group_name)&order=student_name.asc`;
 
-            if (filterName) query += `&student_name=ilike.*${filterName}*`;
-            if (filterGroup && filterGroup !== 'all') query += `&group_id=eq.${filterGroup}`;
-            if (filterPhone) query += `&or=(phone_student.ilike.*${filterPhone}*,phone_parent.ilike.*${filterPhone}*)`;
+            if (filterName) {
+                 query += `&student_name=ilike.*${filterName}*`;
+            }
+            // 🆕 تطبيق فلتر الكود
+            if (filterCode) {
+                 query += `&student_code=ilike.*${filterCode}*`;
+            }
+            if (filterGroup && filterGroup !== 'all') {
+                 query += `&group_id=eq.${filterGroup}`;
+            }
+            // ⚠️ تعديل: يجب فصل البحث بالاسم/الكود عن البحث بالهاتف إذا كانا يهدفان لنفس حقل or
+            if (filterPhone) {
+                 query += `&or=(phone_student.ilike.*${filterPhone}*,phone_parent.ilike.*${filterPhone}*)`;
+            }
 
             try {
                 students = await supabaseFetch('GET', TABLE_STUDENTS, query);
@@ -1206,9 +1228,9 @@
                     class_name: 'غير محدد',
                     group_name: 'غير محدد'
                 };
-                // ⚠️ تم حذف يوم الحصة من عرض المجموعة
                 const groupDisplay = `${groupInfo.group_name} (${groupInfo.class_name})`;
                 const isChecked = selectedStudentIds.has(student.id) ? 'checked' : '';
+                const studentCodeToDisplay = student.student_code || student.id; // استخدام الكود المدخل يدويا أو الـ ID
 
                 const row = document.createElement('tr');
                 row.className = 'hover:bg-gray-50 transition duration-150';
@@ -1216,8 +1238,7 @@
                     <td class="px-4 py-2 text-sm text-gray-500">
                         <input type="checkbox" value="${student.id}" class="student-checkbox rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" ${isChecked}>
                     </td>
-                    <td class="px-4 py-2 text-sm font-bold text-red-600">${student.id}</td>
-                    <td class="px-4 py-2 font-medium text-gray-900">${student.student_name}</td>
+                    <td class="px-4 py-2 text-sm font-bold text-red-600">${studentCodeToDisplay}</td> <td class="px-4 py-2 font-medium text-gray-900">${student.student_name}</td>
                     <td class="px-4 py-2 text-sm text-indigo-600">${groupDisplay}</td>
                     <td class="px-4 py-2 text-sm text-gray-700">${groupInfo.class_name}</td>
                     <td class="px-4 py-2 text-sm text-gray-700">${student.phone_student || 'لا يوجد'}</td>
@@ -1245,24 +1266,25 @@
         newStudentForm.addEventListener('submit', async(e) => {
             e.preventDefault();
             const studentId = document.getElementById('studentIdToEdit').value;
+            const studentCode = document.getElementById('studentCode').value.trim(); // جلب الكود المدخل يدوياً
             const studentName = document.getElementById('studentName').value.trim();
             const groupID = document.getElementById('studentGroup').value;
             const studentPhone = document.getElementById('studentPhone').value.trim() || null;
             const parentPhone = document.getElementById('parentPhone').value.trim() || null;
+
+            if (!studentCode) {
+                 alert('الرجاء إدخال كود الطالب.');
+                 return;
+            }
+
             const data = {
                 student_name: studentName,
                 group_id: parseInt(groupID),
                 phone_student: studentPhone,
                 phone_parent: parentPhone,
+                student_code: studentCode // إرسال الكود المدخل يدوياً
             };
-
-            // إنشاء كود مؤقت للطرفية لإرضاء قيد NOT NULL (سيتم استبداله لاحقاً بالـ id)
-            // هذا يحافظ على التوافق لو كان العمود مفروضاً كـ NOT NULL أو UNIQUE
-            const studentCode = studentId ? undefined : Math.random().toString(36).substring(2, 8).toUpperCase();
-            if (!studentId) {
-                data.student_code = studentCode;
-            }
-
+            
             const isEdit = !!studentId;
             const method = isEdit ? 'PATCH' : 'POST';
             const query = isEdit ? `?id=eq.${studentId}` : '';
@@ -1270,31 +1292,13 @@
 
             try {
                 const response = await supabaseFetch(method, TABLE_STUDENTS, query, data);
-
-                // عند الإضافة (POST) نحصل على الـ id المعاد من Supabase ونحدّث student_code ليطابقه
-                if (!studentId && Array.isArray(response) && response[0] && response[0].id) {
-                    const newId = response[0].id;
-                    try {
-                        await supabaseFetch('PATCH', TABLE_STUDENTS, `?id=eq.${newId}`, {
-                            student_code: newId
-                        });
-                    } catch (patchErr) {
-                        console.error('Failed to set student_code to id:', patchErr);
-                        // لا نوقف التدفق؛ نُبلغ المستخدم لكن عملية الإضافة نجحت
-                        alert(`تم إضافة الطالب ولكن فشل تعيين الكود (student_code). الرجاء التحقق يدوياً. Error: ${patchErr.message}`);
-                        newStudentForm.reset();
-                        hideStudentForm();
-                        fetchStudents();
-                        return;
-                    }
-                }
-
+                
                 alert(`تم ${action} الطالب بنجاح.`);
                 newStudentForm.reset();
                 hideStudentForm();
                 fetchStudents();
             } catch (error) {
-                alert(`فشل ${action} الطالب: ${error.message}`);
+                alert(`فشل ${action} الطالب: ${error.message}. قد يكون الكود المدخل مستخدماً من قبل أو هناك خطأ في البيانات.`);
                 console.error(`Error ${action} student:`, error);
             }
         });
@@ -1302,6 +1306,7 @@
         // ربط أحداث تصفية الطلاب
         document.getElementById('applyStudentFilterBtn').addEventListener('click', fetchStudents);
         studentFilterName.addEventListener('input', fetchStudents);
+        studentFilterCode.addEventListener('input', fetchStudents); // 🆕 ربط حقل الكود
         studentFilterPhone.addEventListener('input', fetchStudents);
         studentFilterGroup.addEventListener('change', fetchStudents);
 
@@ -1342,12 +1347,14 @@
             const cardsContainer = document.getElementById('cardsToPrint');
             cardsContainer.innerHTML = '';
 
+            // ⚠️ جلب الكود الخاص بالطالب
             const studentsToPrint = students.filter(s => selectedStudentIds.has(s.id));
 
             studentsToPrint.forEach(student => {
                 const groupInfo = groups.find(g => g.id === student.group_id);
-                // ⚠️ تم حذف day_of_week من عرض الكارت
-                const groupName = groupInfo ? groupInfo.group_name : 'غير محددة'; 
+                const groupName = groupInfo ? groupInfo.group_name : 'غير محددة';
+                const studentCodeToDisplay = student.student_code || student.id; // استخدام الكود المدخل يدويا أو الـ ID
+                
                 const card = document.createElement('div');
                 card.className = 'student-card';
                 card.innerHTML = `
@@ -1355,7 +1362,7 @@
                     <hr style="border-top: 1px solid #ddd; margin: 5px 0;">
                     <p style="font-size: 16pt; margin: 5px 0;">**الاسم:** ${student.student_name}</p>
                     <p style="font-size: 12pt; margin: 3px 0;">**المجموعة:** ${groupName}</p>
-                    <p style="font-size: 14pt; font-weight: bold; color: #cc0000; margin: 8px 0;">**الكود:** ${student.id}</p>
+                    <p style="font-size: 14pt; font-weight: bold; color: #cc0000; margin: 8px 0;">**الكود:** ${studentCodeToDisplay}</p>
                     <p style="font-size: 10pt; margin: 0;">يستخدم هذا الكود للتسجيل في الامتحانات</p>
                 `;
                 cardsContainer.appendChild(card);
@@ -1551,8 +1558,8 @@
             }
 
             try {
-                // ⚠️ تم تغيير الاستعلام لجلب group_name فقط (لا نحتاج day_of_week)
-                const studentsWithGroups = await supabaseFetch('GET', TABLE_STUDENTS, `?select=id,student_name,phone_student,group_id,${TABLE_GROUPS}(group_name)`);
+                // ⚠️ جلب الطلاب مع معلومات مجموعاتهم (يتضمن student_code بالفعل)
+                const studentsWithGroups = await supabaseFetch('GET', TABLE_STUDENTS, `?select=id,student_name,phone_student,group_id,student_code,${TABLE_GROUPS}(group_name)`);
 
                 // جلب جميع السجلات
                 allRecords = await supabaseFetch('GET', TABLE_RECORDS, `?select=student_id,lesson_month,attendance,homework_done,recitation_degree,exam_degree,comprehensive_exam_degree`);
@@ -1574,7 +1581,7 @@
         function calculateScores(studentsList, recordsList) {
             const scoresMap = new Map();
 
-            // 1. تهيئة الخريطة للطلاب (تم إضافة group_id هنا)
+            // 1. تهيئة الخريطة للطلاب 
             studentsList.forEach(student => {
                 const groupName = student[TABLE_GROUPS] ? student[TABLE_GROUPS].group_name : 'غير محدد';
                 scoresMap.set(student.id, {

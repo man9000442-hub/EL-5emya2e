@@ -285,9 +285,9 @@
                 <h3 class="text-xl font-bold mb-4 text-gray-800">إضافة مجموعة</h3>
                 <form id="newGroupForm" class="space-y-4">
                     <input type="hidden" id="groupIdToEdit">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label for="groupName" class="block text-sm font-medium text-gray-700 mb-2">اسم المجموعة (مثلاً: أ - السبت 4م)</label>
+                            <label for="groupName" class="block text-sm font-medium text-gray-700 mb-2">اسم المجموعة (مثلاً: أ، أو السبت 4م)</label>
                             <input type="text" id="groupName" required class="w-full bg-gray-100 p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500">
                         </div>
                         <div>
@@ -302,20 +302,7 @@
                                 <option value="تالتة ثانوي">تالتة ثانوي</option>
                             </select>
                         </div>
-                        <div>
-                            <label for="groupDay" class="block text-sm font-medium text-gray-700 mb-2">يوم الحصة</label>
-                            <select id="groupDay" required class="w-full bg-gray-100 p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                                <option value="">-- اختر اليوم --</option>
-                                <option value="السبت">السبت</option>
-                                <option value="الأحد">الأحد</option>
-                                <option value="الإثنين">الإثنين</option>
-                                <option value="الثلاثاء">الثلاثاء</option>
-                                <option value="الأربعاء">الأربعاء</option>
-                                <option value="الخميس">الخميس</option>
-                                <option value="الجمعة">الجمعة</option>
-                            </select>
                         </div>
-                    </div>
                     <button type="submit" id="addGroupBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition">
                         حفظ المجموعة
                     </button>
@@ -334,7 +321,6 @@
                                 <th class="px-4 py-2 text-xs font-medium text-gray-500 uppercase tracking-wider text-right">ID</th>
                                 <th class="px-4 py-2 text-xs font-medium text-gray-500 uppercase tracking-wider text-right">اسم المجموعة</th>
                                 <th class="px-4 py-2 text-xs font-medium text-gray-500 uppercase tracking-wider text-right">الصف</th>
-                                <th class="px-4 py-2 text-xs font-medium text-gray-500 uppercase tracking-wider text-right">اليوم</th>
                                 <th class="px-4 py-2 text-xs font-medium text-gray-500 uppercase tracking-wider text-center">الإجراء</th>
                             </tr>
                         </thead>
@@ -1028,7 +1014,7 @@
             const groupIdToEdit = document.getElementById('groupIdToEdit');
             const groupNameInput = document.getElementById('groupName');
             const groupClassSelect = document.getElementById('groupClass');
-            const groupDaySelect = document.getElementById('groupDay');
+            // const groupDaySelect = document.getElementById('groupDay'); // ❌ تم حذفه
             const addGroupBtn = document.getElementById('addGroupBtn');
 
             groupFormSection.classList.remove('hidden');
@@ -1037,7 +1023,7 @@
                 groupIdToEdit.value = group.id;
                 groupNameInput.value = group.group_name;
                 groupClassSelect.value = group.class_name;
-                groupDaySelect.value = group.day_of_week;
+                // groupDaySelect.value = group.day_of_week; // ❌ تم حذفه
                 addGroupBtn.textContent = 'حفظ التعديلات';
             } else {
                 groupIdToEdit.value = '';
@@ -1051,14 +1037,16 @@
         }
 
         async function fetchGroups() {
-            groupsTableBody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">... جاري تحميل المجموعات ...</td></tr>';
+            // 💡 ملاحظة: يجب تعديل استعلام supabase لحذف day_of_week إن لم يعد موجوداً في الجدول
+            groupsTableBody.innerHTML = '<tr><td colspan="4" class="px-6 py-4 text-center text-gray-500">... جاري تحميل المجموعات ...</td></tr>';
             try {
-                groups = await supabaseFetch('GET', TABLE_GROUPS, '?select=*&order=class_name.asc,day_of_week.asc');
+                // ⚠️ تم تغيير الاستعلام لحذف day_of_week والتأكد من الترتيب
+                groups = await supabaseFetch('GET', TABLE_GROUPS, '?select=id,group_name,class_name&order=class_name.asc,group_name.asc');
                 displayGroups(groups);
                 populateGroupSelects(groups);
             } catch (error) {
                 console.error('Error fetching groups:', error);
-                groupsTableBody.innerHTML = `<tr><td colspan="5" class="px-6 py-4 text-center text-red-500 font-bold">خطأ في جلب المجموعات: ${error.message}</td></tr>`;
+                groupsTableBody.innerHTML = `<tr><td colspan="4" class="px-6 py-4 text-center text-red-500 font-bold">خطأ في جلب المجموعات: ${error.message}</td></tr>`;
             }
         }
 
@@ -1066,7 +1054,7 @@
             groupsTableBody.innerHTML = '';
             groupsCountSpan.textContent = currentGroups.length;
             if (currentGroups.length === 0) {
-                groupsTableBody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">لا توجد مجموعات مسجلة.</td></tr>';
+                groupsTableBody.innerHTML = '<tr><td colspan="4" class="px-6 py-4 text-center text-gray-500">لا توجد مجموعات مسجلة.</td></tr>';
                 return;
             }
 
@@ -1077,7 +1065,6 @@
                     <td class="px-4 py-2 text-sm text-gray-500">${group.id}</td>
                     <td class="px-4 py-2 font-medium text-gray-900">${group.group_name}</td>
                     <td class="px-4 py-2 text-sm text-indigo-600">${group.class_name}</td>
-                    <td class="px-4 py-2 text-sm text-gray-700">${group.day_of_week}</td>
                     <td class="px-4 py-2 text-center whitespace-nowrap">
                         <button onclick="editGroup(${group.id})" class="text-indigo-600 hover:text-indigo-900 font-bold py-1 px-2 rounded-md transition text-sm">تعديل</button>
                     </td>
@@ -1089,12 +1076,11 @@
         function populateGroupSelects(groupsList) {
             studentGroupSelect.innerHTML = '<option value="">-- اختر المجموعة --</option>';
             studentFilterGroupSelect.innerHTML = '<option value="all">جميع المجموعات</option>';
-            // 🆕 تعبئة قائمة تصفية الترتيب
             document.getElementById('rankingGroupFilter').innerHTML = '<option value="all">جميع المجموعات</option>';
-            // /🆕
 
             groupsList.forEach(group => {
-                const option = `<option value="${group.id}">${group.class_name} - ${group.group_name} (${group.day_of_week})</option>`;
+                // ⚠️ تم حذف day_of_week من العرض هنا
+                const option = `<option value="${group.id}">${group.class_name} - ${group.group_name}</option>`; 
                 studentGroupSelect.insertAdjacentHTML('beforeend', option);
                 studentFilterGroupSelect.insertAdjacentHTML('beforeend', option);
                 document.getElementById('rankingGroupFilter').insertAdjacentHTML('beforeend', `<option value="${group.id}">${group.class_name} - ${group.group_name}</option>`);
@@ -1113,12 +1099,14 @@
             const groupId = document.getElementById('groupIdToEdit').value;
             const groupName = document.getElementById('groupName').value.trim();
             const groupClass = document.getElementById('groupClass').value;
-            const groupDay = document.getElementById('groupDay').value;
+            // ❌ تم حذف groupDay
 
             const data = {
                 group_name: groupName,
                 class_name: groupClass,
-                day_of_week: groupDay
+                // 💡 إذا كان عمود day_of_week في قاعدة البيانات (Supabase) مطلوباً (NOT NULL)، يجب أن ترسل له قيمة افتراضية مثل 'لا يوجد' هنا.
+                // 💡 إذا لم يكن مطلوباً (NOT NULL)، يمكن حذفه تماماً. بافتراض أنه لم يعد مطلوباً:
+                // day_of_week: 'لا يوجد' 
             };
 
             const isEdit = !!groupId;
@@ -1141,7 +1129,7 @@
 
 
         // ---- B. وظائف الطلاب (Students) ----
-
+        // ... (هذه الدوال لم تتغير بشكل جوهري) ...
         function showStudentForm(student = null) {
             const studentFormSection = document.getElementById('studentFormSection');
             const studentIdToEdit = document.getElementById('studentIdToEdit');
@@ -1180,6 +1168,7 @@
             const filterGroup = studentFilterGroup.value;
             const filterPhone = studentFilterPhone.value.trim();
 
+            // ⚠️ تم تغيير الاستعلام لجلب group_name فقط (لا نحتاج day_of_week)
             let query = `?select=id,student_name,group_id,phone_student,phone_parent,student_code,${TABLE_GROUPS}(class_name,group_name)&order=student_name.asc`;
 
             if (filterName) query += `&student_name=ilike.*${filterName}*`;
@@ -1217,6 +1206,7 @@
                     class_name: 'غير محدد',
                     group_name: 'غير محدد'
                 };
+                // ⚠️ تم حذف يوم الحصة من عرض المجموعة
                 const groupDisplay = `${groupInfo.group_name} (${groupInfo.class_name})`;
                 const isChecked = selectedStudentIds.has(student.id) ? 'checked' : '';
 
@@ -1356,7 +1346,8 @@
 
             studentsToPrint.forEach(student => {
                 const groupInfo = groups.find(g => g.id === student.group_id);
-                const groupName = groupInfo ? groupInfo.group_name : 'غير محددة';
+                // ⚠️ تم حذف day_of_week من عرض الكارت
+                const groupName = groupInfo ? groupInfo.group_name : 'غير محددة'; 
                 const card = document.createElement('div');
                 card.className = 'student-card';
                 card.innerHTML = `
@@ -1560,7 +1551,7 @@
             }
 
             try {
-                // جلب جميع الطلاب مع معلومات مجموعاتهم
+                // ⚠️ تم تغيير الاستعلام لجلب group_name فقط (لا نحتاج day_of_week)
                 const studentsWithGroups = await supabaseFetch('GET', TABLE_STUDENTS, `?select=id,student_name,phone_student,group_id,${TABLE_GROUPS}(group_name)`);
 
                 // جلب جميع السجلات
@@ -1590,7 +1581,7 @@
                     id: student.id,
                     name: student.student_name,
                     phone: student.phone_student || '—',
-                    group_id: student.group_id, // 🚨 تم الإضافة: لتسهيل التصفية
+                    group_id: student.group_id, 
                     group: groupName,
                     totalAttendance: 0,
                     totalHomework: 0,
@@ -1627,12 +1618,12 @@
                 }
             });
 
-            // 3. حساب الدرجة النهائية (مثال لآلية حساب الدرجة النهائية)
+            // 3. حساب الدرجة النهائية 
             const calculatedScores = Array.from(scoresMap.values()).map(student => {
                 const attendanceBonus = student.totalAttendance * 1; 
                 const homeworkBonus = student.totalHomework * 1; 
 
-                // 🚨 تصحيح طفيف: للتأكد من استخدام اسم المجموعة بشكل صحيح للعرض
+                // التأكد من استخدام اسم المجموعة بشكل صحيح للعرض
                 const groupInfo = studentsList.find(s => s.id === student.id);
                 student.group = groupInfo && groupInfo[TABLE_GROUPS] ? groupInfo[TABLE_GROUPS].group_name : 'غير محدد';
                 
@@ -1702,7 +1693,7 @@
                 filteredScores = filteredScores.filter(student => student.totalAttendance > 0 || student.totalHomework > 0 || student.overallScore > 0);
             }
             
-            // 2. التصفية حسب المجموعة 🚨 تم تعديل هذا الجزء للاعتماد على group_id الرقمي
+            // 2. التصفية حسب المجموعة 
             if (groupFilter !== 'all' && groupFilter) {
                 const filterGroupId = parseInt(groupFilter);
                 filteredScores = filteredScores.filter(student => student.group_id === filterGroupId);

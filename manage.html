@@ -437,6 +437,8 @@
                     <h3 class="text-xl font-bold mb-4 text-gray-800" id="recordModalTitle">إضافة سجل أداء للطالب: <span id="recordModalStudentName"></span></h3>
                     <form id="recordForm" class="space-y-4">
                         <input type="hidden" id="recordStudentId">
+                        <input type="hidden" id="recordIdToEdit">
+
                         <div>
                             <label for="recordDate" class="block text-sm font-medium text-gray-700 mb-2">التاريخ</label>
                             <input type="date" id="recordDate" required class="w-full bg-gray-100 p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500">
@@ -463,11 +465,8 @@
                             </select>
                         </div>
                         <div>
-                            <label for="recordHomework" class="block text-sm font-medium text-gray-700 mb-2">الواجب</label>
-                            <select id="recordHomework" required class="w-full bg-gray-100 p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                                <option value="true">تم (سلم)</option>
-                                <option value="false">لم يتم (لم يسلم)</option>
-                            </select>
+                            <label for="recordHomework" class="block text-sm font-medium text-gray-700 mb-2">درجة الواجب (/10)</label>
+                            <input type="number" id="recordHomework" min="0" max="10" placeholder="0-10" required class="w-full bg-gray-100 p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500">
                         </div>
                         <div>
                             <div class="grid grid-cols-2 gap-4">
@@ -513,11 +512,11 @@
                                 <th class="px-4 py-2 text-xs font-medium uppercase tracking-wider text-right">الشهر</th>
                                 <th class="px-4 py-2 text-xs font-medium uppercase tracking-wider text-right">الحصة رقم</th>
                                 <th class="px-4 py-2 text-xs font-medium uppercase tracking-wider text-right">الحضور</th>
-                                <th class="px-4 py-2 text-xs font-medium uppercase tracking-wider text-right">الواجب</th>
+                                <th class="px-4 py-2 text-xs font-medium uppercase tracking-wider text-right">واجب /10</th>
                                 <th class="px-4 py-2 text-xs font-medium uppercase tracking-wider text-right">تسميع /10</th>
                                 <th class="px-4 py-2 text-xs font-medium uppercase tracking-wider text-right">امتحان /10</th>
                                 <th class="px-4 py-2 text-xs font-medium uppercase tracking-wider text-right">شامل /20</th>
-                                <th class="px-4 py-2 text-xs font-medium uppercase tracking-wider text-center">تعديل</th>
+                                <th class="px-4 py-2 text-xs font-medium uppercase tracking-wider text-center">إجراءات</th>
                             </tr>
                         </thead>
                         <tbody id="recordsTableBody" class="bg-white divide-y divide-gray-200">
@@ -573,7 +572,7 @@
                                 <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider text-right">المجموعة</th>
                                 <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider text-right">هاتف الطالب</th>
                                 <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider text-right">حضر (حصة)</th>
-                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider text-right">واجب (✅)</th>
+                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider text-right">واجب (مجموع)</th>
                                 <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider text-right">التسميع (الإجمالي)</th>
                                 <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider text-right">الامتحانات (الإجمالي)</th>
                                 <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider text-right">الدرجة الكلية 💯</th>
@@ -1386,6 +1385,10 @@
             document.getElementById('recordModalStudentName').textContent = studentName;
             document.getElementById('recordStudentId').value = studentId;
             document.getElementById('recordForm').reset();
+            // 🆕 تصفير معرف التعديل عند الإضافة الجديدة
+            document.getElementById('recordIdToEdit').value = ''; 
+            document.getElementById('saveRecordBtn').textContent = 'حفظ السجل';
+
 
             // تعيين التاريخ الحالي كافتراضي
             document.getElementById('recordDate').valueAsDate = new Date();
@@ -1398,12 +1401,14 @@
         document.getElementById('recordForm').addEventListener('submit', async(e) => {
             e.preventDefault();
 
+            const recordIdToEdit = document.getElementById('recordIdToEdit').value; // 🆕
             const studentId = document.getElementById('recordStudentId').value;
             const lessonDate = document.getElementById('recordDate').value; // yyyy-mm-dd
             const lessonMonth = document.getElementById('recordMonth').value;
             const lessonNumber = document.getElementById('recordLessonNumber').value;
             const attendance = document.getElementById('recordAttendance').value;
-            const homework = document.getElementById('recordHomework').value === 'true';
+            // 🆕 قراءة درجة الواجب بدلاً من الـ Checkbox
+            const homeworkDegree = document.getElementById('recordHomework').value; 
 
             // 🆕 قراءة الحقول الجديدة
             const recitationDegree = document.getElementById('recordRecitationDegree').value || null;
@@ -1418,7 +1423,8 @@
                 lesson_month: lessonMonth,
                 lesson_number: parseInt(lessonNumber),
                 attendance: attendance,
-                homework_done: homework,
+                // 🆕 إرسال درجة الواجب (homework_degree) بدلاً من homework_done
+                homework_degree: homeworkDegree ? parseInt(homeworkDegree) : 0,
 
                 // 🚨 إضافة الأعمدة الجديدة هنا
                 recitation_degree: recitationDegree ? parseInt(recitationDegree) : null,
@@ -1427,17 +1433,23 @@
 
                 exam_degree: examDegree ? parseInt(examDegree) : null
             };
+            
+            // 🆕 تحديد العملية (إضافة أم تعديل)
+            const isEdit = !!recordIdToEdit;
+            const method = isEdit ? 'PATCH' : 'POST';
+            const query = isEdit ? `?id=eq.${recordIdToEdit}` : '';
+            const actionMsg = isEdit ? 'تعديل' : 'حفظ';
 
             try {
-                await supabaseFetch('POST', TABLE_RECORDS, '', data);
-                alert('تم حفظ سجل الأداء بنجاح! ✅');
+                await supabaseFetch(method, TABLE_RECORDS, query, data);
+                alert(`تم ${actionMsg} سجل الأداء بنجاح! ✅`);
                 document.getElementById('recordModal').classList.add('hidden');
                 // 🆕 تحديث لعرض السجلات فوراً مع الحفاظ على الصفحة الحالية
                 viewStudentRecords(parseInt(studentId), document.getElementById('recordModalStudentName').textContent);
                 // 🆕 تحديث قائمة الترتيب في الخلفية
                 fetchRankingData(true);
             } catch (error) {
-                alert(`فشل حفظ سجل الأداء: ${error.message}`);
+                alert(`فشل ${actionMsg} سجل الأداء: ${error.message}`);
                 console.error('Error saving record:', error);
             }
         });
@@ -1467,7 +1479,8 @@
 
             try {
                 // 🚨 التصحيح: يجب تحديد جميع الأعمدة المطلوبة هنا
-                const records = await supabaseFetch('GET', TABLE_RECORDS, `?student_id=eq.${studentId}&select=lesson_date,lesson_month,lesson_number,attendance,homework_done,recitation_degree,exam_degree,comprehensive_exam_degree&order=lesson_date.desc`);
+                // 🆕 تمت إضافة 'id' و 'homework_degree' للاستعلام
+                const records = await supabaseFetch('GET', TABLE_RECORDS, `?student_id=eq.${studentId}&select=id,lesson_date,lesson_month,lesson_number,attendance,homework_degree,recitation_degree,exam_degree,comprehensive_exam_degree&order=lesson_date.desc`);
 
                 recordsTableBody.innerHTML = '';
                 if (records.length === 0) {
@@ -1477,18 +1490,25 @@
 
                 records.forEach(record => {
                     const row = document.createElement('tr');
+                    const homeworkScore = record.homework_degree !== null ? record.homework_degree : 0;
+                    
+                    // تحويل كائن السجل إلى نص لتمريره لدالة التعديل
+                    // نقوم باستبدال علامات الاقتباس لتجنب مشاكل HTML
+                    const recordJson = JSON.stringify(record).replace(/"/g, '&quot;');
+
                     row.className = 'hover:bg-gray-50 transition duration-150';
                     row.innerHTML = `
                         <td class="px-4 py-2 text-sm text-gray-700">${record.lesson_date}</td>
                         <td class="px-4 py-2 text-sm text-gray-700">${record.lesson_month}</td>
                         <td class="px-4 py-2 text-sm text-gray-700">${record.lesson_number}</td>
                         <td class="px-4 py-2 text-sm ${record.attendance === 'حضر' ? 'text-green-600' : 'text-red-600'} font-bold">${record.attendance}</td>
-                        <td class="px-4 py-2 text-sm ${record.homework_done ? 'text-green-600' : 'text-red-600'} font-bold">${record.homework_done ? 'تم ✅' : 'لم يتم ❌'}</td>
+                        <td class="px-4 py-2 text-sm font-bold text-gray-700">${homeworkScore} / 10</td>
                         <td class="px-4 py-2 text-sm text-gray-700">${record.recitation_degree || '—'}</td>
                         <td class="px-4 py-2 text-sm text-gray-700">${record.exam_degree || '—'}</td>
                         <td class="px-4 py-2 text-sm text-gray-700">${record.comprehensive_exam_degree || '—'}</td>
                         <td class="px-4 py-2 text-center whitespace-nowrap space-x-2 space-x-reverse">
-                            <button onclick="deleteRecord('${record.lesson_date}', ${currentViewingStudent.id})" class="text-red-600 hover:text-red-900 font-bold py-1 px-2 rounded-md transition text-sm">🗑️ حذف</button>
+                            <button onclick="prepareEditRecord(${recordJson})" class="text-indigo-600 hover:text-indigo-900 font-bold py-1 px-2 rounded-md transition text-sm">✎ تعديل</button>
+                            <button onclick="deleteRecord(${record.id})" class="text-red-600 hover:text-red-900 font-bold py-1 px-2 rounded-md transition text-sm">🗑️ حذف</button>
                         </td>
                     `;
                     recordsTableBody.appendChild(row);
@@ -1499,17 +1519,39 @@
             }
         }
 
-        // 🆕 دالة حذف السجل
-        async function deleteRecord(lessonDate, studentId) {
+        // 🆕 دالة تحضير النموذج للتعديل
+        function prepareEditRecord(record) {
+            const recordModal = document.getElementById('recordModal');
+            document.getElementById('recordModalStudentName').textContent = currentViewingStudent.name;
+            document.getElementById('recordStudentId').value = currentViewingStudent.id;
+            
+            // تعبئة البيانات الموجودة
+            document.getElementById('recordIdToEdit').value = record.id;
+            document.getElementById('recordDate').value = record.lesson_date;
+            document.getElementById('recordMonth').value = record.lesson_month;
+            document.getElementById('recordLessonNumber').value = record.lesson_number;
+            document.getElementById('recordAttendance').value = record.attendance;
+            document.getElementById('recordHomework').value = record.homework_degree;
+            document.getElementById('recordRecitationDegree').value = record.recitation_degree;
+            document.getElementById('recordComprehensiveExam').value = record.comprehensive_exam_degree;
+            document.getElementById('recordExamDegree').value = record.exam_degree;
+
+            document.getElementById('saveRecordBtn').textContent = 'تحديث السجل';
+            recordModal.classList.remove('hidden');
+        }
+
+        // 🆕 دالة حذف السجل (تم الإصلاح: تعتمد الآن على recordId فقط)
+        async function deleteRecord(recordId) {
             if (!confirm('هل أنت متأكد من حذف هذا السجل؟ لا يمكن التراجع عن هذه العملية.')) {
                 return;
             }
 
             try {
-                await supabaseFetch('DELETE', TABLE_RECORDS, `?student_id=eq.${studentId}&lesson_date=eq.${lessonDate}`);
+                // ⚠️ الحذف باستخدام ID فقط وهو الأكثر أمانًا
+                await supabaseFetch('DELETE', TABLE_RECORDS, `?id=eq.${recordId}`);
                 alert('تم حذف السجل بنجاح! ✅');
                 // تحديث قائمة السجلات
-                viewStudentRecords(studentId, currentViewingStudent.name);
+                viewStudentRecords(currentViewingStudent.id, currentViewingStudent.name);
                 // 🆕 تحديث قائمة الترتيب في الخلفية
                 fetchRankingData(true);
             } catch (error) {
@@ -1524,6 +1566,10 @@
             document.getElementById('recordModalStudentName').textContent = currentViewingStudent.name;
             document.getElementById('recordStudentId').value = currentViewingStudent.id;
             document.getElementById('recordForm').reset();
+            // تصفير معرف التعديل
+            document.getElementById('recordIdToEdit').value = '';
+            document.getElementById('saveRecordBtn').textContent = 'حفظ السجل';
+
 
             // تعيين التاريخ الحالي كافتراضي
             document.getElementById('recordDate').valueAsDate = new Date();
@@ -1561,8 +1607,8 @@
                 // ⚠️ جلب الطلاب مع معلومات مجموعاتهم (يتضمن student_code بالفعل)
                 const studentsWithGroups = await supabaseFetch('GET', TABLE_STUDENTS, `?select=id,student_name,phone_student,group_id,student_code,${TABLE_GROUPS}(group_name)`);
 
-                // جلب جميع السجلات
-                allRecords = await supabaseFetch('GET', TABLE_RECORDS, `?select=student_id,lesson_month,attendance,homework_done,recitation_degree,exam_degree,comprehensive_exam_degree`);
+                // 🆕 تعديل: جلب homework_degree بدلاً من homework_done
+                allRecords = await supabaseFetch('GET', TABLE_RECORDS, `?select=student_id,lesson_month,attendance,homework_degree,recitation_degree,exam_degree,comprehensive_exam_degree`);
 
                 // دمج وحساب الدرجات لكل طالب
                 rankingData = calculateScores(studentsWithGroups, allRecords); // تخزين البيانات الناتجة في rankingData
@@ -1608,8 +1654,9 @@
                     if (record.attendance === 'حضر') {
                         studentScore.totalAttendance++;
                     }
-                    if (record.homework_done) {
-                        studentScore.totalHomework++;
+                    // 🆕 تعديل: جمع درجات الواجب
+                    if (record.homework_degree !== null && typeof record.homework_degree === 'number') {
+                        studentScore.totalHomework += record.homework_degree;
                     }
 
                     if (record.recitation_degree !== null && typeof record.recitation_degree === 'number') {
@@ -1628,7 +1675,8 @@
             // 3. حساب الدرجة النهائية 
             const calculatedScores = Array.from(scoresMap.values()).map(student => {
                 const attendanceBonus = student.totalAttendance * 1; 
-                const homeworkBonus = student.totalHomework * 1; 
+                // 🆕 تعديل: الدرجة تُحسب بناء على مجموع درجات الواجب
+                const homeworkBonus = student.totalHomework; 
 
                 // التأكد من استخدام اسم المجموعة بشكل صحيح للعرض
                 const groupInfo = studentsList.find(s => s.id === student.id);
@@ -1667,8 +1715,9 @@
                         if (record.attendance === 'حضر') {
                             totalAttendance++;
                         }
-                        if (record.homework_done) {
-                            totalHomework++;
+                        // 🆕 تعديل: جمع درجات الواجب
+                        if (record.homework_degree !== null && typeof record.homework_degree === 'number') {
+                            totalHomework += record.homework_degree;
                         }
                         if (record.recitation_degree !== null && typeof record.recitation_degree === 'number') {
                             totalRecitation += record.recitation_degree;
@@ -1682,7 +1731,7 @@
 
                     // إعادة حساب الدرجة الكلية للشهر
                     const attendanceBonus = totalAttendance * 1; 
-                    const homeworkBonus = totalHomework * 1; 
+                    const homeworkBonus = totalHomework; // 🆕
                     const overallScore = totalRecitation + totalExam + totalComprehensiveExam + attendanceBonus + homeworkBonus;
 
                     return {

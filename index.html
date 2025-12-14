@@ -8,19 +8,15 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
     <style>
-        /* إضافة خط عربي حديث   جديييد*/
-        
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
         body {
             font-family: 'Cairo', sans-serif;
             background-color: #f7f9fb;
-            /* افتراضي إذا لم يتم تحميل الخلفية */
         }
         
         .grid {
             display: grid;
         }
-        /* نمط الخلفية (افترض وجود bg.png) */
         
         body {
             background-image: url('bg.png');
@@ -29,7 +25,6 @@
             background-size: cover;
             background-position: center;
         }
-        /* تعديل بسيط لنمط تمرير الفيديوهات */
         
         #videosContainer {
             scrollbar-width: thin;
@@ -95,8 +90,6 @@
     <a href="quiz.html" class="bg-white shadow-xl rounded-3xl p-5 w-full max-w-lg mx-auto text-center mt-8 mb-4 hover:bg-indigo-50 transition duration-300 transform hover:translate-y-[-2px] block border-r-8 border-indigo-500">
         <h2 class="text-2xl font-extrabold text-indigo-700">صفحه الاختبارات</h2>
     </a>
-
-
 
     <button onclick="openVideosModal()" class="bg-white shadow-xl rounded-3xl p-5 w-full max-w-lg mx-auto text-center mt-8 mb-4 hover:bg-indigo-50 transition duration-300 transform hover:translate-y-[-2px] block border-r-8 border-indigo-500">
         <h2 class="text-2xl font-extrabold text-indigo-700">🎬 الفيديوهات التعليمية</h2>
@@ -212,10 +205,10 @@
             const studentId = student.id;
 
             // 2. جلب سجلات الأداء (النتائج)
+            // 🛑 [تم التعديل] تم استبدال homework_done بـ homework_degree
             let records = [];
             try {
-                // 🚨 جلب الأعمدة الجديدة (recitation_degree, comprehensive_exam_degree)
-                const recordsQuery = `?select=lesson_number,attendance,homework_done,exam_degree,recitation_degree,comprehensive_exam_degree,lesson_month,lesson_date&student_id=eq.${studentId}&order=lesson_date.desc`;
+                const recordsQuery = `?select=lesson_number,attendance,homework_degree,exam_degree,recitation_degree,comprehensive_exam_degree,lesson_month,lesson_date&student_id=eq.${studentId}&order=lesson_date.desc`;
                 records = await supabaseFetchAnon(TABLE_RECORDS, recordsQuery);
             } catch (error) {
                 console.error("Failed to fetch records:", error);
@@ -242,18 +235,19 @@
             records.forEach(r => {
                 const exam = safeNumber(r.exam_degree);
                 const recitation = safeNumber(r.recitation_degree);
+                const homework = safeNumber(r.homework_degree); // 🆕 [تم التعديل] استلام درجة الواجب
                 const comprehensive = safeNumber(r.comprehensive_exam_degree);
 
-                totalScoreObtained += (exam + recitation + comprehensive);
+                // 🆕 [تم التعديل] إضافة الواجب للمجموع
+                totalScoreObtained += (exam + recitation + homework + comprehensive);
 
                 // حساب النهاية العظمى (Max Score) لهذه الحصة
                 let currentSessionMax = 0;
-                if (exam > 0 || exam === 0) currentSessionMax += 10; // كل حصة فيها امتحان يومي /10
-                if (recitation > 0 || recitation === 0) currentSessionMax += 10; // كل حصة فيها تسميع /10
+                if (exam > 0 || exam === 0) currentSessionMax += 10; 
+                if (recitation > 0 || recitation === 0) currentSessionMax += 10; 
+                if (homework > 0 || homework === 0) currentSessionMax += 10; // 🆕 [تم التعديل] نفترض أن درجة الواجب من 10
 
-                // إذا كان هناك امتحان شامل مسجل (درجته ليست null أو 0)، نضيف 20 درجة للنهاية العظمى
                 if (!isEmptyCell(r.comprehensive_exam_degree)) {
-                    // نضيف 20 للامتحان الشامل فقط إذا كان مسجل
                     currentSessionMax += 20;
                 }
 
@@ -267,7 +261,6 @@
                 class_name: "—"
             };
 
-            const totalRecordsCount = records.length;
             const percent = totalMaxScore > 0 ? ((totalScoreObtained / totalMaxScore) * 100).toFixed(1) : 0;
 
             const percentClass = percent >= 85 ? "text-green-600 bg-green-100" : percent >= 60 ? "text-yellow-600 bg-yellow-100" : "text-red-600 bg-red-100";
@@ -289,13 +282,14 @@
 
                     for (const gs of groupStudents) {
                         try {
-                            const gsRecordsQuery = `?select=exam_degree,recitation_degree,comprehensive_exam_degree&student_id=eq.${gs.id}&order=lesson_date.desc`;
+                            // 🛑 [تم التعديل] طلبنا هنا أيضاً homework_degree
+                            const gsRecordsQuery = `?select=exam_degree,recitation_degree,homework_degree,comprehensive_exam_degree&student_id=eq.${gs.id}&order=lesson_date.desc`;
                             const gsRecords = await supabaseFetchAnon(TABLE_RECORDS, gsRecordsQuery);
 
-                            // تطبيق نفس التصفية بالشهر إن وجدت
                             let filteredGsRecords = gsRecords;
                             if (selectedMonth) {
-                                const gsMonthQuery = `?select=exam_degree,recitation_degree,comprehensive_exam_degree,lesson_month&student_id=eq.${gs.id}&lesson_month=eq.${selectedMonth}`;
+                                // 🛑 [تم التعديل] وهنا أيضاً
+                                const gsMonthQuery = `?select=exam_degree,recitation_degree,homework_degree,comprehensive_exam_degree,lesson_month&student_id=eq.${gs.id}&lesson_month=eq.${selectedMonth}`;
                                 filteredGsRecords = await supabaseFetchAnon(TABLE_RECORDS, gsMonthQuery);
                             }
 
@@ -305,12 +299,15 @@
                             filteredGsRecords.forEach(r => {
                                 const exam = safeNumber(r.exam_degree);
                                 const recitation = safeNumber(r.recitation_degree);
+                                const homework = safeNumber(r.homework_degree); // 🆕
                                 const comprehensive = safeNumber(r.comprehensive_exam_degree);
-                                gsTotalScore += (exam + recitation + comprehensive);
+                                
+                                gsTotalScore += (exam + recitation + homework + comprehensive);
 
                                 let currentMax = 0;
                                 if (exam > 0 || exam === 0) currentMax += 10;
                                 if (recitation > 0 || recitation === 0) currentMax += 10;
+                                if (homework > 0 || homework === 0) currentMax += 10; // 🆕
                                 if (!isEmptyCell(r.comprehensive_exam_degree)) currentMax += 20;
 
                                 gsMaxScore += currentMax;
@@ -418,8 +415,7 @@
                             <th class="p-3">التاريخ</th>
                             <th class="p-3">حصة</th>
                             <th class="p-3">حضور</th>
-                            <th class="p-3">واجب</th>
-                            <th class="p-3">تسميع (10)</th>
+                            <th class="p-3">واجب (10)</th> <th class="p-3">تسميع (10)</th>
                             <th class="p-3">امتحان (10)</th>
                             <th class="p-3">شامل (20)</th>
                         </tr>
@@ -436,9 +432,10 @@
                         month: 'numeric'
                     });
                     const attendanceClass = record.attendance === 'حضر' ? 'text-green-600 font-bold' : 'text-red-600 font-bold';
-                    const homeworkText = record.homework_done === true ? '✅' : '❌';
+                    
+                    // 🆕 [تم التعديل] عرض درجة الواجب بدلاً من العلامة
+                    const homeworkDisplay = !isEmptyCell(record.homework_degree) ? `<span class="font-bold text-blue-600">${record.homework_degree}</span>` : '—';
 
-                    // 🚨 عرض الحقول الجديدة
                     const recDegree = !isEmptyCell(record.recitation_degree) ? record.recitation_degree : '—';
                     const examDegree = !isEmptyCell(record.exam_degree) ? record.exam_degree : '—';
                     const compDegree = !isEmptyCell(record.comprehensive_exam_degree) ? `<span class="text-purple-700 font-bold">${record.comprehensive_exam_degree}</span>` : '—';
@@ -452,7 +449,7 @@
                             <td class="p-2 text-gray-600">${dateDisplay}</td>
                             <td class="p-2">${record.lesson_number || '—'}</td>
                             <td class="p-2 ${attendanceClass}">${record.attendance}</td>
-                            <td class="p-2">${homeworkText}</td>
+                            <td class="p-2">${homeworkDisplay}</td>
                             <td class="p-2 font-medium">${recDegree}</td>
                             <td class="p-2 font-medium">${examDegree}</td>
                             <td class="p-2">${compDegree}</td>
@@ -465,6 +462,8 @@
             return tableHtml;
         }
 
+        // ... [باقي كود الفيديوهات والاتصال كما هو بدون تغيير] ...
+        
         let videosData = [];
         async function openVideosModal() {
             document.getElementById("videosModal").classList.remove("hidden");
@@ -525,10 +524,11 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            // عند تحميل الصفحة، يبدأ الطالب بالبحث بنفسه
         });
     </script>
 </body>
 
 </html>
 
+
+<!--new-->>

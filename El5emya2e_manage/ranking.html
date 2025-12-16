@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة إدارة نتائج الأستاذ الخيميائي - الترتيب</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Cairo', sans-serif; background-color: #f7f9fb; }
+        .container { max-width: 90rem; }
+        .header-gradient { background-image: linear-gradient(to right, #4c51bf, #6b46c1); }
+        .table-container::-webkit-scrollbar { height: 8px; }
+        .table-container::-webkit-scrollbar-thumb { background-color: #a0aec0; border-radius: 4px; }
+    </style>
+</head>
+
+<body class="p-4 sm:p-8">
+
+    <header class="header-gradient text-white p-6 rounded-xl shadow-2xl mb-10 container mx-auto">
+        <h1 class="text-3xl sm:text-4xl font-extrabold">📊 لوحة الإدارة والنتائج</h1>
+        <p class="text-lg mt-2 opacity-90">مرحبًا مستر مؤمن - ترتيب الطلاب</p>
+    </header>
+
+    <main class="container mx-auto">
+        <div class="mb-6 border-b border-gray-200">
+            <ul class="flex flex-wrap -mb-px" id="tabs">
+                <li class="mr-2"><a href="index.html" class="inline-block p-4 border-b-2 border-transparent rounded-t-lg font-bold text-gray-500 hover:text-indigo-600 hover:border-indigo-400 transition">عرض نتائج الامتحانات</a></li>
+                <li class="mr-2"><a href="management.html" class="inline-block p-4 border-b-2 border-transparent rounded-t-lg font-bold text-gray-500 hover:text-indigo-600 hover:border-indigo-400 transition">إدارة الامتحانات</a></li>
+                <li class="mr-2"><a href="students.html" class="inline-block p-4 border-b-2 border-transparent rounded-t-lg font-bold text-gray-500 hover:text-indigo-600 hover:border-indigo-400 transition">إدارة الطلاب والمجموعات 🧑‍🎓</a></li>
+                <li class="mr-2"><a href="ranking.html" class="inline-block p-4 border-b-2 border-indigo-600 rounded-t-lg font-bold text-indigo-600 hover:text-indigo-700 hover:border-indigo-400 transition">ترتيب الطلاب 🏆</a></li>
+            </ul>
+        </div>
+
+        <div id="ranking-content">
+            <div class="bg-white p-6 sm:p-8 rounded-xl shadow-lg border border-gray-100 mb-8">
+                <h2 class="text-xl font-bold mb-5 text-gray-800">تصفية وترتيب الطلاب (سجلات الأداء)</h2>
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                    <div class="col-span-full md:col-span-1">
+                        <label for="rankingMonthFilter" class="block text-sm font-medium text-gray-700 mb-2">اختر الشهر</label>
+                        <select id="rankingMonthFilter" class="w-full bg-gray-100 p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition">
+                            <option value="all">جميع الأشهر</option>
+                        </select>
+                    </div>
+                    <div class="col-span-full md:col-span-1">
+                        <label for="rankingGroupFilter" class="block text-sm font-medium text-gray-700 mb-2">اختر المجموعة</label>
+                        <select id="rankingGroupFilter" class="w-full bg-gray-100 p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition">
+                            <option value="all">جميع المجموعات</option>
+                        </select>
+                    </div>
+                    <div class="col-span-full md:col-span-1">
+                        <label for="rankingNameSearch" class="block text-sm font-medium text-gray-700 mb-2">البحث بالاسم</label>
+                        <input type="text" id="rankingNameSearch" placeholder="اسم الطالب كاملاً" class="w-full bg-gray-100 p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition">
+                    </div>
+                    <div class="col-span-full md:col-span-1">
+                        <label for="rankingPhoneSearch" class="block text-sm font-medium text-gray-700 mb-2">البحث برقم الهاتف</label>
+                        <input type="text" id="rankingPhoneSearch" placeholder="رقم الهاتف" class="w-full bg-gray-100 p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition">
+                    </div>
+                    <div class="col-span-full md:col-span-1 flex items-end">
+                        <button id="applyRankingFilterBtn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition shadow-md">
+                            تطبيق التصفية
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 sm:p-8 rounded-xl shadow-lg border border-gray-100">
+                <h2 class="text-2xl font-bold mb-4 text-gray-800">قائمة الترتيب (الدرجة الكلية القصوى: <span id="rankingTotalScore">0</span> نقطة)</h2>
+                <div class="table-container overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider text-right">الترتيب 👑</th>
+                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider text-right">الاسم</th>
+                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider text-right">المجموعة</th>
+                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider text-right">هاتف الطالب</th>
+                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider text-right">حضر (حصة)</th>
+                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider text-right">واجب (مجموع)</th>
+                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider text-right">التسميع (الإجمالي)</th>
+                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider text-right">الامتحانات (الإجمالي)</th>
+                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider text-right">الدرجة الكلية 💯</th>
+                            </tr>
+                        </thead>
+                        <tbody id="rankingTableBody" class="bg-white divide-y divide-gray-200">
+                            <tr>
+                                <td colspan="9" class="px-6 py-4 text-center text-gray-500">... جاري تحميل الترتيب ...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Configuration
+        const SUPABASE_URL = "https://arbbxmnjviryxkmhwdgk.supabase.co";
+        const SUPABASE_SERVICE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyYmJ4bW5qdmlyeXhrbWh3ZGdrIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MjY5NTU0MSwiZXhwIjoyMDc4MjcxNTQxfQ.W5_c_-VqSUhvHmApF_Y4usZfuCwXz0Ci1hxgfO0u8sc";
+        const TABLE_GROUPS = "alchemiya_groups";
+        const TABLE_STUDENTS = "alchemiya_students";
+        const TABLE_RECORDS = "alchemiya_records";
+
+        const monthNames = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
+        let rankingData = [];
+        let allRecords = [];
+
+        async function supabaseFetch(method, table, query = '', data = null) {
+            const url = `${SUPABASE_URL}/rest/v1/${table}${query}`;
+            const headers = { 'Content-Type': 'application/json', 'apikey': SUPABASE_SERVICE_KEY, 'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}` };
+            const response = await fetch(url, { method, headers });
+            if (!response.ok) throw new Error(`Supabase Error: ${response.statusText}`);
+            return response.json();
+        }
+
+        // --- Fetch Groups for Filter ---
+        async function fetchGroupsForFilter() {
+            try {
+                const groups = await supabaseFetch('GET', TABLE_GROUPS, '?select=id,group_name,class_name&order=class_name.asc,group_name.asc');
+                const filter = document.getElementById('rankingGroupFilter');
+                filter.innerHTML = '<option value="all">جميع المجموعات</option>';
+                groups.forEach(group => {
+                    filter.insertAdjacentHTML('beforeend', `<option value="${group.id}">${group.class_name} - ${group.group_name}</option>`);
+                });
+            } catch (error) { console.error('Error fetching groups', error); }
+        }
+
+        // --- Ranking Logic ---
+        function populateMonthFilter() {
+            const monthFilter = document.getElementById('rankingMonthFilter');
+            monthFilter.innerHTML = '<option value="all">جميع الأشهر</option>';
+            monthNames.forEach(month => {
+                monthFilter.insertAdjacentHTML('beforeend', `<option value="${month}">${month}</option>`);
+            });
+            monthFilter.value = monthNames[new Date().getMonth()];
+        }
+
+        async function fetchRankingData() {
+            const rankingTableBody = document.getElementById('rankingTableBody');
+            rankingTableBody.innerHTML = '<tr><td colspan="9" class="px-6 py-4 text-center text-gray-500">... جاري تحميل الترتيب ...</td></tr>';
+            try {
+                const studentsWithGroups = await supabaseFetch('GET', TABLE_STUDENTS, `?select=id,student_name,phone_student,group_id,student_code,${TABLE_GROUPS}(group_name)`);
+                allRecords = await supabaseFetch('GET', TABLE_RECORDS, `?select=student_id,lesson_month,attendance,homework_degree,recitation_degree,exam_degree,comprehensive_exam_degree`);
+                rankingData = calculateScores(studentsWithGroups, allRecords);
+                filterAndDisplayRanking(rankingData);
+            } catch (error) {
+                rankingTableBody.innerHTML = `<tr><td colspan="9" class="px-6 py-4 text-center text-red-500 font-bold">خطأ: ${error.message}</td></tr>`;
+            }
+        }
+
+        function calculateScores(studentsList, recordsList) {
+            const scoresMap = new Map();
+            studentsList.forEach(student => {
+                const groupName = student[TABLE_GROUPS] ? student[TABLE_GROUPS].group_name : 'غير محدد';
+                scoresMap.set(student.id, {
+                    id: student.id, name: student.student_name, phone: student.phone_student || '—',
+                    group_id: student.group_id, group: groupName, phone_parent: student.phone_parent || '',
+                    totalAttendance: 0, totalHomework: 0, totalRecitation: 0, totalExam: 0, totalComprehensiveExam: 0, overallScore: 0
+                });
+            });
+
+            recordsList.forEach(record => {
+                if (scoresMap.has(record.student_id)) {
+                    const s = scoresMap.get(record.student_id);
+                    if (record.attendance === 'حضر') s.totalAttendance++;
+                    if (typeof record.homework_degree === 'number') s.totalHomework += record.homework_degree;
+                    if (typeof record.recitation_degree === 'number') s.totalRecitation += record.recitation_degree;
+                    if (typeof record.comprehensive_exam_degree === 'number') s.totalComprehensiveExam += record.comprehensive_exam_degree;
+                    else if (typeof record.exam_degree === 'number') s.totalExam += record.exam_degree;
+                }
+            });
+
+            return Array.from(scoresMap.values()).map(student => {
+                student.overallScore = student.totalRecitation + student.totalExam + student.totalComprehensiveExam + (student.totalAttendance * 1) + student.totalHomework;
+                return student;
+            });
+        }
+
+        function filterAndDisplayRanking(scores) {
+            const monthFilter = document.getElementById('rankingMonthFilter').value;
+            const groupFilter = document.getElementById('rankingGroupFilter').value;
+            const nameSearch = document.getElementById('rankingNameSearch').value.trim().toLowerCase();
+            const phoneSearch = document.getElementById('rankingPhoneSearch').value.trim();
+
+            let filteredScores = scores.map(student => ({ ...student }));
+
+            if (monthFilter !== 'all') {
+                filteredScores = filteredScores.map(student => {
+                    const filteredRecords = allRecords.filter(r => r.student_id === student.id && r.lesson_month === monthFilter);
+                    let att = 0, hw = 0, rec = 0, ex = 0, comp = 0;
+                    filteredRecords.forEach(r => {
+                        if (r.attendance === 'حضر') att++;
+                        if (typeof r.homework_degree === 'number') hw += r.homework_degree;
+                        if (typeof r.recitation_degree === 'number') rec += r.recitation_degree;
+                        if (typeof r.comprehensive_exam_degree === 'number') comp += r.comprehensive_exam_degree;
+                        else if (typeof r.exam_degree === 'number') ex += r.exam_degree;
+                    });
+                    const overall = rec + ex + comp + (att * 1) + hw;
+                    return { ...student, totalAttendance: att, totalHomework: hw, totalRecitation: rec, totalExam: ex, totalComprehensiveExam: comp, overallScore: overall };
+                }).filter(s => s.totalAttendance > 0 || s.totalHomework > 0 || s.overallScore > 0);
+            }
+
+            if (groupFilter !== 'all' && groupFilter) {
+                const gid = parseInt(groupFilter);
+                filteredScores = filteredScores.filter(s => s.group_id === gid);
+            }
+            if (nameSearch) filteredScores = filteredScores.filter(s => s.name.toLowerCase().includes(nameSearch));
+            if (phoneSearch) filteredScores = filteredScores.filter(s => s.phone.includes(phoneSearch) || s.phone_parent.includes(phoneSearch));
+
+            filteredScores.sort((a, b) => b.overallScore - a.overallScore);
+            displayRanking(filteredScores);
+        }
+
+        function displayRanking(studentsRanks) {
+            const table = document.getElementById('rankingTableBody');
+            const maxScore = studentsRanks.length > 0 ? studentsRanks[0].overallScore : 0;
+            document.getElementById('rankingTotalScore').textContent = maxScore;
+            table.innerHTML = '';
+            if (studentsRanks.length === 0) { table.innerHTML = '<tr><td colspan="9" class="text-center">لا توجد نتائج.</td></tr>'; return; }
+
+            studentsRanks.forEach((student, index) => {
+                let rank = index + 1;
+                if (index > 0 && student.overallScore === studentsRanks[index - 1].overallScore) rank = studentsRanks[index - 1].rank;
+                else student.rank = rank;
+
+                let rankIcon = rank;
+                let rankClass = 'text-gray-800 font-bold';
+                if (rank === 1) { rankIcon = '🥇'; rankClass = 'text-yellow-600 font-extrabold text-xl'; }
+                else if (rank === 2) { rankIcon = '🥈'; rankClass = 'text-gray-500 font-extrabold text-xl'; }
+                else if (rank === 3) { rankIcon = '🥉'; rankClass = 'text-amber-700 font-extrabold text-xl'; }
+
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-gray-50';
+                row.innerHTML = `<td class="px-6 py-4 whitespace-nowrap ${rankClass}">${rankIcon}</td><td class="px-6 py-4 font-medium">${student.name}</td><td class="px-6 py-4 text-indigo-600">${student.group}</td><td class="px-6 py-4">${student.phone}</td><td class="px-6 py-4 text-green-600 font-bold">${student.totalAttendance}</td><td class="px-6 py-4 text-green-600 font-bold">${student.totalHomework}</td><td class="px-6 py-4 font-bold">${student.totalRecitation}</td><td class="px-6 py-4 font-bold">${student.totalExam + student.totalComprehensiveExam}</td><td class="px-6 py-4 text-red-700 font-extrabold text-xl">${student.overallScore}</td>`;
+                table.appendChild(row);
+            });
+        }
+
+        document.getElementById('applyRankingFilterBtn').addEventListener('click', () => filterAndDisplayRanking(rankingData));
+        document.getElementById('rankingNameSearch').addEventListener('input', () => filterAndDisplayRanking(rankingData));
+        document.getElementById('rankingPhoneSearch').addEventListener('input', () => filterAndDisplayRanking(rankingData));
+        document.getElementById('rankingGroupFilter').addEventListener('change', () => filterAndDisplayRanking(rankingData));
+        document.getElementById('rankingMonthFilter').addEventListener('change', fetchRankingData);
+
+        // Initialize
+        populateMonthFilter();
+        fetchGroupsForFilter();
+        fetchRankingData();
+    </script>
+</body>
+</html>

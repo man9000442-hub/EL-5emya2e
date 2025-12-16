@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة إدارة نتائج الأستاذ الخيميائي - الطلاب والمجموعات</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Cairo', sans-serif; background-color: #f7f9fb; }
+        .container { max-width: 90rem; }
+        .header-gradient { background-image: linear-gradient(to right, #4c51bf, #6b46c1); }
+        .table-container::-webkit-scrollbar { height: 8px; }
+        .table-container::-webkit-scrollbar-thumb { background-color: #a0aec0; border-radius: 4px; }
+        /* Print Styles */
+        @media print {
+            body * { visibility: hidden; }
+            #cardsToPrint, #cardsToPrint * { visibility: visible; }
+            #cardsToPrint { position: absolute; left: 0; top: 0; width: 100%; padding: 10mm; }
+            .student-card { width: 80mm; height: 50mm; border: 1px solid #333; margin: 5mm; padding: 5mm; box-sizing: border-box; page-break-inside: avoid; text-align: center; display: block; float: left; }
+        }
+    </style>
+</head>
+
+<body class="p-4 sm:p-8">
+
+    <header class="header-gradient text-white p-6 rounded-xl shadow-2xl mb-10 container mx-auto">
+        <h1 class="text-3xl sm:text-4xl font-extrabold">📊 لوحة الإدارة والنتائج</h1>
+        <p class="text-lg mt-2 opacity-90">مرحبًا مستر مؤمن - إدارة الطلاب والمجموعات</p>
+    </header>
+
+    <main class="container mx-auto">
+        <div class="mb-6 border-b border-gray-200">
+            <ul class="flex flex-wrap -mb-px" id="tabs">
+                <li class="mr-2"><a href="index.html" class="inline-block p-4 border-b-2 border-transparent rounded-t-lg font-bold text-gray-500 hover:text-indigo-600 hover:border-indigo-400 transition">عرض نتائج الامتحانات</a></li>
+                <li class="mr-2"><a href="management.html" class="inline-block p-4 border-b-2 border-transparent rounded-t-lg font-bold text-gray-500 hover:text-indigo-600 hover:border-indigo-400 transition">إدارة الامتحانات</a></li>
+                <li class="mr-2"><a href="students.html" class="inline-block p-4 border-b-2 border-indigo-600 rounded-t-lg font-bold text-indigo-600 hover:text-indigo-700 hover:border-indigo-400 transition">إدارة الطلاب والمجموعات 🧑‍🎓</a></li>
+                <li class="mr-2"><a href="ranking.html" class="inline-block p-4 border-b-2 border-transparent rounded-t-lg font-bold text-gray-500 hover:text-indigo-600 hover:border-indigo-400 transition">ترتيب الطلاب 🏆</a></li>
+            </ul>
+        </div>
+
+        <div id="students-content">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-3xl font-bold text-gray-800">إدارة الطلاب والمجموعات</h2>
+                <div class="flex space-x-4 space-x-reverse">
+                    <button onclick="showGroupForm()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition">+ إضافة مجموعة جديدة</button>
+                    <button onclick="showStudentForm()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition">+ إضافة طالب جديد</button>
+                </div>
+            </div>
+
+            <div id="groupFormSection" class="bg-white p-6 sm:p-8 rounded-xl shadow-lg border border-indigo-200 border-l-4 mb-8 hidden">
+                <h3 class="text-xl font-bold mb-4 text-gray-800">إضافة مجموعة</h3>
+                <form id="newGroupForm" class="space-y-4">
+                    <input type="hidden" id="groupIdToEdit">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="groupName" class="block text-sm font-medium text-gray-700 mb-2">اسم المجموعة (مثلاً: أ، أو السبت 4م)</label>
+                            <input type="text" id="groupName" required class="w-full bg-gray-100 p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                        <div>
+                            <label for="groupClass" class="block text-sm font-medium text-gray-700 mb-2">الصف الدراسي</label>
+                            <select id="groupClass" required class="w-full bg-gray-100 p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <option value="">-- اختر الصف --</option>
+                                <option value="أولى إعدادي">أولى إعدادي</option><option value="تانية إعدادي">تانية إعدادي</option><option value="تالتة إعدادي">تالتة إعدادي</option>
+                                <option value="أولى ثانوي">أولى ثانوي</option><option value="تانية ثانوي">تانية ثانوي</option><option value="تالتة ثانوي">تالتة ثانوي</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" id="addGroupBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition">حفظ المجموعة</button>
+                    <button type="button" onclick="hideGroupForm()" class="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-lg transition">إلغاء</button>
+                </form>
+            </div>
+
+            <div class="bg-white p-6 sm:p-8 rounded-xl shadow-lg border border-gray-100 mb-8">
+                <h3 class="text-xl font-bold mb-4 text-gray-700">قائمة المجموعات المسجلة (<span id="groupsCount">0</span>)</h3>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-4 py-2 text-xs font-medium text-gray-500 uppercase tracking-wider text-right">ID</th>
+                                <th class="px-4 py-2 text-xs font-medium text-gray-500 uppercase tracking-wider text-right">اسم المجموعة</th>
+                                <th class="px-4 py-2 text-xs font-medium text-gray-500 uppercase tracking-wider text-right">الصف</th>
+                                <th class="px-4 py-2 text-xs font-medium text-gray-500 uppercase tracking-wider text-center">الإجراء</th>
+                            </tr>
+                        </thead>
+                        <tbody id="groupsTableBody" class="bg-white divide-y divide-gray-200">
+                            <tr><td colspan="4" class="px-6 py-4 text-center text-gray-500">... جاري تحميل المجموعات ...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="studentFormSection" class="bg-white p-6 sm:p-8 rounded-xl shadow-lg border border-green-200 border-l-4 mb-8 hidden">
+                <h3 class="text-xl font-bold mb-4 text-gray-800">إضافة / تعديل بيانات طالب</h3>
+                <form id="newStudentForm" class="space-y-4">
+                    <input type="hidden" id="studentIdToEdit">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div class="col-span-full md:col-span-1">
+                            <label for="studentCode" class="block text-sm font-medium text-gray-700 mb-2">كود الطالب</label>
+                            <input type="text" id="studentCode" required class="w-full bg-gray-100 p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500">
+                        </div>
+                        <div class="col-span-full md:col-span-1">
+                            <label for="studentName" class="block text-sm font-medium text-gray-700 mb-2">اسم الطالب كاملاً</label>
+                            <input type="text" id="studentName" required class="w-full bg-gray-100 p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500">
+                        </div>
+                        <div class="col-span-full md:col-span-2">
+                            <label for="studentGroup" class="block text-sm font-medium text-gray-700 mb-2">المجموعة</label>
+                            <select id="studentGroup" required class="w-full bg-gray-100 p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500">
+                                <option value="">-- اختر المجموعة --</option>
+                            </select>
+                        </div>
+                        <div class="col-span-full md:col-span-2">
+                            <label for="studentPhone" class="block text-sm font-medium text-gray-700 mb-2">رقم تليفون الطالب</label>
+                            <input type="text" id="studentPhone" class="w-full bg-gray-100 p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500">
+                        </div>
+                        <div class="col-span-full md:col-span-2">
+                            <label for="parentPhone" class="block text-sm font-medium text-gray-700 mb-2">رقم تليفون ولي الأمر</label>
+                            <input type="text" id="parentPhone" class="w-full bg-gray-100 p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500">
+                        </div>
+                    </div>
+                    <button type="submit" id="addStudentBtn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition">حفظ بيانات الطالب</button>
+                    <button type="button" onclick="hideStudentForm()" class="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-lg transition">إلغاء</button>
+                </form>
+            </div>
+
+            <div class="bg-white p-6 sm:p-8 rounded-xl shadow-lg border border-gray-100 mb-8">
+                <h3 class="text-xl font-bold mb-4 text-gray-800">تصفية وبحث الطلاب</h3>
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                    <div>
+                        <label for="studentFilterName" class="block text-sm font-medium text-gray-700 mb-2">البحث بالاسم</label>
+                        <input type="text" id="studentFilterName" placeholder="اسم الطالب" class="w-full bg-gray-100 p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <div>
+                        <label for="studentFilterCode" class="block text-sm font-medium text-gray-700 mb-2">البحث بالكود</label>
+                        <input type="text" id="studentFilterCode" placeholder="كود الطالب" class="w-full bg-gray-100 p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <div>
+                        <label for="studentFilterGroup" class="block text-sm font-medium text-gray-700 mb-2">التصفية بالمجموعة</label>
+                        <select id="studentFilterGroup" class="w-full bg-gray-100 p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option value="all">جميع المجموعات</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="studentFilterPhone" class="block text-sm font-medium text-gray-700 mb-2">البحث برقم الهاتف</label>
+                        <input type="text" id="studentFilterPhone" placeholder="أي رقم هاتف" class="w-full bg-gray-100 p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <div class="flex items-end space-x-2 space-x-reverse">
+                        <button id="applyStudentFilterBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition shadow-md">تطبيق</button>
+                        <button id="exportCardsBtn" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-lg transition shadow-md">استخراج كروت (PDF)</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 sm:p-8 rounded-xl shadow-lg border border-gray-100">
+                <h3 class="text-2xl font-bold mb-4 text-gray-800">قائمة الطلاب (<span id="studentsCount">0</span> طالب)</h3>
+                <div class="table-container overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-4 py-2 text-xs font-medium text-gray-500 uppercase tracking-wider text-right">
+                                    <input type="checkbox" id="selectAllStudents" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                                </th>
+                                <th class="px-4 py-2 text-xs font-medium text-gray-500 uppercase tracking-wider text-right">الكود</th>
+                                <th class="px-4 py-2 text-xs font-medium text-gray-500 uppercase tracking-wider text-right">الاسم</th>
+                                <th class="px-4 py-2 text-xs font-medium text-gray-500 uppercase tracking-wider text-right">المجموعة</th>
+                                <th class="px-4 py-2 text-xs font-medium text-gray-500 uppercase tracking-wider text-right">الصف</th>
+                                <th class="px-4 py-2 text-xs font-medium text-gray-500 uppercase tracking-wider text-right">هاتف الطالب</th>
+                                <th class="px-4 py-2 text-xs font-medium text-gray-500 uppercase tracking-wider text-right">هاتف ولي الأمر</th>
+                                <th class="px-4 py-2 text-xs font-medium text-gray-500 uppercase tracking-wider text-center">الإجراء</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentsTableBody" class="bg-white divide-y divide-gray-200">
+                            <tr><td colspan="8" class="px-6 py-4 text-center text-gray-500">... جاري تحميل الطلاب ...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="studentRecordsView" class="bg-white p-6 sm:p-8 rounded-xl shadow-lg border border-yellow-200 border-l-4 hidden mt-6">
+                <div class="flex justify-between items-center mb-4">
+                    <button onclick="closeRecordsView()" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg transition">← العودة لقائمة الطلاب</button>
+                    <button id="addNewRecordBtn" onclick="openAddRecordForm()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition">+ إضافة سجل جديد</button>
+                </div>
+                <h3 class="text-xl font-bold mb-4 text-gray-800">سجلات أداء الطالب: <span id="recordsStudentName" class="text-indigo-600"></span></h3>
+                <div class="table-container overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-4 py-2 text-xs font-medium uppercase tracking-wider text-right">التاريخ</th>
+                                <th class="px-4 py-2 text-xs font-medium uppercase tracking-wider text-right">الشهر</th>
+                                <th class="px-4 py-2 text-xs font-medium uppercase tracking-wider text-right">الحصة رقم</th>
+                                <th class="px-4 py-2 text-xs font-medium uppercase tracking-wider text-right">الحضور</th>
+                                <th class="px-4 py-2 text-xs font-medium uppercase tracking-wider text-right">واجب /10</th>
+                                <th class="px-4 py-2 text-xs font-medium uppercase tracking-wider text-right">تسميع /10</th>
+                                <th class="px-4 py-2 text-xs font-medium uppercase tracking-wider text-right">امتحان /10</th>
+                                <th class="px-4 py-2 text-xs font-medium uppercase tracking-wider text-right">شامل /20</th>
+                                <th class="px-4 py-2 text-xs font-medium uppercase tracking-wider text-center">إجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recordsTableBody" class="bg-white divide-y divide-gray-200">
+                            <tr><td colspan="9" class="px-6 py-4 text-center text-gray-500">... لا توجد سجلات لهذا الطالب ...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="cardsToPrint" class="hidden"></div>
+
+            <div id="recordModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+                <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+                    <h3 class="text-xl font-bold mb-4 text-gray-800" id="recordModalTitle">إضافة سجل أداء للطالب: <span id="recordModalStudentName"></span></h3>
+                    <form id="recordForm" class="space-y-4">
+                        <input type="hidden" id="recordStudentId">
+                        <input type="hidden" id="recordIdToEdit">
+                        <div>
+                            <label for="recordDate" class="block text-sm font-medium text-gray-700 mb-2">التاريخ</label>
+                            <input type="date" id="recordDate" required class="w-full bg-gray-100 p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                        <div>
+                            <label for="recordMonth" class="block text-sm font-medium text-gray-700 mb-2">الشهر</label>
+                            <select id="recordMonth" required class="w-full bg-gray-100 p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <option value="">-- اختر الشهر --</option>
+                                <option value="يناير">يناير</option><option value="فبراير">فبراير</option><option value="مارس">مارس</option>
+                                <option value="أبريل">أبريل</option><option value="مايو">مايو</option><option value="يونيو">يونيو</option>
+                                <option value="يوليو">يوليو</option><option value="أغسطس">أغسطس</option><option value="سبتمبر">سبتمبر</option>
+                                <option value="أكتوبر">أكتوبر</option><option value="نوفمبر">نوفمبر</option><option value="ديسمبر">ديسمبر</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="recordLessonNumber" class="block text-sm font-medium text-gray-700 mb-2">رقم الحصة في الشهر</label>
+                            <input type="number" id="recordLessonNumber" required min="1" class="w-full bg-gray-100 p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                        <div>
+                            <label for="recordAttendance" class="block text-sm font-medium text-gray-700 mb-2">الحالة</label>
+                            <select id="recordAttendance" required class="w-full bg-gray-100 p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <option value="حضر">حضر</option><option value="غاب">غاب</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="recordHomework" class="block text-sm font-medium text-gray-700 mb-2">درجة الواجب (/10)</label>
+                            <input type="number" id="recordHomework" min="0" max="10" placeholder="0-10" required class="w-full bg-gray-100 p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                        <div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label for="recordRecitationDegree" class="block text-sm font-medium text-gray-700 mb-2">درجة التسميع (/10)</label>
+                                    <input type="number" id="recordRecitationDegree" min="0" max="10" placeholder="0-10" class="w-full bg-gray-100 p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                </div>
+                                <div>
+                                    <label for="recordComprehensiveExam" class="block text-sm font-medium text-gray-700 mb-2">الامتحان الشامل الشهري (/20)</label>
+                                    <input type="number" id="recordComprehensiveExam" min="0" max="20" placeholder="اتركه فارغاً للعادية" class="w-full bg-gray-100 p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                </div>
+                            </div>
+                            <label for="recordExamDegree" class="block text-sm font-medium text-gray-700 mb-2">درجة الامتحان</label>
+                            <input type="number" id="recordExamDegree" class="w-full bg-gray-100 p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                        <div class="flex justify-end space-x-2 space-x-reverse">
+                            <button type="submit" id="saveRecordBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition">حفظ السجل</button>
+                            <button type="button" onclick="document.getElementById('recordModal').classList.add('hidden')" class="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-lg transition">إغلاق</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Configuration
+        const SUPABASE_URL = "https://arbbxmnjviryxkmhwdgk.supabase.co";
+        const SUPABASE_SERVICE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyYmJ4bW5qdmlyeXhrbWh3ZGdrIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MjY5NTU0MSwiZXhwIjoyMDc4MjcxNTQxfQ.W5_c_-VqSUhvHmApF_Y4usZfuCwXz0Ci1hxgfO0u8sc";
+        const TABLE_GROUPS = "alchemiya_groups";
+        const TABLE_STUDENTS = "alchemiya_students";
+        const TABLE_RECORDS = "alchemiya_records";
+
+        const monthNames = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
+        let groups = [];
+        let students = [];
+        let selectedStudentIds = new Set();
+        let currentViewingStudent = { id: null, name: null };
+
+        async function supabaseFetch(method, table, query = '', data = null) {
+            const url = `${SUPABASE_URL}/rest/v1/${table}${query}`;
+            const headers = { 'Content-Type': 'application/json', 'apikey': SUPABASE_SERVICE_KEY, 'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}` };
+            if (method === 'POST' || method === 'PATCH') headers['Prefer'] = 'return=representation';
+            const response = await fetch(url, { method, headers, body: data ? JSON.stringify(data) : null });
+            if (!response.ok) { const errorText = await response.text(); throw new Error(`Error: ${errorText}`); }
+            if (method === 'DELETE') return { success: true };
+            return response.json();
+        }
+
+        // --- Groups Logic ---
+        function showGroupForm(group = null) {
+            document.getElementById('groupFormSection').classList.remove('hidden');
+            const addGroupBtn = document.getElementById('addGroupBtn');
+            if (group) {
+                document.getElementById('groupIdToEdit').value = group.id;
+                document.getElementById('groupName').value = group.group_name;
+                document.getElementById('groupClass').value = group.class_name;
+                addGroupBtn.textContent = 'حفظ التعديلات';
+            } else {
+                document.getElementById('groupIdToEdit').value = '';
+                document.getElementById('newGroupForm').reset();
+                addGroupBtn.textContent = 'حفظ المجموعة';
+            }
+        }
+
+        function hideGroupForm() { document.getElementById('groupFormSection').classList.add('hidden'); }
+
+        async function fetchGroups() {
+            const groupsTableBody = document.getElementById('groupsTableBody');
+            groupsTableBody.innerHTML = '<tr><td colspan="4" class="px-6 py-4 text-center text-gray-500">... جاري تحميل المجموعات ...</td></tr>';
+            try {
+                groups = await supabaseFetch('GET', TABLE_GROUPS, '?select=id,group_name,class_name&order=class_name.asc,group_name.asc');
+                displayGroups(groups);
+                populateGroupSelects(groups);
+            } catch (error) { groupsTableBody.innerHTML = `<tr><td colspan="4" class="text-red-500 font-bold">${error.message}</td></tr>`; }
+        }
+
+        function displayGroups(currentGroups) {
+            const groupsTableBody = document.getElementById('groupsTableBody');
+            document.getElementById('groupsCount').textContent = currentGroups.length;
+            groupsTableBody.innerHTML = '';
+            if (currentGroups.length === 0) { groupsTableBody.innerHTML = '<tr><td colspan="4" class="text-center">لا توجد مجموعات.</td></tr>'; return; }
+            currentGroups.forEach(group => {
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-gray-50';
+                row.innerHTML = `<td class="px-4 py-2 text-sm">${group.id}</td><td class="px-4 py-2 font-medium">${group.group_name}</td><td class="px-4 py-2 text-sm text-indigo-600">${group.class_name}</td><td class="px-4 py-2 text-center"><button onclick="editGroup(${group.id})" class="text-indigo-600 font-bold">تعديل</button></td>`;
+                groupsTableBody.appendChild(row);
+            });
+        }
+
+        function populateGroupSelects(groupsList) {
+            const sgs = document.getElementById('studentGroup');
+            const sfgs = document.getElementById('studentFilterGroup');
+            sgs.innerHTML = '<option value="">-- اختر المجموعة --</option>';
+            sfgs.innerHTML = '<option value="all">جميع المجموعات</option>';
+            groupsList.forEach(group => {
+                const opt = `<option value="${group.id}">${group.class_name} - ${group.group_name}</option>`;
+                sgs.insertAdjacentHTML('beforeend', opt);
+                sfgs.insertAdjacentHTML('beforeend', opt);
+            });
+        }
+
+        async function editGroup(groupId) { const group = groups.find(g => g.id === groupId); if (group) showGroupForm(group); }
+
+        document.getElementById('newGroupForm').addEventListener('submit', async(e) => {
+            e.preventDefault();
+            const groupId = document.getElementById('groupIdToEdit').value;
+            const data = { group_name: document.getElementById('groupName').value.trim(), class_name: document.getElementById('groupClass').value };
+            const isEdit = !!groupId;
+            const method = isEdit ? 'PATCH' : 'POST';
+            const query = isEdit ? `?id=eq.${groupId}` : '';
+            try { await supabaseFetch(method, TABLE_GROUPS, query, data); alert('تم الحفظ بنجاح'); hideGroupForm(); fetchGroups(); } catch (error) { alert(error.message); }
+        });
+
+        // --- Students Logic ---
+        function showStudentForm(student = null) {
+            document.getElementById('studentFormSection').classList.remove('hidden');
+            const btn = document.getElementById('addStudentBtn');
+            if (student) {
+                document.getElementById('studentIdToEdit').value = student.id;
+                document.getElementById('studentCode').value = student.student_code || '';
+                document.getElementById('studentName').value = student.student_name;
+                document.getElementById('studentGroup').value = student.group_id;
+                document.getElementById('studentPhone').value = student.phone_student || '';
+                document.getElementById('parentPhone').value = student.phone_parent || '';
+                btn.textContent = 'حفظ تعديلات الطالب';
+            } else {
+                document.getElementById('studentIdToEdit').value = '';
+                document.getElementById('newStudentForm').reset();
+                btn.textContent = 'حفظ بيانات الطالب';
+            }
+        }
+        function hideStudentForm() { document.getElementById('studentFormSection').classList.add('hidden'); }
+
+        async function fetchStudents() {
+            const table = document.getElementById('studentsTableBody');
+            table.innerHTML = '<tr><td colspan="8" class="text-center">... جاري تحميل الطلاب ...</td></tr>';
+            const fName = document.getElementById('studentFilterName').value.trim();
+            const fCode = document.getElementById('studentFilterCode').value.trim();
+            const fGroup = document.getElementById('studentFilterGroup').value;
+            const fPhone = document.getElementById('studentFilterPhone').value.trim();
+            let query = `?select=id,student_name,group_id,phone_student,phone_parent,student_code,${TABLE_GROUPS}(class_name,group_name)&order=student_name.asc`;
+            if (fName) query += `&student_name=ilike.*${fName}*`;
+            if (fCode) query += `&student_code=ilike.*${fCode}*`;
+            if (fGroup && fGroup !== 'all') query += `&group_id=eq.${fGroup}`;
+            if (fPhone) query += `&or=(phone_student.ilike.*${fPhone}*,phone_parent.ilike.*${fPhone}*)`;
+
+            try { students = await supabaseFetch('GET', TABLE_STUDENTS, query); displayStudents(students); } catch (error) { table.innerHTML = `<tr><td colspan="8" class="text-red-500">${error.message}</td></tr>`; }
+        }
+
+        function displayStudents(currentStudents) {
+            const table = document.getElementById('studentsTableBody');
+            document.getElementById('studentsCount').textContent = currentStudents.length;
+            table.innerHTML = '';
+            if (currentStudents.length === 0) { table.innerHTML = '<tr><td colspan="8" class="text-center">لا توجد طلاب.</td></tr>'; return; }
+            currentStudents.forEach(student => {
+                const groupInfo = student[TABLE_GROUPS] || { class_name: '?', group_name: '?' };
+                const isChecked = selectedStudentIds.has(student.id) ? 'checked' : '';
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-gray-50';
+                row.innerHTML = `
+                    <td class="px-4 py-2"><input type="checkbox" value="${student.id}" class="student-checkbox" ${isChecked}></td>
+                    <td class="px-4 py-2 font-bold text-red-600">${student.student_code || student.id}</td>
+                    <td class="px-4 py-2 font-medium">${student.student_name}</td>
+                    <td class="px-4 py-2 text-indigo-600">${groupInfo.group_name}</td>
+                    <td class="px-4 py-2">${groupInfo.class_name}</td>
+                    <td class="px-4 py-2">${student.phone_student || '-'}</td>
+                    <td class="px-4 py-2">${student.phone_parent || '-'}</td>
+                    <td class="px-4 py-2 text-center space-x-2 space-x-reverse">
+                        <button onclick="viewStudentRecords(${student.id}, '${student.student_name}')" class="text-blue-600 font-bold text-sm">سجل الأداء</button>
+                        <button onclick="editStudent(${student.id})" class="text-indigo-600 font-bold text-sm">تعديل</button>
+                    </td>`;
+                table.appendChild(row);
+            });
+        }
+
+        async function editStudent(id) { const s = students.find(x => x.id === id); if(s) showStudentForm(s); }
+
+        document.getElementById('newStudentForm').addEventListener('submit', async(e) => {
+            e.preventDefault();
+            const sid = document.getElementById('studentIdToEdit').value;
+            const data = {
+                student_name: document.getElementById('studentName').value.trim(),
+                group_id: parseInt(document.getElementById('studentGroup').value),
+                phone_student: document.getElementById('studentPhone').value.trim() || null,
+                phone_parent: document.getElementById('parentPhone').value.trim() || null,
+                student_code: document.getElementById('studentCode').value.trim()
+            };
+            const isEdit = !!sid;
+            const method = isEdit ? 'PATCH' : 'POST';
+            const query = isEdit ? `?id=eq.${sid}` : '';
+            try { await supabaseFetch(method, TABLE_STUDENTS, query, data); alert('تم الحفظ'); hideStudentForm(); fetchStudents(); } catch (error) { alert(error.message); }
+        });
+
+        document.getElementById('applyStudentFilterBtn').addEventListener('click', fetchStudents);
+        document.getElementById('studentsTableBody').addEventListener('change', (e) => { if (e.target.classList.contains('student-checkbox')) e.target.checked ? selectedStudentIds.add(parseInt(e.target.value)) : selectedStudentIds.delete(parseInt(e.target.value)); });
+        document.getElementById('exportCardsBtn').addEventListener('click', () => { if (selectedStudentIds.size === 0) alert('حدد طلاب أولاً'); else printStudentCards(); });
+
+        function printStudentCards() {
+            const container = document.getElementById('cardsToPrint');
+            container.innerHTML = '';
+            students.filter(s => selectedStudentIds.has(s.id)).forEach(student => {
+                const gName = (groups.find(g => g.id === student.group_id) || {}).group_name || '؟';
+                const card = document.createElement('div'); card.className = 'student-card';
+                card.innerHTML = `<div style="font-weight:bold;margin-bottom:5px;">كارت الطالب</div><hr><p style="font-size:16pt;margin:5px 0;">${student.student_name}</p><p>المجموعة: ${gName}</p><p style="font-size:14pt;font-weight:bold;color:#c00;">الكود: ${student.student_code || student.id}</p>`;
+                container.appendChild(card);
+            });
+            container.classList.remove('hidden'); window.print(); setTimeout(() => container.classList.add('hidden'), 500);
+        }
+
+        // --- Records Logic ---
+        async function viewStudentRecords(studentId, studentName) {
+            currentViewingStudent = { id: studentId, name: studentName };
+            document.getElementById('studentRecordsView').classList.remove('hidden');
+            document.getElementById('recordsStudentName').textContent = studentName;
+            // Scroll to records view
+            document.getElementById('studentRecordsView').scrollIntoView({ behavior: 'smooth' });
+            
+            const table = document.getElementById('recordsTableBody');
+            table.innerHTML = '<tr><td colspan="9" class="text-center">... جاري التحميل ...</td></tr>';
+            try {
+                const records = await supabaseFetch('GET', TABLE_RECORDS, `?student_id=eq.${studentId}&select=*&order=lesson_date.desc`);
+                table.innerHTML = '';
+                if (records.length === 0) { table.innerHTML = '<tr><td colspan="9" class="text-center">لا توجد سجلات.</td></tr>'; return; }
+                records.forEach(r => {
+                    const row = document.createElement('tr');
+                    const rJson = JSON.stringify(r).replace(/"/g, '&quot;');
+                    row.innerHTML = `<td class="px-4 py-2">${r.lesson_date}</td><td class="px-4 py-2">${r.lesson_month}</td><td class="px-4 py-2">${r.lesson_number}</td><td class="px-4 py-2 font-bold ${r.attendance==='حضر'?'text-green-600':'text-red-600'}">${r.attendance}</td><td class="px-4 py-2 font-bold">${r.homework_degree||0}/10</td><td class="px-4 py-2">${r.recitation_degree||'-'}</td><td class="px-4 py-2">${r.exam_degree||'-'}</td><td class="px-4 py-2">${r.comprehensive_exam_degree||'-'}</td><td class="px-4 py-2 text-center"><button onclick="prepareEditRecord(${rJson})" class="text-indigo-600 font-bold">تعديل</button> <button onclick="deleteRecord(${r.id})" class="text-red-600 font-bold">حذف</button></td>`;
+                    table.appendChild(row);
+                });
+            } catch (e) { console.error(e); }
+        }
+
+        function closeRecordsView() { document.getElementById('studentRecordsView').classList.add('hidden'); }
+        function openAddRecordForm() {
+            document.getElementById('recordModalStudentName').textContent = currentViewingStudent.name;
+            document.getElementById('recordStudentId').value = currentViewingStudent.id;
+            document.getElementById('recordForm').reset();
+            document.getElementById('recordIdToEdit').value = '';
+            document.getElementById('recordDate').valueAsDate = new Date();
+            document.getElementById('recordMonth').value = monthNames[new Date().getMonth()];
+            document.getElementById('recordModal').classList.remove('hidden');
+        }
+
+        function prepareEditRecord(r) {
+            openAddRecordForm();
+            document.getElementById('recordIdToEdit').value = r.id;
+            document.getElementById('recordDate').value = r.lesson_date;
+            document.getElementById('recordMonth').value = r.lesson_month;
+            document.getElementById('recordLessonNumber').value = r.lesson_number;
+            document.getElementById('recordAttendance').value = r.attendance;
+            document.getElementById('recordHomework').value = r.homework_degree;
+            document.getElementById('recordRecitationDegree').value = r.recitation_degree;
+            document.getElementById('recordComprehensiveExam').value = r.comprehensive_exam_degree;
+            document.getElementById('recordExamDegree').value = r.exam_degree;
+        }
+
+        document.getElementById('recordForm').addEventListener('submit', async(e) => {
+            e.preventDefault();
+            const rid = document.getElementById('recordIdToEdit').value;
+            const data = {
+                student_id: parseInt(document.getElementById('recordStudentId').value),
+                lesson_date: document.getElementById('recordDate').value,
+                lesson_month: document.getElementById('recordMonth').value,
+                lesson_number: parseInt(document.getElementById('recordLessonNumber').value),
+                attendance: document.getElementById('recordAttendance').value,
+                homework_degree: parseInt(document.getElementById('recordHomework').value) || 0,
+                recitation_degree: parseInt(document.getElementById('recordRecitationDegree').value) || null,
+                comprehensive_exam_degree: parseInt(document.getElementById('recordComprehensiveExam').value) || null,
+                exam_degree: parseInt(document.getElementById('recordExamDegree').value) || null
+            };
+            const method = rid ? 'PATCH' : 'POST';
+            const query = rid ? `?id=eq.${rid}` : '';
+            try { await supabaseFetch(method, TABLE_RECORDS, query, data); alert('تم الحفظ'); document.getElementById('recordModal').classList.add('hidden'); viewStudentRecords(currentViewingStudent.id, currentViewingStudent.name); } catch(e) { alert(e.message); }
+        });
+
+        async function deleteRecord(rid) { if(confirm('حذف السجل؟')) { try { await supabaseFetch('DELETE', TABLE_RECORDS, `?id=eq.${rid}`); viewStudentRecords(currentViewingStudent.id, currentViewingStudent.name); } catch(e){ alert(e.message); } } }
+
+        // Initialize
+        fetchGroups();
+        fetchStudents();
+    </script>
+</body>
+</html>

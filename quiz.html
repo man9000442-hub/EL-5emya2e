@@ -1,413 +1,244 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>El5emya2e-Quiz</title>
+    <title>منصة الخيميائي | بوابة الاختبارات</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body {
-            font-family: 'Cairo', sans-serif;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .fade-in { animation: fadeIn 0.5s ease-out forwards; }
-        
-        .card label {
-            transition: all 0.2s ease-in-out;
-            cursor: pointer;
-            display: block;
-            padding: 0.75rem;
-            border-radius: 0.5rem;
-            background-color: #FFFFFF;
-            color: #1F2937;
-            margin-bottom: 0.5rem;
-            border: 2px solid #E5E7EB;
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
-        }
-        
-        .card label:hover {
-            background-color: #F9FAFB;
-            border-color: #6366F1;
-        }
-        
-        .card input[type="radio"] { display: none; }
-        
-        .selected-answer {
-            background-color: #4338CA !important;
-            border-color: #A5B4FC !important;
-            color: white !important;
-        }
-        
-        .correct-answer {
-            background-color: #10B981 !important;
-            color: white !important;
-            border-color: #34D399 !important;
-        }
-        
-        .incorrect-answer {
-            background-color: #EF4444 !important;
-            color: white !important;
-            border-color: #F87171 !important;
-        }
-        
-        .explanation {
-            background-color: #FFFBEB;
-            padding: 10px;
-            border-radius: 8px;
-            margin-top: 10px;
-            border-left: 4px solid #F59E0B;
-            color: #92400E;
-            animation: fadeIn 0.5s;
-        }
+        body { font-family: 'Cairo', sans-serif; background-color: #f8fafc; }
+        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .selected-answer { background-color: #eef2ff !important; border-color: #4f46e5 !important; }
+        .radio-label { transition: all 0.2s; cursor: pointer; display: flex; align-items: center; padding: 1rem; border-radius: 1rem; border: 2px solid #f1f5f9; margin-bottom: 0.75rem; background: white; }
     </style>
 </head>
+<body class="p-4 md:p-8">
 
-<body class="bg-gray-50 text-gray-900 min-h-screen flex flex-col items-center p-4 sm:p-6">
-
-    <header class="w-full max-w-4xl text-center bg-gradient-to-r from-blue-400 to-indigo-600 p-6 rounded-3xl shadow-xl mb-8 fade-in text-white">
-        <h1 class="text-4xl font-extrabold">امتحان الخيميائي</h1>
-        <p class="text-xl mt-2 opacity-95">أهلاً بك يا بطل</p>
+    <header class="max-w-4xl mx-auto text-center mb-10 fade-in">
+        <div class="bg-indigo-600 text-white py-10 px-6 rounded-[2.5rem] shadow-2xl shadow-indigo-200">
+            <h1 class="text-4xl md:text-5xl font-black mb-3">مِنصة الخيميائي</h1>
+            <p class="text-indigo-100 text-lg">نظام الامتحانات الذكي - لا تراجع ولا استسلام</p>
+        </div>
     </header>
 
-    <main id="loginSection" class="w-full max-w-md bg-white p-8 rounded-2xl shadow-xl text-center fade-in border border-gray-200">
-        <h2 class="text-2xl font-bold mb-6 text-gray-800">تسجيل الدخول للامتحان</h2>
-        
-        <div class="space-y-4 text-right">
+    <main id="loginSection" class="max-w-md mx-auto bg-white p-8 rounded-3xl shadow-xl border border-slate-100 fade-in">
+        <h2 class="text-2xl font-bold text-slate-800 text-center mb-8">تسجيل دخول الطالب</h2>
+        <div class="space-y-5">
             <div>
-                <label class="block text-gray-700 font-bold mb-2">كود الطالب</label>
-                <input id="inputCode" type="text" placeholder="أدخل الكود الخاص بك" class="w-full p-3 bg-gray-50 rounded-lg border-2 border-gray-300 focus:outline-none focus:border-indigo-500 transition">
+                <label class="block text-slate-600 font-bold mb-2 mr-2">كود الطالب</label>
+                <input id="inputCode" type="text" placeholder="أدخل الكود الخاص بك" class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-indigo-500 outline-none text-center font-bold text-lg">
             </div>
-            
             <div>
-                <label class="block text-gray-700 font-bold mb-2">رقم الهاتف المسجل</label>
-                <input id="inputPhone" type="tel" placeholder="أدخل رقم الهاتف" class="w-full p-3 bg-gray-50 rounded-lg border-2 border-gray-300 focus:outline-none focus:border-indigo-500 transition">
+                <label class="block text-slate-600 font-bold mb-2 mr-2">رقم الهاتف</label>
+                <input id="inputPhone" type="tel" placeholder="رقم موبايلك" class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-indigo-500 outline-none text-center font-bold text-lg">
             </div>
+            <button id="loginBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-black py-4 rounded-2xl shadow-lg transition-all transform active:scale-95 flex items-center justify-center gap-2">
+                <span>دخول الاختبار الآن</span>
+                <i class="fa-solid fa-bolt"></i>
+            </button>
+            <p id="loginError" class="hidden text-red-600 bg-red-50 p-4 rounded-xl border border-red-100 text-center font-bold text-sm"></p>
         </div>
-
-        <button id="loginBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg mt-6 transition transform hover:scale-[1.02] shadow-md">
-            تحقق وابدأ الاختبار
-        </button>
-        <p id="loginError" class="text-red-500 mt-4 hidden font-bold text-sm"></p>
     </main>
 
-    <section id="quizSection" class="hidden w-full max-w-4xl mt-8 fade-in">
-        <div class="bg-blue-50 border-r-4 border-blue-500 p-4 rounded-lg shadow-sm mb-6 flex justify-between items-center">
+    <section id="quizSection" class="hidden max-w-4xl mx-auto fade-in">
+        <div class="bg-white p-6 rounded-2xl shadow-sm border-r-8 border-indigo-600 mb-8 flex flex-col md:flex-row justify-between items-center gap-4">
             <div>
-                <p class="text-blue-900 font-bold text-lg">مرحباً: <span id="displayStudentName" class="text-indigo-700"></span></p>
-                <p class="text-blue-700 text-sm">الصف: <span id="displayClassName"></span></p>
+                <p class="text-slate-400 text-sm font-bold">اسم الطالب:</p>
+                <p id="displayStudentName" class="text-2xl font-black text-slate-800"></p>
             </div>
+            <div id="displayClassName" class="bg-indigo-50 text-indigo-700 px-6 py-2 rounded-full font-bold"></div>
         </div>
 
-        <form id="quizForm" class="space-y-6"></form>
-        
-        <div id="result" class="mt-6 text-2xl font-bold text-center p-4 bg-green-50 text-green-800 rounded-2xl shadow-lg hidden border-l-8 border-green-400"></div>
-        
-        <button id="submitBtn" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg mt-6 transition transform hover:scale-[1.02] shadow-md">
-            إرسال الإجابات
-        </button>
+        <div id="quizContainer">
+            <form id="quizForm" class="space-y-6"></form>
+            <button id="submitBtn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-5 rounded-3xl mt-12 shadow-xl text-xl flex items-center justify-center gap-3">
+                <i class="fa-solid fa-check-double"></i>
+                <span>اعتماد وتسليم الإجابات</span>
+            </button>
+        </div>
+
+        <div id="finalResultContainer" class="hidden bg-white p-12 rounded-[3rem] shadow-2xl border-4 border-indigo-50 text-center">
+            <span class="text-7xl">🌟</span>
+            <h2 class="text-3xl font-black text-slate-800 mt-6">تم تسجيل نتيجتك بنجاح!</h2>
+            <div id="finalScore" class="text-7xl font-black text-indigo-600 my-8 italic"></div>
+            <div class="space-y-3 bg-slate-50 p-6 rounded-2xl max-w-sm mx-auto text-right">
+                <p class="font-bold text-slate-600">👤 الاسم: <span id="resName" class="text-slate-900"></span></p>
+                <p class="font-bold text-slate-600">🔑 الكود: <span id="resCode" class="text-slate-900"></span></p>
+            </div>
+            <button onclick="window.location.reload()" class="mt-8 text-indigo-600 font-bold hover:underline">العودة للرئيسية</button>
+        </div>
     </section>
 
-    <footer style="position: relative; z-index: 9999; text-align: center; padding: 40px 0; margin-top: 50px; background: transparent;">
-        <div style="background: rgba(255, 255, 255, 0.95); color: #111; max-width: 400px; margin: 0 auto; border-radius: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); border: 1px solid #ddd; padding: 25px;">
-            <p style="font-weight: 600; margin-bottom: 15px; font-size: 16px;">
-                صُمّم بواسطة <span style="color: #2563eb; font-weight: 700;">Abdelrahman Tarek</span>
-            </p>
-            <a href="https://wa.me/201094724932" target="_blank" style="display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(to right, #2563eb, #3b82f6); color: #fff; font-weight: 600; font-size: 14px; padding: 10px 18px; border-radius: 9999px; text-decoration: none; box-shadow: 0 2px 10px rgba(0,0,0,0.2); transition: all 0.3s;">
-                <i class="fa-solid fa-envelope"></i> تواصل معنا
-            </a>
-        </div>
-    </footer>
-
     <script>
-        // *************************************************************
-        // ** إعدادات Supabase **
-        // *************************************************************
         const SUPABASE_URL = "https://arbbxmnjviryxkmhwdgk.supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyYmJ4bW5qdmlyeXhrbWh3ZGdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI2OTU1NDEsImV4cCI6MjA3ODI3MTU0MX0.G-MsJtbQ1LlPZO-Vob6nKzdClHmOYu6RFOKi62FKKNk";
         
-        // الجداول
-        const TABLE_RESULTS = "alchemiya_results";
-        const TABLE_QUIZZES = "alchemiya_quizzes";
-        const TABLE_QUESTIONS = "alchemiya_questions";
-        const TABLE_STUDENTS = "alchemiya_students";
-        const TABLE_GROUPS = "alchemiya_groups";
-        // *************************************************************
-
-        let questions = [];
-        let correctAnswers = {};
-        let explanations = {};
-        
-        // متغيرات لتخزين بيانات الطالب المسجل حالياً
-        let currentStudent = {
-            name: "",
-            phone: "",
-            className: "",
-            groupId: ""
+        const DB = {
+            RESULTS: "alchemiya_results",
+            QUIZZES: "alchemiya_quizzes",
+            QUESTIONS: "alchemiya_questions",
+            STUDENTS: "alchemiya_students",
+            GROUPS: "alchemiya_groups"
         };
 
-        // 1. دالة تسجيل الدخول وجلب البيانات
-// 1. دالة تسجيل الدخول وجلب البيانات (معدلة ومصححة)
-// 1. دالة تسجيل الدخول وجلب البيانات (تعديل: البحث بالكود فقط)
-        async function loginAndFetchQuiz() {
-            const codeInput = document.getElementById("inputCode").value.trim();
-            const phoneInput = document.getElementById("inputPhone").value.trim(); // هذا الرقم سيتم حفظه يدوياً
-            const loginBtn = document.getElementById("loginBtn");
-            const errorMsg = document.getElementById("loginError");
+        let questions = [];
+        let currentQuizId = null;
+        let student = { name: "", code: "", phone: "", className: "" };
 
-            // نتحقق أن الطالب كتب الرقم والكود، لكننا سنبحث بالكود فقط
-            if (!codeInput || !phoneInput) {
-                alert("يرجى إدخال الكود ورقم الهاتف");
+        // === دالة الدخول الذكية ===
+        async function handleLogin() {
+            const code = document.getElementById("inputCode").value.trim();
+            const phone = document.getElementById("inputPhone").value.trim();
+            const btn = document.getElementById("loginBtn");
+            const err = document.getElementById("loginError");
+
+            if (!code || !phone) { alert("أكمل البيانات أولاً"); return; }
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري فحص السجلات...';
+            err.classList.add("hidden");
+
+            try {
+                // 1. فحص بيانات الطالب
+                const resS = await fetch(`${SUPABASE_URL}/rest/v1/${DB.STUDENTS}?student_code=eq.${code}&select=student_name,group_id`, { headers: { 'apikey': SUPABASE_ANON_KEY } });
+                const students = await resS.json();
+                if (!students.length) throw new Error("هذا الكود غير صحيح أو غير مسجل.");
+
+                student.name = students[0].student_name;
+                student.code = code;
+                student.phone = phone;
+
+                // 2. جلب الصف والامتحان
+                const resG = await fetch(`${SUPABASE_URL}/rest/v1/${DB.GROUPS}?id=eq.${students[0].group_id}&select=class_name`, { headers: { 'apikey': SUPABASE_ANON_KEY } });
+                const groups = await resG.json();
+                student.className = groups[0].class_name;
+
+                const resQ = await fetch(`${SUPABASE_URL}/rest/v1/${DB.QUIZZES}?class_name=eq.${encodeURIComponent(student.className)}&is_active=eq.true&select=id&limit=1`, { headers: { 'apikey': SUPABASE_ANON_KEY } });
+                const quizzes = await resQ.json();
+                if (!quizzes.length) throw new Error("لا يوجد امتحان متاح لصفك حالياً.");
+                currentQuizId = quizzes[0].id;
+
+                // 3. منع التكرار (الفحص القاطع في جدول النتائج)
+                // نستخدم التحقق بالكود + رقم الامتحان لمنع الدخول تماماً
+                const resCheck = await fetch(`${SUPABASE_URL}/rest/v1/${DB.RESULTS}?student_code=eq.${code}&quiz_id=eq.${currentQuizId}&select=id`, { 
+                    headers: { 'apikey': SUPABASE_ANON_KEY, 'Cache-Control': 'no-cache' } 
+                });
+                const existing = await resCheck.json();
+
+                if (existing.length > 0) {
+                    throw new Error(`عذراً يا ${student.name}، لقد أديت هذا الامتحان مسبقاً ولا يسمح بالتكرار.`);
+                }
+
+                // 4. تحميل الأسئلة وبدء العرض
+                await loadQuestions(currentQuizId);
+                displayExam();
+
+            } catch (e) {
+                err.textContent = e.message;
+                err.classList.remove("hidden");
+                btn.disabled = false;
+                btn.innerHTML = '<span>دخول الاختبار الآن</span> <i class="fa-solid fa-bolt"></i>';
+            }
+        }
+
+        async function loadQuestions(id) {
+            const res = await fetch(`${SUPABASE_URL}/rest/v1/${DB.QUESTIONS}?quiz_id=eq.${id}&select=id,question_text,choice_a,choice_b,choice_c,choice_d,correct_answer`, { headers: { 'apikey': SUPABASE_ANON_KEY } });
+            const data = await res.json();
+            questions = data.map(q => ({
+                id: q.id,
+                text: q.question_text,
+                choices: [q.choice_a, q.choice_b, q.choice_c, q.choice_d],
+                correct: q[`choice_${q.correct_answer.toLowerCase()}`]
+            }));
+        }
+
+        function displayExam() {
+            document.getElementById("displayStudentName").textContent = student.name;
+            document.getElementById("displayClassName").textContent = "الصف: " + student.className;
+            
+            const form = document.getElementById("quizForm");
+            form.innerHTML = questions.map((q, i) => `
+                <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 fade-in" style="animation-delay: ${i*0.1}s">
+                    <p class="font-bold text-xl mb-6 text-slate-800"><span class="text-indigo-600">س${i+1}:</span> ${q.text}</p>
+                    <div class="choices-area">
+                        ${q.choices.map(c => `
+                            <label class="radio-label">
+                                <input type="radio" name="q${q.id}" value="${c}" class="hidden" required>
+                                <span class="font-bold text-slate-700">${c}</span>
+                            </label>
+                        `).join("")}
+                    </div>
+                </div>
+            `).join("");
+
+            // تأثيرات الاختيار
+            form.querySelectorAll('input').forEach(input => {
+                input.addEventListener('change', (e) => {
+                    const parent = e.target.closest('.choices-area');
+                    parent.querySelectorAll('label').forEach(l => l.classList.remove('selected-answer'));
+                    e.target.closest('label').classList.add('selected-answer');
+                });
+            });
+
+            document.getElementById("loginSection").classList.add("hidden");
+            document.getElementById("quizSection").classList.remove("hidden");
+        }
+
+        document.getElementById("loginBtn").addEventListener("click", handleLogin);
+
+        document.getElementById("submitBtn").addEventListener("click", async () => {
+            const inputs = document.querySelectorAll('input[type="radio"]:checked');
+            if (inputs.length < questions.length) {
+                alert("برجاء الإجابة على جميع الأسئلة قبل التسليم.");
                 return;
             }
 
-            loginBtn.textContent = "جاري التحقق...";
-            loginBtn.disabled = true;
-            errorMsg.classList.add("hidden");
+            if (!confirm("هل أنت متأكد من تسليم الامتحان؟ لا يمكن التعديل لاحقاً.")) return;
 
-            try {
-                // *************************************************************
-                // التعديل: البحث باستخدام student_code فقط
-                // حذفنا جزء (&phone=eq...) لأننا لا نريد مطابقة الهاتف من القاعدة
-                // *************************************************************
-                
-                const studentUrl = `${SUPABASE_URL}/rest/v1/${TABLE_STUDENTS}?select=student_name,group_id&student_code=eq.${codeInput}`;
-                
-                console.log("Request URL:", studentUrl); 
+            const btn = document.getElementById("submitBtn");
+            btn.disabled = true;
+            btn.textContent = "جاري حفظ النتيجة...";
 
-                const studentRes = await fetch(studentUrl, { 
-                    method: 'GET',
-                    headers: { 
-                        'apikey': SUPABASE_ANON_KEY,
-                        'Content-Type': 'application/json'
-                    } 
-                });
-
-                if (!studentRes.ok) {
-                    const err = await studentRes.json();
-                    console.error("Supabase Error:", err);
-                    throw new Error("خطأ في الاتصال بقاعدة البيانات.");
-                }
-
-                const students = await studentRes.json();
-
-                // التحقق هل الكود موجود أم لا
-                if (!students || students.length === 0) {
-                    throw new Error("كود الطالب غير صحيح. يرجى المحاولة مرة أخرى.");
-                }
-
-                const studentData = students[0];
-                
-                // *************************************************************
-                // هنا نأخذ البيانات:
-                // الاسم والصف: من قاعدة البيانات
-                // الهاتف: من الإدخال اليدوي (phoneInput)
-                // *************************************************************
-                currentStudent.name = studentData.student_name;
-                currentStudent.phone = phoneInput; // الرقم اليدوي
-                currentStudent.groupId = studentData.group_id;
-
-                console.log("تم العثور على الطالب:", currentStudent.name);
-
-                // 2. البحث عن اسم المجموعة (الصف) باستخدام group_id
-                const groupUrl = `${SUPABASE_URL}/rest/v1/${TABLE_GROUPS}?select=class_name&id=eq.${studentData.group_id}`;
-                const groupRes = await fetch(groupUrl, { headers: { 'apikey': SUPABASE_ANON_KEY } });
-                
-                if (!groupRes.ok) throw new Error("فشل في جلب بيانات المجموعة.");
-                const groups = await groupRes.json();
-
-                if (!groups || groups.length === 0) {
-                    throw new Error("لم يتم العثور على الصف الدراسي المرتبط بهذا الطالب.");
-                }
-
-                currentStudent.className = groups[0].class_name;
-                
-                // 3. جلب الامتحان الخاص بهذا الصف
-                await fetchQuestionsFromSupabase(currentStudent.className);
-
-                // 4. عرض الامتحان
-                document.getElementById("displayStudentName").textContent = currentStudent.name;
-                document.getElementById("displayClassName").textContent = currentStudent.className;
-                
-                showQuestions();
-                document.getElementById("loginSection").classList.add("hidden");
-                document.getElementById("quizSection").classList.remove("hidden");
-
-            } catch (error) {
-                console.error(error);
-                errorMsg.textContent = error.message;
-                errorMsg.classList.remove("hidden");
-                loginBtn.textContent = "تحقق وابدأ الاختبار";
-                loginBtn.disabled = false;
-            }
-        }
-
-        // 2. دالة جلب الأسئلة
-        async function fetchQuestionsFromSupabase(className) {
-            // البحث عن أحدث امتحان مُفعَّل لهذا الصف
-            const quizUrl = `${SUPABASE_URL}/rest/v1/${TABLE_QUIZZES}?select=id&class_name=eq.${encodeURIComponent(className)}&is_active=eq.true&order=created_at.desc&limit=1`;
-
-            let response = await fetch(quizUrl, { headers: { 'apikey': SUPABASE_ANON_KEY } });
-            const quizzes = await response.json();
-
-            if (!quizzes || quizzes.length === 0) {
-                throw new Error(`لا يوجد امتحان مُفعَّل حالياً للصف "${className}".`);
-            }
-
-            const quizId = quizzes[0].id;
-
-            // جلب الأسئلة
-            const questionsUrl = `${SUPABASE_URL}/rest/v1/${TABLE_QUESTIONS}?select=id,question_text,choice_a,choice_b,choice_c,choice_d,correct_answer,explanation&quiz_id=eq.${quizId}`;
-            response = await fetch(questionsUrl, { headers: { 'apikey': SUPABASE_ANON_KEY } });
-            
-            if (!response.ok) throw new Error("فشل في جلب الأسئلة.");
-            const rawQuestions = await response.json();
-
-            questions = rawQuestions.map(q => {
-                const correctChoiceLetter = q.correct_answer ? q.correct_answer.toUpperCase() : 'A';
-                const correctChoiceText = q[`choice_${correctChoiceLetter.toLowerCase()}`];
-
-                return {
-                    id: q.id.toString(),
-                    question: q.question_text,
-                    choices: [q.choice_a, q.choice_b, q.choice_c, q.choice_d],
-                    correct: correctChoiceText,
-                    explanation: q.explanation || ''
-                };
-            });
-        }
-
-        // زر البدء
-        document.getElementById("loginBtn").addEventListener("click", loginAndFetchQuiz);
-
-        // دالة عرض الأسئلة (نفس القديمة)
-        function showQuestions() {
-            const form = document.getElementById("quizForm");
-            form.innerHTML = "";
-            questions.forEach((q, index) => {
-                correctAnswers[q.id] = q.correct;
-                explanations[q.id] = q.explanation;
-
-                let choicesHtml = q.choices.map((c) => `
-                <label>
-                    <input type="radio" name="${q.id}" value="${c}">
-                    <span>${c}</span>
-                </label>
-            `).join("");
-
-                let html = `
-                <div class="card bg-white p-5 rounded-2xl shadow-lg border border-gray-200 fade-in" style="animation-delay: ${index * 100}ms;">
-                    <p class="font-bold text-lg mb-4 text-gray-800">${index + 1}. ${q.question}</p>
-                    <div class="choices space-y-2">${choicesHtml}</div>
-                </div>
-            `;
-                form.innerHTML += html;
-            });
-
-            form.querySelectorAll('input[type="radio"]').forEach(radio => {
-                radio.addEventListener('change', (event) => {
-                    const parent = event.target.closest('.choices');
-                    parent.querySelectorAll('label').forEach(label => label.classList.remove('selected-answer'));
-                    event.target.parentElement.classList.add('selected-answer');
-                });
-            });
-        }
-
-        // زر الإرسال
-        document.getElementById("submitBtn").addEventListener("click", async(e) => {
-            e.preventDefault();
-            
-            // تأكيد بسيط قبل الارسال
-            if (!confirm("هل أنت متأكد من تسليم الإجابات؟")) return;
-
-            document.getElementById("submitBtn").disabled = true;
-            document.getElementById("submitBtn").textContent = "جاري التصحيح...";
-
-            let score = 0, wrong = [], total = questions.length;
-            
+            let score = 0;
+            let wrongIds = [];
             questions.forEach(q => {
-                const selectedRadio = document.querySelector(`input[name="${q.id}"]:checked`);
-                const card = document.querySelector(`input[name="${q.id}"]`).closest('.card');
-
-                // تلوين الإجابات
-                document.querySelectorAll(`input[name="${q.id}"]`).forEach(opt => {
-                    const label = opt.parentElement;
-                    label.classList.remove('selected-answer');
-                    if (opt.value === q.correct) {
-                        label.classList.add('correct-answer');
-                    }
-                });
-
-                if (selectedRadio) {
-                    const selectedLabel = selectedRadio.parentElement;
-                    if (selectedRadio.value === q.correct) {
-                        score++;
-                    } else {
-                        selectedLabel.classList.add('incorrect-answer');
-                        wrong.push(q.id);
-                        if (q.explanation) addExplanation(card, q.explanation);
-                    }
-                } else {
-                    wrong.push(q.id);
-                    if (q.explanation) addExplanation(card, q.explanation);
-                }
+                const picked = document.querySelector(`input[name="q${q.id}"]:checked`);
+                if (picked && picked.value === q.correct) score++;
+                else wrongIds.push(q.id);
             });
 
-            function addExplanation(card, text) {
-                if (card.querySelector('.explanation')) return; 
-                const exp = document.createElement("div");
-                exp.className = "explanation";
-                exp.innerHTML = `<b>💡 الشرح:</b> ${text}`;
-                card.appendChild(exp);
-            }
-
-            const resultDiv = document.getElementById("result");
-            resultDiv.innerHTML = `✅ نتيجتك النهائية: ${score} / ${total}`;
-            resultDiv.classList.remove('hidden');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            document.getElementById("submitBtn").style.display = 'none';
-
+            // حفظ النتيجة
             try {
-                // إرسال النتيجة باستخدام البيانات المخزنة من خطوة الدخول
-                const dataToSubmit = {
-                    student_name: currentStudent.name,  // الاسم من قاعدة البيانات
-                    student_phone: currentStudent.phone, // الهاتف المدخل
-                    class_name: currentStudent.className, // الصف من قاعدة البيانات
-                    score: score,
-                    total_questions: total,
-                    wrong_questions_ids: wrong.join(',')
-                };
-
-                const response = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE_RESULTS}`, {
+                await fetch(`${SUPABASE_URL}/rest/v1/${DB.RESULTS}`, {
                     method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "apikey": SUPABASE_ANON_KEY,
-                        "Prefer": "return=minimal"
-                    },
-                    body: JSON.stringify(dataToSubmit)
+                    headers: { "Content-Type": "application/json", "apikey": SUPABASE_ANON_KEY },
+                    body: JSON.stringify({
+                        student_name: student.name,
+                        student_code: student.code, // مهم جداً للمنع
+                        student_phone: student.phone,
+                        class_name: student.className,
+                        quiz_id: currentQuizId,
+                        score: score,
+                        total_questions: questions.length,
+                        wrong_questions_ids: wrongIds.join(',')
+                    })
                 });
 
-                if (!response.ok) {
-                    console.error('Failed to save result:', response.status);
-                    alert("حدث خطأ في حفظ النتيجة، لكن تم تصحيح الامتحان بنجاح.");
-                } else {
-                    console.log('Result saved!');
-                }
-            } catch (error) {
-                console.error('Error:', error);
+                // عرض النتيجة
+                document.getElementById("quizContainer").classList.add("hidden");
+                document.getElementById("finalScore").textContent = `${score} / ${questions.length}`;
+                document.getElementById("resName").textContent = student.name;
+                document.getElementById("resCode").textContent = student.code;
+                document.getElementById("finalResultContainer").classList.remove("hidden");
+                window.scrollTo(0, 0);
+
+            } catch (e) {
+                alert("حدث خطأ أثناء الحفظ، تم إظهار النتيجة محلياً.");
             }
         });
     </script>
 </body>
 </html>
-

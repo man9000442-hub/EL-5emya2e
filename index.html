@@ -400,22 +400,13 @@
         function buildRecordsTable(records) {
             if (records.length === 0) return `<p class="text-gray-500 p-4 text-center">لا توجد سجلات.</p>`;
 
-            const groupedByMonth = records.reduce((acc, record) => {
-                const month = record.lesson_month || 'عام';
-                if (!acc[month]) acc[month] = [];
-                acc[month].push(record);
-                return acc;
-            }, {});
-
             let tableHtml = `
                 <table class="w-full border-collapse text-center text-sm">
                     <thead class="bg-indigo-700 text-white shadow-lg">
                         <tr>
-                            <th class="p-3">الشهر</th>
-                            <th class="p-3">التاريخ</th>
                             <th class="p-3">حصة</th>
-                            <th class="p-3">حضور</th>
-                            <th class="p-3">واجب (10)</th> <th class="p-3">تسميع (10)</th>
+                            <th class="p-3">واجب (10)</th>
+                            <th class="p-3">تسميع (10)</th>
                             <th class="p-3">امتحان (10)</th>
                             <th class="p-3">شامل (20)</th>
                         </tr>
@@ -425,38 +416,27 @@
 
             let rowCounter = 0;
 
-            for (const month in groupedByMonth) {
-                groupedByMonth[month].forEach(record => {
-                    const dateDisplay = new Date(record.lesson_date).toLocaleDateString('ar-EG', {
-                        day: 'numeric',
-                        month: 'numeric'
-                    });
-                    const attendanceClass = record.attendance === 'حضر' ? 'text-green-600 font-bold' : 'text-red-600 font-bold';
-                    
-                    // 🆕 [تم التعديل] عرض درجة الواجب بدلاً من العلامة
-                    const homeworkDisplay = !isEmptyCell(record.homework_degree) ? `<span class="font-bold text-blue-600">${record.homework_degree}</span>` : '—';
+            records.forEach(record => {
+                // عرض درجة الواجب بدلاً من العلامة
+                const homeworkDisplay = !isEmptyCell(record.homework_degree) ? `<span class="font-bold text-blue-600">${record.homework_degree}</span>` : '—';
 
-                    const recDegree = !isEmptyCell(record.recitation_degree) ? record.recitation_degree : '—';
-                    const examDegree = !isEmptyCell(record.exam_degree) ? record.exam_degree : '—';
-                    const compDegree = !isEmptyCell(record.comprehensive_exam_degree) ? `<span class="text-purple-700 font-bold">${record.comprehensive_exam_degree}</span>` : '—';
+                const recDegree = !isEmptyCell(record.recitation_degree) ? record.recitation_degree : '—';
+                const examDegree = !isEmptyCell(record.exam_degree) ? record.exam_degree : '—';
+                const compDegree = !isEmptyCell(record.comprehensive_exam_degree) ? `<span class="text-purple-700 font-bold">${record.comprehensive_exam_degree}</span>` : '—';
 
-                    rowCounter++;
-                    const rowClass = rowCounter % 2 === 0 ? 'bg-gray-50' : 'bg-white';
+                rowCounter++;
+                const rowClass = rowCounter % 2 === 0 ? 'bg-gray-50' : 'bg-white';
 
-                    tableHtml += `
-                        <tr class="border-b ${rowClass} hover:bg-indigo-50 transition">
-                            <td class="p-2 font-semibold">${month}</td>
-                            <td class="p-2 text-gray-600">${dateDisplay}</td>
-                            <td class="p-2">${record.lesson_number || '—'}</td>
-                            <td class="p-2 ${attendanceClass}">${record.attendance}</td>
-                            <td class="p-2">${homeworkDisplay}</td>
-                            <td class="p-2 font-medium">${recDegree}</td>
-                            <td class="p-2 font-medium">${examDegree}</td>
-                            <td class="p-2">${compDegree}</td>
-                        </tr>
-                    `;
-                });
-            }
+                tableHtml += `
+                    <tr class="border-b ${rowClass} hover:bg-indigo-50 transition">
+                        <td class="p-2">${record.lesson_number || '—'}</td>
+                        <td class="p-2">${homeworkDisplay}</td>
+                        <td class="p-2 font-medium">${recDegree}</td>
+                        <td class="p-2 font-medium">${examDegree}</td>
+                        <td class="p-2">${compDegree}</td>
+                    </tr>
+                `;
+            });
 
             tableHtml += `</tbody></table>`;
             return tableHtml;

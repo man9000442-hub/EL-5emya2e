@@ -6,29 +6,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mr Ayman Quiz</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body {
             font-family: 'Cairo', sans-serif;
         }
         
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
-        .fade-in {
-            animation: fadeIn 0.5s ease-out forwards;
-        }
+        .fade-in { animation: fadeIn 0.5s ease-out forwards; }
         
         .card label {
             transition: all 0.2s ease-in-out;
@@ -48,9 +40,7 @@
             border-color: #6366F1;
         }
         
-        .card input[type="radio"] {
-            display: none;
-        }
+        .card input[type="radio"] { display: none; }
         
         .selected-answer {
             background-color: #4338CA !important;
@@ -86,53 +76,53 @@
 
     <header class="w-full max-w-4xl text-center bg-gradient-to-r from-blue-400 to-indigo-600 p-6 rounded-3xl shadow-xl mb-8 fade-in text-white">
         <h1 class="text-4xl font-extrabold">امتحان الخيميائي</h1>
-        <p class="text-xl mt-2 opacity-95">بالتوفيق يا صديقي</p>
+        <p class="text-xl mt-2 opacity-95">أهلاً بك يا بطل</p>
     </header>
 
-    <main id="classSelection" class="w-full max-w-md bg-white p-8 rounded-2xl shadow-xl text-center fade-in border border-gray-200">
-        <h2 class="text-2xl font-bold mb-6 text-gray-800">اختر الصف الدراسي</h2>
-        <select id="classSelect" class="w-full bg-gray-100... (إلخ)">
-            <option value="">-- اختر الصف --</option>
-            <option value="g1">أولى إعدادي</option>
-            <option value="g2">تانية إعدادي</option>
-            <option value="g3">تالتة إعدادي</option>
-            <option value="s1">أولى ثانوي</option>
-            <option value="s2">تانية ثانوي</option>
-            <option value="s3">تالتة ثانوي</option>
-        </select>
-        <button id="startBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg mt-6 transition transform hover:scale-[1.02] shadow-md">
-            ابـدأ الاخـتـبـار
+    <main id="loginSection" class="w-full max-w-md bg-white p-8 rounded-2xl shadow-xl text-center fade-in border border-gray-200">
+        <h2 class="text-2xl font-bold mb-6 text-gray-800">تسجيل الدخول للامتحان</h2>
+        
+        <div class="space-y-4 text-right">
+            <div>
+                <label class="block text-gray-700 font-bold mb-2">كود الطالب</label>
+                <input id="inputCode" type="text" placeholder="أدخل الكود الخاص بك" class="w-full p-3 bg-gray-50 rounded-lg border-2 border-gray-300 focus:outline-none focus:border-indigo-500 transition">
+            </div>
+            
+            <div>
+                <label class="block text-gray-700 font-bold mb-2">رقم الهاتف المسجل</label>
+                <input id="inputPhone" type="tel" placeholder="أدخل رقم الهاتف" class="w-full p-3 bg-gray-50 rounded-lg border-2 border-gray-300 focus:outline-none focus:border-indigo-500 transition">
+            </div>
+        </div>
+
+        <button id="loginBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg mt-6 transition transform hover:scale-[1.02] shadow-md">
+            تحقق وابدأ الاختبار
         </button>
+        <p id="loginError" class="text-red-500 mt-4 hidden font-bold text-sm"></p>
     </main>
 
     <section id="quizSection" class="hidden w-full max-w-4xl mt-8 fade-in">
-        <div class="bg-white p-6 rounded-2xl shadow-xl mb-6 border border-gray-200">
-            <input id="studentName" placeholder="اكتب اسمك هنا" class="w-full p-3 bg-gray-100 text-gray-900 rounded-lg border-2 border-gray-300 focus:outline-none focus:border-purple-500 transition mb-4" required>
-            <input id="studentPhone" placeholder="اكتب رقم تليفونك هنا" class="w-full p-3 bg-gray-100 text-gray-900 rounded-lg border-2 border-gray-300 focus:outline-none focus:border-purple-500 transition" required>
+        <div class="bg-blue-50 border-r-4 border-blue-500 p-4 rounded-lg shadow-sm mb-6 flex justify-between items-center">
+            <div>
+                <p class="text-blue-900 font-bold text-lg">مرحباً: <span id="displayStudentName" class="text-indigo-700"></span></p>
+                <p class="text-blue-700 text-sm">الصف: <span id="displayClassName"></span></p>
+            </div>
         </div>
+
         <form id="quizForm" class="space-y-6"></form>
+        
         <div id="result" class="mt-6 text-2xl font-bold text-center p-4 bg-green-50 text-green-800 rounded-2xl shadow-lg hidden border-l-8 border-green-400"></div>
+        
         <button id="submitBtn" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg mt-6 transition transform hover:scale-[1.02] shadow-md">
             إرسال الإجابات
         </button>
     </section>
 
-    <footer style="
-    position: relative; z-index: 9999; text-align: center; padding: 40px 0; margin-top: 50px; background: transparent;
-">
-        <div style="
-        background: rgba(255, 255, 255, 0.95); color: #111; max-width: 400px; margin: 0 auto; border-radius: 20px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.3); border: 1px solid #ddd; padding: 25px;
-    ">
+    <footer style="position: relative; z-index: 9999; text-align: center; padding: 40px 0; margin-top: 50px; background: transparent;">
+        <div style="background: rgba(255, 255, 255, 0.95); color: #111; max-width: 400px; margin: 0 auto; border-radius: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); border: 1px solid #ddd; padding: 25px;">
             <p style="font-weight: 600; margin-bottom: 15px; font-size: 16px;">
-                صُمّم بواسطة
-                <span style="color: #2563eb; font-weight: 700;">Abdelrahman Tarek</span>
+                صُمّم بواسطة <span style="color: #2563eb; font-weight: 700;">Abdelrahman Tarek</span>
             </p>
-            <a href="https://wa.me/201094724932" target="_blank" style="
-                display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(to right, #2563eb, #3b82f6);
-                color: #fff; font-weight: 600; font-size: 14px; padding: 10px 18px; border-radius: 9999px;
-                text-decoration: none; box-shadow: 0 2px 10px rgba(0,0,0,0.2); transition: all 0.3s;
-            " onmouseover="this.style.background='linear-gradient(to right,#3b82f6,#60a5fa)'" onmouseout="this.style.background='linear-gradient(to right,#2563eb,#3b82f6)'">
+            <a href="https://wa.me/201094724932" target="_blank" style="display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(to right, #2563eb, #3b82f6); color: #fff; font-weight: 600; font-size: 14px; padding: 10px 18px; border-radius: 9999px; text-decoration: none; box-shadow: 0 2px 10px rgba(0,0,0,0.2); transition: all 0.3s;">
                 <i class="fa-solid fa-envelope"></i> تواصل معنا
             </a>
         </div>
@@ -140,68 +130,149 @@
 
     <script>
         // *************************************************************
-        // ** ⚠️ يجب استبدال القيم Placeholder بمفاتيحك الحقيقية ⚠️ **
+        // ** إعدادات Supabase **
         // *************************************************************
         const SUPABASE_URL = "https://arbbxmnjviryxkmhwdgk.supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyYmJ4bW5qdmlyeXhrbWh3ZGdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI2OTU1NDEsImV4cCI6MjA3ODI3MTU0MX0.G-MsJtbQ1LlPZO-Vob6nKzdClHmOYu6RFOKi62FKKNk";
+        
+        // الجداول
         const TABLE_RESULTS = "alchemiya_results";
         const TABLE_QUIZZES = "alchemiya_quizzes";
         const TABLE_QUESTIONS = "alchemiya_questions";
+        const TABLE_STUDENTS = "alchemiya_students";
+        const TABLE_GROUPS = "alchemiya_groups";
         // *************************************************************
 
         let questions = [];
         let correctAnswers = {};
         let explanations = {};
-        let selectedClass = "";
-
-        const classNames = {
-            // 🚨 إضافة الصفوف الإعدادية
-            g1: "أولى إعدادي",
-            g2: "تانية إعدادي",
-            g3: "تالتة إعدادي",
-
-            s1: "أولى ثانوي",
-            s2: "تانية ثانوي",
-            s3: "تالتة ثانوي"
+        
+        // متغيرات لتخزين بيانات الطالب المسجل حالياً
+        let currentStudent = {
+            name: "",
+            phone: "",
+            className: "",
+            groupId: ""
         };
 
-        // 🚨 دالة جلب الأسئلة من Supabase
-        async function fetchQuestionsFromSupabase(classKey) {
-            const className = classNames[classKey];
+        // 1. دالة تسجيل الدخول وجلب البيانات
+// 1. دالة تسجيل الدخول وجلب البيانات (معدلة ومصححة)
+// 1. دالة تسجيل الدخول وجلب البيانات (تعديل: البحث بالكود فقط)
+        async function loginAndFetchQuiz() {
+            const codeInput = document.getElementById("inputCode").value.trim();
+            const phoneInput = document.getElementById("inputPhone").value.trim(); // هذا الرقم سيتم حفظه يدوياً
+            const loginBtn = document.getElementById("loginBtn");
+            const errorMsg = document.getElementById("loginError");
 
-            // 1. البحث عن أحدث امتحان مُفعَّل للصف المطلوب
-            const quizUrl = `${SUPABASE_URL}/rest/v1/${TABLE_QUIZZES}?select=id&class_name=eq.${className}&is_active=eq.true&order=created_at.desc&limit=1`;
+            // نتحقق أن الطالب كتب الرقم والكود، لكننا سنبحث بالكود فقط
+            if (!codeInput || !phoneInput) {
+                alert("يرجى إدخال الكود ورقم الهاتف");
+                return;
+            }
 
-            let response = await fetch(quizUrl, {
-                method: 'GET',
-                headers: {
-                    'apikey': SUPABASE_ANON_KEY
+            loginBtn.textContent = "جاري التحقق...";
+            loginBtn.disabled = true;
+            errorMsg.classList.add("hidden");
+
+            try {
+                // *************************************************************
+                // التعديل: البحث باستخدام student_code فقط
+                // حذفنا جزء (&phone=eq...) لأننا لا نريد مطابقة الهاتف من القاعدة
+                // *************************************************************
+                
+                const studentUrl = `${SUPABASE_URL}/rest/v1/${TABLE_STUDENTS}?select=student_name,group_id&student_code=eq.${codeInput}`;
+                
+                console.log("Request URL:", studentUrl); 
+
+                const studentRes = await fetch(studentUrl, { 
+                    method: 'GET',
+                    headers: { 
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Content-Type': 'application/json'
+                    } 
+                });
+
+                if (!studentRes.ok) {
+                    const err = await studentRes.json();
+                    console.error("Supabase Error:", err);
+                    throw new Error("خطأ في الاتصال بقاعدة البيانات.");
                 }
-            });
 
-            if (!response.ok) throw new Error("فشل في جلب بيانات الامتحان الأساسية.");
+                const students = await studentRes.json();
+
+                // التحقق هل الكود موجود أم لا
+                if (!students || students.length === 0) {
+                    throw new Error("كود الطالب غير صحيح. يرجى المحاولة مرة أخرى.");
+                }
+
+                const studentData = students[0];
+                
+                // *************************************************************
+                // هنا نأخذ البيانات:
+                // الاسم والصف: من قاعدة البيانات
+                // الهاتف: من الإدخال اليدوي (phoneInput)
+                // *************************************************************
+                currentStudent.name = studentData.student_name;
+                currentStudent.phone = phoneInput; // الرقم اليدوي
+                currentStudent.groupId = studentData.group_id;
+
+                console.log("تم العثور على الطالب:", currentStudent.name);
+
+                // 2. البحث عن اسم المجموعة (الصف) باستخدام group_id
+                const groupUrl = `${SUPABASE_URL}/rest/v1/${TABLE_GROUPS}?select=class_name&id=eq.${studentData.group_id}`;
+                const groupRes = await fetch(groupUrl, { headers: { 'apikey': SUPABASE_ANON_KEY } });
+                
+                if (!groupRes.ok) throw new Error("فشل في جلب بيانات المجموعة.");
+                const groups = await groupRes.json();
+
+                if (!groups || groups.length === 0) {
+                    throw new Error("لم يتم العثور على الصف الدراسي المرتبط بهذا الطالب.");
+                }
+
+                currentStudent.className = groups[0].class_name;
+                
+                // 3. جلب الامتحان الخاص بهذا الصف
+                await fetchQuestionsFromSupabase(currentStudent.className);
+
+                // 4. عرض الامتحان
+                document.getElementById("displayStudentName").textContent = currentStudent.name;
+                document.getElementById("displayClassName").textContent = currentStudent.className;
+                
+                showQuestions();
+                document.getElementById("loginSection").classList.add("hidden");
+                document.getElementById("quizSection").classList.remove("hidden");
+
+            } catch (error) {
+                console.error(error);
+                errorMsg.textContent = error.message;
+                errorMsg.classList.remove("hidden");
+                loginBtn.textContent = "تحقق وابدأ الاختبار";
+                loginBtn.disabled = false;
+            }
+        }
+
+        // 2. دالة جلب الأسئلة
+        async function fetchQuestionsFromSupabase(className) {
+            // البحث عن أحدث امتحان مُفعَّل لهذا الصف
+            const quizUrl = `${SUPABASE_URL}/rest/v1/${TABLE_QUIZZES}?select=id&class_name=eq.${encodeURIComponent(className)}&is_active=eq.true&order=created_at.desc&limit=1`;
+
+            let response = await fetch(quizUrl, { headers: { 'apikey': SUPABASE_ANON_KEY } });
             const quizzes = await response.json();
 
-            if (quizzes.length === 0) {
+            if (!quizzes || quizzes.length === 0) {
                 throw new Error(`لا يوجد امتحان مُفعَّل حالياً للصف "${className}".`);
             }
 
             const quizId = quizzes[0].id;
 
-            // 2. جلب جميع الأسئلة المرتبطة بهذا الامتحان
+            // جلب الأسئلة
             const questionsUrl = `${SUPABASE_URL}/rest/v1/${TABLE_QUESTIONS}?select=id,question_text,choice_a,choice_b,choice_c,choice_d,correct_answer,explanation&quiz_id=eq.${quizId}`;
-            response = await fetch(questionsUrl, {
-                method: 'GET',
-                headers: {
-                    'apikey': SUPABASE_ANON_KEY
-                }
-            });
-
-            if (!response.ok) throw new Error("فشل في جلب الأسئلة من قاعدة البيانات.");
+            response = await fetch(questionsUrl, { headers: { 'apikey': SUPABASE_ANON_KEY } });
+            
+            if (!response.ok) throw new Error("فشل في جلب الأسئلة.");
             const rawQuestions = await response.json();
 
-            // 3. إعادة تهيئة البيانات لتناسب طريقة عرض الأسئلة
-            return rawQuestions.map(q => {
+            questions = rawQuestions.map(q => {
                 const correctChoiceLetter = q.correct_answer ? q.correct_answer.toUpperCase() : 'A';
                 const correctChoiceText = q[`choice_${correctChoiceLetter.toLowerCase()}`];
 
@@ -215,33 +286,10 @@
             });
         }
 
-        document.getElementById("startBtn").addEventListener("click", async() => {
-            selectedClass = document.getElementById("classSelect").value;
-            if (!selectedClass) {
-                alert("من فضلك اختر الصف الدراسي أولاً");
-                return;
-            }
+        // زر البدء
+        document.getElementById("loginBtn").addEventListener("click", loginAndFetchQuiz);
 
-            document.getElementById("startBtn").textContent = "جاري تحميل الأسئلة...";
-            document.getElementById("startBtn").disabled = true;
-
-            try {
-                questions = await fetchQuestionsFromSupabase(selectedClass);
-
-                if (questions.length === 0) {
-                    throw new Error("لم يتم العثور على أسئلة لهذا الامتحان المُفعل.");
-                }
-
-                showQuestions();
-                document.getElementById("classSelection").classList.add("hidden");
-                document.getElementById("quizSection").classList.remove("hidden");
-            } catch (error) {
-                alert(`حدث خطأ أثناء تحميل الأسئلة: ${error.message}.`);
-                document.getElementById("startBtn").textContent = "ابدأ الاختبار";
-                document.getElementById("startBtn").disabled = false;
-            }
-        });
-
+        // دالة عرض الأسئلة (نفس القديمة)
         function showQuestions() {
             const form = document.getElementById("quizForm");
             form.innerHTML = "";
@@ -249,7 +297,7 @@
                 correctAnswers[q.id] = q.correct;
                 explanations[q.id] = q.explanation;
 
-                let choicesHtml = q.choices.map((c, idx) => `
+                let choicesHtml = q.choices.map((c) => `
                 <label>
                     <input type="radio" name="${q.id}" value="${c}">
                     <span>${c}</span>
@@ -274,25 +322,23 @@
             });
         }
 
+        // زر الإرسال
         document.getElementById("submitBtn").addEventListener("click", async(e) => {
             e.preventDefault();
-            const name = document.getElementById("studentName").value.trim();
-            const phone = document.getElementById("studentPhone").value.trim();
-            if (!name || !phone) {
-                alert("من فضلك اكتب الاسم ورقم التليفون للمتابعة");
-                return;
-            }
+            
+            // تأكيد بسيط قبل الارسال
+            if (!confirm("هل أنت متأكد من تسليم الإجابات؟")) return;
 
             document.getElementById("submitBtn").disabled = true;
             document.getElementById("submitBtn").textContent = "جاري التصحيح...";
 
-            let score = 0,
-                wrong = [],
-                total = questions.length;
+            let score = 0, wrong = [], total = questions.length;
+            
             questions.forEach(q => {
                 const selectedRadio = document.querySelector(`input[name="${q.id}"]:checked`);
-                const card = selectedRadio ? selectedRadio.closest(".card") : document.querySelector(`input[name="${q.id}"]`).closest('.card');
+                const card = document.querySelector(`input[name="${q.id}"]`).closest('.card');
 
+                // تلوين الإجابات
                 document.querySelectorAll(`input[name="${q.id}"]`).forEach(opt => {
                     const label = opt.parentElement;
                     label.classList.remove('selected-answer');
@@ -308,40 +354,34 @@
                     } else {
                         selectedLabel.classList.add('incorrect-answer');
                         wrong.push(q.id);
-                        if (q.explanation) {
-                            const exp = document.createElement("div");
-                            exp.className = "explanation";
-                            exp.innerHTML = `<b>💡 الشرح:</b> ${q.explanation}`;
-                            card.appendChild(exp);
-                        }
+                        if (q.explanation) addExplanation(card, q.explanation);
                     }
                 } else {
                     wrong.push(q.id);
-                    if (q.explanation) {
-                        const exp = document.createElement("div");
-                        exp.className = "explanation";
-                        exp.innerHTML = `<b>💡 الشرح:</b> ${q.explanation}`;
-                        card.appendChild(exp);
-                    }
+                    if (q.explanation) addExplanation(card, q.explanation);
                 }
             });
+
+            function addExplanation(card, text) {
+                if (card.querySelector('.explanation')) return; 
+                const exp = document.createElement("div");
+                exp.className = "explanation";
+                exp.innerHTML = `<b>💡 الشرح:</b> ${text}`;
+                card.appendChild(exp);
+            }
 
             const resultDiv = document.getElementById("result");
             resultDiv.innerHTML = `✅ نتيجتك النهائية: ${score} / ${total}`;
             resultDiv.classList.remove('hidden');
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
-
+            window.scrollTo({ top: 0, behavior: 'smooth' });
             document.getElementById("submitBtn").style.display = 'none';
 
             try {
-                // إرسال النتيجة إلى جدول quiz_results
+                // إرسال النتيجة باستخدام البيانات المخزنة من خطوة الدخول
                 const dataToSubmit = {
-                    student_name: name,
-                    student_phone: phone,
-                    class_name: classNames[selectedClass],
+                    student_name: currentStudent.name,  // الاسم من قاعدة البيانات
+                    student_phone: currentStudent.phone, // الهاتف المدخل
+                    class_name: currentStudent.className, // الصف من قاعدة البيانات
                     score: score,
                     total_questions: total,
                     wrong_questions_ids: wrong.join(',')
@@ -358,15 +398,15 @@
                 });
 
                 if (!response.ok) {
-                    console.error('Failed to save result to Supabase:', response.status, response.statusText);
+                    console.error('Failed to save result:', response.status);
+                    alert("حدث خطأ في حفظ النتيجة، لكن تم تصحيح الامتحان بنجاح.");
                 } else {
-                    console.log('Result successfully saved to Supabase!');
+                    console.log('Result saved!');
                 }
             } catch (error) {
-                console.error('An error occurred during API fetch:', error);
+                console.error('Error:', error);
             }
         });
     </script>
 </body>
-
 </html>

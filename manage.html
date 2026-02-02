@@ -1,0 +1,1568 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>لوحة إدارة الأستاذ الخيميائي - النظام الشامل</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Cairo", sans-serif;
+        background-color: #f3f4f6;
+      }
+
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: #6366f1;
+        border-radius: 4px;
+      }
+
+      .tab-btn.active {
+        background-color: #4f46e5;
+        color: white;
+        border-bottom: 3px solid #312e81;
+      }
+
+      .tab-btn {
+        transition: all 0.3s ease;
+      }
+
+      .section-content {
+        animation: fadeIn 0.4s ease-in-out;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      /* Print Styles */
+
+      @media print {
+        body * {
+          visibility: hidden;
+        }
+        #cardsToPrint,
+        #cardsToPrint * {
+          visibility: visible;
+        }
+        #cardsToPrint {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 100%;
+          padding: 10mm;
+        }
+        .student-card {
+          width: 80mm;
+          height: 50mm;
+          border: 1px solid #333;
+          margin: 5mm;
+          padding: 5mm;
+          box-sizing: border-box;
+          page-break-inside: avoid;
+          text-align: center;
+          display: block;
+          float: left;
+        }
+      }
+    </style>
+  </head>
+
+  <body class="text-gray-800">
+    <div class="bg-white shadow-md sticky top-0 z-30 print:hidden">
+      <div class="container mx-auto px-4">
+        <div
+          class="flex justify-between items-center py-4 border-b border-gray-100"
+        >
+          <div class="flex items-center gap-3">
+            <h1 class="text-xl font-extrabold text-indigo-900">
+              الأستاذ الخيميائي
+            </h1>
+          </div>
+          <div
+            class="text-sm font-semibold text-gray-600 bg-gray-100 px-3 py-1 rounded-full"
+          >
+            إدارة متكاملة
+          </div>
+        </div>
+        <div class="flex overflow-x-auto space-x-1 space-x-reverse py-2">
+          <button
+            onclick="switchTab('dashboard')"
+            class="tab-btn active px-4 py-2 rounded-lg font-bold text-sm whitespace-nowrap"
+          >
+            📊 الرئيسية
+          </button>
+          <button
+            onclick="switchTab('quizzes')"
+            class="tab-btn bg-white text-gray-600 hover:bg-gray-50 px-4 py-2 rounded-lg font-bold text-sm whitespace-nowrap"
+          >
+            📝 الامتحانات
+          </button>
+          <button
+            onclick="switchTab('students')"
+            class="tab-btn bg-white text-gray-600 hover:bg-gray-50 px-4 py-2 rounded-lg font-bold text-sm whitespace-nowrap"
+          >
+            🧑‍🎓 الطلاب والمجموعات
+          </button>
+          <button
+            onclick="switchTab('results')"
+            class="tab-btn bg-white text-gray-600 hover:bg-gray-50 px-4 py-2 rounded-lg font-bold text-sm whitespace-nowrap"
+          >
+            📑 نتائج الامتحانات
+          </button>
+          <button
+            onclick="switchTab('ranking')"
+            class="tab-btn bg-white text-gray-600 hover:bg-gray-50 px-4 py-2 rounded-lg font-bold text-sm whitespace-nowrap"
+          >
+            🏆 الترتيب
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <main class="container mx-auto p-4 sm:p-6 pb-20">
+      <div id="dashboard-section" class="section-content">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div class="bg-indigo-600 text-white p-6 rounded-2xl shadow-lg">
+            <h3 class="text-lg font-semibold opacity-90">الطلاب المسجلين</h3>
+            <p class="text-4xl font-bold mt-2" id="dashTotalStudents">...</p>
+          </div>
+          <div
+            class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100"
+          >
+            <h3 class="text-lg font-semibold text-gray-600">المجموعات</h3>
+            <p
+              class="text-4xl font-bold mt-2 text-indigo-600"
+              id="dashTotalGroups"
+            >
+              ...
+            </p>
+          </div>
+          <div
+            class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100"
+          >
+            <h3 class="text-lg font-semibold text-gray-600">
+              الامتحانات النشطة
+            </h3>
+            <p
+              class="text-4xl font-bold mt-2 text-green-600"
+              id="dashActiveQuizzes"
+            >
+              ...
+            </p>
+          </div>
+        </div>
+        <div class="bg-blue-50 border-r-4 border-blue-500 p-4 rounded shadow">
+          <p class="font-bold text-blue-800">
+            مرحباً بك في لوحة التحكم الجديدة.
+          </p>
+          <p class="text-sm text-blue-600">
+            تم دمج جميع الصفحات (الطلاب، الامتحانات، النتائج، الترتيب) في واجهة
+            واحدة سريعة.
+          </p>
+        </div>
+      </div>
+
+      <div id="quizzes-section" class="section-content hidden">
+        <div id="quizListSection">
+          <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold text-gray-800">مكتبة الامتحانات</h2>
+            <button
+              id="showNewQuizFormBtn"
+              class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-xl shadow transition"
+            >
+              + امتحان جديد
+            </button>
+          </div>
+          <div class="bg-white rounded-xl shadow overflow-hidden">
+            <div class="overflow-x-auto">
+              <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                  <tr>
+                    <th class="px-6 py-4 text-right">#</th>
+                    <th class="px-6 py-4 text-right">الامتحان</th>
+                    <th class="px-6 py-4 text-right">الصف</th>
+                    <th class="px-6 py-4 text-center">الأسئلة</th>
+                    <th class="px-6 py-4 text-center">الحالة</th>
+                    <th class="px-6 py-4 text-center">تحكم</th>
+                  </tr>
+                </thead>
+                <tbody
+                  id="quizListTableBody"
+                  class="bg-white divide-y divide-gray-200"
+                ></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div
+          id="newQuizSection"
+          class="hidden bg-white p-6 rounded-xl shadow mt-4"
+        >
+          <h3 class="font-bold mb-4">إنشاء امتحان</h3>
+          <form id="newQuizForm" class="space-y-4">
+            <input
+              type="text"
+              id="newQuizName"
+              placeholder="اسم الامتحان"
+              class="w-full p-2 border rounded"
+            />
+            <select id="newQuizClass" class="w-full p-2 border rounded">
+              <option value="g1">أولى إعدادي</option>
+              <option value="g2">تانية إعدادي</option>
+              <option value="g3">تالتة إعدادي</option>
+              <option value="s1">أولى ثانوي</option>
+              <option value="s2">تانية ثانوي</option>
+              <option value="s3">تالتة ثانوي</option>
+            </select>
+            <button
+              type="submit"
+              class="bg-indigo-600 text-white px-4 py-2 rounded"
+            >
+              حفظ
+            </button>
+            <button
+              type="button"
+              onclick="cancelNewQuiz()"
+              class="bg-gray-300 px-4 py-2 rounded"
+            >
+              إلغاء
+            </button>
+          </form>
+        </div>
+        <div id="manageQuizDetailsSection" class="hidden mt-4">
+          <button
+            onclick="closeEditMode()"
+            class="mb-4 text-indigo-600 font-bold"
+          >
+            عودة
+          </button>
+          <h3 class="text-xl font-bold">
+            تعديل: <span id="editingQuizName"></span>
+          </h3>
+          <button
+            onclick="openAddQuestionModal()"
+            class="bg-green-600 text-white px-4 py-2 rounded my-4"
+          >
+            + سؤال جديد
+          </button>
+          <div id="quizQuestionsContainer" class="space-y-2"></div>
+        </div>
+      </div>
+
+      <div id="students-section" class="section-content hidden">
+        <div class="flex flex-wrap gap-2 mb-6">
+          <button
+            onclick="showStudentView('list')"
+            class="bg-indigo-100 text-indigo-800 px-4 py-2 rounded-lg font-bold hover:bg-indigo-200"
+          >
+            📋 قائمة الطلاب
+          </button>
+          <button
+            onclick="showStudentView('groups')"
+            class="bg-purple-100 text-purple-800 px-4 py-2 rounded-lg font-bold hover:bg-purple-200"
+          >
+            🏫 إدارة المجموعات
+          </button>
+          <button
+            onclick="showStudentView('bulk')"
+            class="bg-green-100 text-green-800 px-4 py-2 rounded-lg font-bold hover:bg-green-200"
+          >
+            🚀 السجل الجماعي
+          </button>
+        </div>
+
+        <div id="view-groups" class="hidden">
+          <h3 class="font-bold mb-2">إضافة مجموعة</h3>
+          <form id="newGroupForm" class="flex gap-2 mb-4">
+            <input type="hidden" id="groupIdToEdit" />
+            <input
+              type="text"
+              id="groupName"
+              placeholder="اسم المجموعة"
+              required
+              class="border p-2 rounded"
+            />
+            <select id="groupClass" class="border p-2 rounded">
+              <option value="أولى إعدادي">أولى إعدادي</option>
+              <option value="تانية إعدادي">تانية إعدادي</option>
+              <option value="تالتة إعدادي">تالتة إعدادي</option>
+              <option value="أولى ثانوي">أولى ثانوي</option>
+              <option value="تانية ثانوي">تانية ثانوي</option>
+              <option value="تالتة ثانوي">تالتة ثانوي</option>
+            </select>
+            <button
+              type="submit"
+              id="addGroupBtn"
+              class="bg-purple-600 text-white px-4 py-2 rounded"
+            >
+              حفظ
+            </button>
+          </form>
+          <table class="w-full bg-white shadow rounded">
+            <tbody id="groupsTableBody"></tbody>
+          </table>
+        </div>
+
+        <div id="view-list">
+          <div
+            class="bg-white p-4 rounded shadow mb-4 grid grid-cols-1 md:grid-cols-5 gap-2"
+          >
+            <input
+              type="text"
+              id="studentFilterName"
+              placeholder="بحث بالاسم"
+              class="p-2 border rounded"
+            />
+            <input
+              type="text"
+              id="studentFilterCode"
+              placeholder="بحث بالكود"
+              class="p-2 border rounded"
+            />
+            <select id="studentFilterGroup" class="p-2 border rounded">
+              <option value="all">كل المجموعات</option>
+            </select>
+            <button
+              onclick="fetchStudents()"
+              class="bg-indigo-600 text-white rounded"
+            >
+              بحث
+            </button>
+            <button
+              onclick="printStudentCards()"
+              class="bg-gray-700 text-white rounded"
+            >
+              طباعة كروت
+            </button>
+          </div>
+          <div class="mb-4">
+            <button
+              onclick="showStudentForm()"
+              class="bg-green-600 text-white px-4 py-2 rounded font-bold"
+            >
+              + طالب جديد
+            </button>
+          </div>
+          <div
+            id="studentFormSection"
+            class="hidden bg-green-50 p-4 rounded mb-4"
+          >
+            <form id="newStudentForm" class="grid grid-cols-2 gap-2">
+              <input type="hidden" id="studentIdToEdit" />
+              <input
+                type="text"
+                id="studentName"
+                placeholder="الاسم"
+                required
+                class="border p-2 rounded"
+              />
+              <input
+                type="text"
+                id="studentCode"
+                placeholder="الكود"
+                class="border p-2 rounded"
+              />
+              <select id="studentGroup" required class="border p-2 rounded">
+                <option value="">المجموعة</option>
+              </select>
+              <input
+                type="text"
+                id="studentPhone"
+                placeholder="هاتف الطالب"
+                class="border p-2 rounded"
+              />
+              <input
+                type="text"
+                id="parentPhone"
+                placeholder="هاتف ولي الأمر"
+                class="border p-2 rounded"
+              />
+              <div class="col-span-2">
+                <button
+                  type="submit"
+                  id="addStudentBtn"
+                  class="bg-green-600 text-white px-4 py-2 rounded"
+                >
+                  حفظ
+                </button>
+                <button
+                  type="button"
+                  onclick="
+                    document
+                      .getElementById('studentFormSection')
+                      .classList.add('hidden')
+                  "
+                  class="bg-gray-300 px-4 py-2 rounded"
+                >
+                  إلغاء
+                </button>
+              </div>
+            </form>
+          </div>
+          <table class="w-full bg-white shadow rounded">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="p-2">#</th>
+                <th class="p-2">الكود</th>
+                <th class="p-2">الاسم</th>
+                <th class="p-2">المجموعة</th>
+                <th class="p-2">هاتف</th>
+                <th class="p-2">تحكم</th>
+              </tr>
+            </thead>
+            <tbody id="studentsTableBody"></tbody>
+          </table>
+        </div>
+
+        <div id="view-bulk" class="hidden">
+          <div class="bg-white shadow rounded p-4">
+            <div class="grid grid-cols-4 gap-2 mb-4">
+              <select
+                id="bulkGroupSelect"
+                onchange="loadGroupStudentsForBulk()"
+                class="border p-2 rounded"
+              >
+                <option value="">اختر المجموعة</option>
+              </select>
+              <input type="date" id="bulkDate" class="border p-2 rounded" />
+              <input
+                type="number"
+                id="bulkSessionNum"
+                value="1"
+                class="border p-2 rounded"
+              />
+              <div class="flex items-center">
+                <input
+                  type="checkbox"
+                  id="hasCompExam"
+                  onchange="toggleCompExamColumn()"
+                  class="ml-2"
+                /><label>يوجد شامل</label>
+              </div>
+            </div>
+            <table class="w-full">
+              <thead class="bg-gray-100">
+                <tr>
+                  <th>الاسم</th>
+                  <th>غاب</th>
+                  <th>واجب</th>
+                  <th>تسميع</th>
+                  <th>امتحان</th>
+                  <th class="comp-col hidden">شامل</th>
+                </tr>
+              </thead>
+              <tbody id="bulkStudentsBody"></tbody>
+            </table>
+            <button
+              onclick="saveBulkAttendance()"
+              class="mt-4 bg-blue-600 text-white px-6 py-2 rounded w-full font-bold"
+            >
+              حفظ السجل
+            </button>
+          </div>
+        </div>
+
+        <div
+          id="studentRecordsView"
+          class="hidden mt-4 bg-white p-4 rounded shadow border-t-4 border-yellow-400"
+        >
+          <div class="flex justify-between mb-2">
+            <h3 class="font-bold">
+              سجل: <span id="recordsStudentName"></span>
+            </h3>
+            <button
+              onclick="closeRecordsView()"
+              class="bg-gray-400 text-white px-2 rounded"
+            >
+              إغلاق
+            </button>
+          </div>
+          <button
+            onclick="openAddRecordForm()"
+            class="bg-green-600 text-white px-2 py-1 rounded mb-2"
+          >
+            + إضافة يدوي
+          </button>
+          <table class="w-full text-sm">
+            <thead class="bg-gray-50">
+              <tr>
+                <th>التاريخ</th>
+                <th>حصة</th>
+                <th>حالة</th>
+                <th>واجب</th>
+                <th>تسميع</th>
+                <th>امتحان</th>
+                <th>شامل</th>
+                <th>تحكم</th>
+              </tr>
+            </thead>
+            <tbody id="recordsTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="results-section" class="section-content hidden">
+        <h2 class="text-2xl font-bold mb-4">نتائج الامتحانات</h2>
+        <div class="bg-white p-6 rounded-xl shadow mb-6">
+          <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+            <select id="resClassFilter" class="p-2 border rounded bg-gray-50">
+              <option value="all">كل الصفوف</option>
+              <option value="g1">أولى إعدادي</option>
+              <option value="g2">تانية إعدادي</option>
+              <option value="g3">تالتة إعدادي</option>
+              <option value="s1">أولى ثانوي</option>
+              <option value="s2">تانية ثانوي</option>
+              <option value="s3">تالتة ثانوي</option>
+            </select>
+            <input
+              type="text"
+              id="resCodeSearch"
+              placeholder="بحث بالكود"
+              class="p-2 border rounded bg-gray-50"
+            />
+            <input
+              type="text"
+              id="resNameSearch"
+              placeholder="بحث بالاسم"
+              class="p-2 border rounded bg-gray-50"
+            />
+            <input
+              type="text"
+              id="resPhoneSearch"
+              placeholder="بحث بالهاتف"
+              class="p-2 border rounded bg-gray-50"
+            />
+            <button
+              onclick="fetchResults()"
+              class="bg-indigo-600 text-white font-bold py-2 rounded shadow"
+            >
+              بحث
+            </button>
+          </div>
+        </div>
+        <div class="bg-white rounded-xl shadow overflow-hidden">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-6 py-3 text-right">#</th>
+                <th class="px-6 py-3 text-right">الكود</th>
+                <th class="px-6 py-3 text-right">الاسم</th>
+                <th class="px-6 py-3 text-right">الدرجة</th>
+                <th class="px-6 py-3 text-right">الوقت</th>
+              </tr>
+            </thead>
+            <tbody id="resultsTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="ranking-section" class="section-content hidden">
+        <h2 class="text-2xl font-bold mb-4">لوحة الشرف والترتيب</h2>
+        <div class="bg-white p-6 rounded-xl shadow mb-6">
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <select id="rankingMonthFilter" class="p-2 border rounded">
+              <option value="all">كل الأشهر</option>
+            </select>
+            <select id="rankingGroupFilter" class="p-2 border rounded">
+              <option value="all">كل المجموعات</option>
+            </select>
+            <button
+              onclick="fetchRankingData()"
+              class="bg-red-600 text-white font-bold py-2 rounded shadow"
+            >
+              تحديث الترتيب
+            </button>
+          </div>
+        </div>
+        <div class="bg-white rounded-xl shadow overflow-hidden">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-6 py-3 text-right">الترتيب</th>
+                <th class="px-6 py-3 text-right">الاسم</th>
+                <th class="px-6 py-3 text-right">المجموعة</th>
+                <th class="px-6 py-3 text-right">الحضور</th>
+                <th class="px-6 py-3 text-right">المجموع الكلي</th>
+              </tr>
+            </thead>
+            <tbody id="rankingTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+
+    <div
+      id="questionEditModal"
+      class="hidden fixed inset-0 bg-gray-900 bg-opacity-60 overflow-y-auto h-full w-full z-50"
+    >
+      <div
+        class="relative top-20 mx-auto p-5 border w-11/12 md:w-2/3 shadow-lg rounded-md bg-white"
+      >
+        <h3 class="text-lg font-bold mb-4">تعديل السؤال</h3>
+        <form id="singleQuestionForm" class="space-y-4">
+          <input type="hidden" id="editQuestionId" /><input
+            type="hidden"
+            id="editQuestionQuizId"
+          />
+          <textarea
+            id="editQuestionText"
+            rows="3"
+            required
+            class="w-full bg-gray-50 p-3 rounded border"
+          ></textarea>
+          <div class="grid grid-cols-2 gap-4">
+            <input
+              type="text"
+              id="editChoiceA"
+              class="bg-gray-50 p-2 rounded border"
+              placeholder="أ"
+            />
+            <input
+              type="text"
+              id="editChoiceB"
+              class="bg-gray-50 p-2 rounded border"
+              placeholder="ب"
+            />
+            <input
+              type="text"
+              id="editChoiceC"
+              class="bg-gray-50 p-2 rounded border"
+              placeholder="ج"
+            />
+            <input
+              type="text"
+              id="editChoiceD"
+              class="bg-gray-50 p-2 rounded border"
+              placeholder="د"
+            />
+          </div>
+          <select id="editCorrectAnswer" class="w-full p-2 border">
+            <option value="A">أ</option>
+            <option value="B">ب</option>
+            <option value="C">ج</option>
+            <option value="D">د</option>
+          </select>
+          <div class="flex justify-end gap-2 pt-4">
+            <button
+              type="button"
+              onclick="
+                document
+                  .getElementById('questionEditModal')
+                  .classList.add('hidden')
+              "
+              class="px-4 py-2 bg-gray-200 rounded"
+            >
+              إلغاء
+            </button>
+            <button
+              type="submit"
+              class="px-6 py-2 bg-indigo-600 text-white rounded"
+            >
+              حفظ
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div
+      id="recordModal"
+      class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50"
+    >
+      <div
+        class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white"
+      >
+        <h3 class="font-bold mb-4">بيانات الحصة</h3>
+        <form id="recordForm" class="space-y-3">
+          <input type="hidden" id="recordStudentId" /><input
+            type="hidden"
+            id="recordIdToEdit"
+          />
+          <input
+            type="date"
+            id="recordDate"
+            required
+            class="w-full p-2 border rounded"
+          />
+          <input
+            type="text"
+            id="recordMonth"
+            readonly
+            class="w-full p-2 border rounded bg-gray-100"
+          />
+          <input
+            type="number"
+            id="recordLessonNumber"
+            placeholder="رقم الحصة"
+            required
+            class="w-full p-2 border rounded"
+          />
+          <select id="recordAttendance" class="w-full p-2 border rounded">
+            <option value="حضر">حضر</option>
+            <option value="غاب">غاب</option>
+          </select>
+          <div class="grid grid-cols-2 gap-2">
+            <input
+              type="number"
+              id="recordHomework"
+              placeholder="واجب"
+              class="w-full p-2 border rounded"
+            />
+            <input
+              type="number"
+              id="recordRecitationDegree"
+              placeholder="تسميع"
+              class="w-full p-2 border rounded"
+            />
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <input
+              type="number"
+              id="recordExamDegree"
+              placeholder="امتحان"
+              class="w-full p-2 border rounded"
+            />
+            <input
+              type="number"
+              id="recordComprehensiveExam"
+              placeholder="شامل"
+              class="w-full p-2 border rounded"
+            />
+          </div>
+          <div class="flex justify-end pt-2">
+            <button
+              type="submit"
+              class="bg-indigo-600 text-white px-4 py-2 rounded"
+            >
+              حفظ
+            </button>
+            <button
+              type="button"
+              onclick="
+                document.getElementById('recordModal').classList.add('hidden')
+              "
+              class="bg-gray-300 px-4 py-2 rounded ml-2"
+            >
+              إلغاء
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div id="cardsToPrint" class="hidden"></div>
+
+    <script>
+      // Config
+      const SUPABASE_URL = "https://arbbxmnjviryxkmhwdgk.supabase.co";
+      const SUPABASE_SERVICE_KEY =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyYmJ4bW5qdmlyeXhrbWh3ZGdrIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MjY5NTU0MSwiZXhwIjoyMDc4MjcxNTQxfQ.W5_c_-VqSUhvHmApF_Y4usZfuCwXz0Ci1hxgfO0u8sc";
+      const TABLE_GROUPS = "alchemiya_groups";
+      const TABLE_STUDENTS = "alchemiya_students";
+      const TABLE_RECORDS = "alchemiya_records";
+      const TABLE_QUIZZES = "alchemiya_quizzes";
+      const TABLE_QUESTIONS = "alchemiya_questions";
+      const TABLE_RESULTS = "alchemiya_results";
+
+      const monthNames = [
+        "يناير",
+        "فبراير",
+        "مارس",
+        "أبريل",
+        "مايو",
+        "يونيو",
+        "يوليو",
+        "أغسطس",
+        "سبتمبر",
+        "أكتوبر",
+        "نوفمبر",
+        "ديسمبر",
+      ];
+      let groups = [];
+      let students = [];
+      let selectedStudentIds = new Set();
+      let currentViewingStudent = {
+        id: null,
+        name: null,
+      };
+      let currentEditingQuizId = null;
+
+      // Helper
+      async function supabaseFetch(method, table, query = "", data = null) {
+        const url = `${SUPABASE_URL}/rest/v1/${table}${query}`;
+        const headers = {
+          "Content-Type": "application/json",
+          apikey: SUPABASE_SERVICE_KEY,
+          Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`,
+        };
+
+        // Fix for Accurate Counts using HEAD
+        if (method === "HEAD") {
+          headers["Prefer"] = "count=exact";
+          const response = await fetch(url, {
+            method: "GET",
+            headers,
+          }); // Using GET with count=exact behaves like HEAD for count
+          const range = response.headers.get("content-range");
+          if (range) return parseInt(range.split("/")[1]);
+          return 0;
+        }
+
+        if (method === "POST" || method === "PATCH")
+          headers["Prefer"] = "return=representation";
+        const response = await fetch(url, {
+          method,
+          headers,
+          body: data ? JSON.stringify(data) : null,
+        });
+        if (!response.ok) {
+          const txt = await response.text();
+          throw new Error(txt);
+        }
+        if (method === "DELETE")
+          return {
+            success: true,
+          };
+        return response.json();
+      }
+
+      function getMonthNameFromDate(dateStr) {
+        const d = new Date(dateStr);
+        return monthNames[d.getMonth()];
+      }
+
+      // Navigation
+      function switchTab(tabName) {
+        document
+          .querySelectorAll(".section-content")
+          .forEach((el) => el.classList.add("hidden"));
+        document.querySelectorAll(".tab-btn").forEach((btn) => {
+          btn.classList.remove("active", "bg-indigo-600", "text-white");
+          btn.classList.add("bg-white", "text-gray-600");
+        });
+        document
+          .getElementById(tabName + "-section")
+          .classList.remove("hidden");
+
+        // Highlight logic
+        const btns = document.querySelectorAll(".tab-btn");
+        let idx = {
+          dashboard: 0,
+          quizzes: 1,
+          students: 2,
+          results: 3,
+          ranking: 4,
+        }[tabName];
+        if (btns[idx]) {
+          btns[idx].classList.add("active", "bg-indigo-600", "text-white");
+          btns[idx].classList.remove("bg-white", "text-gray-600");
+        }
+
+        if (tabName === "quizzes") fetchQuizzes();
+        if (tabName === "students") {
+          fetchGroups();
+          showStudentView("list");
+        }
+        if (tabName === "dashboard") loadDashboard();
+        if (tabName === "results") fetchResults();
+        if (tabName === "ranking") {
+          fetchGroupsForFilter();
+          populateMonthFilter();
+          fetchRankingData();
+        }
+      }
+
+      function showStudentView(viewName) {
+        ["view-list", "view-groups", "view-bulk"].forEach((v) =>
+          document.getElementById(v).classList.add("hidden"),
+        );
+        document.getElementById("view-" + viewName).classList.remove("hidden");
+        if (viewName === "list") fetchStudents();
+        if (viewName === "groups") fetchGroups();
+        if (viewName === "bulk") {
+          document.getElementById("bulkDate").valueAsDate = new Date();
+          const sel = document.getElementById("bulkGroupSelect");
+          sel.innerHTML = '<option value="">-- اختر المجموعة --</option>';
+          groups.forEach((g) => {
+            sel.innerHTML += `<option value="${g.id}">${g.group_name} (${g.class_name})</option>`;
+          });
+        }
+      }
+
+      // --- 1. DASHBOARD FIXED ---
+      async function loadDashboard() {
+        try {
+          // FIX: Using precise count fetching
+          const sCount = await supabaseFetch(
+            "HEAD",
+            TABLE_STUDENTS,
+            "?select=*",
+          );
+          document.getElementById("dashTotalStudents").textContent = sCount;
+
+          const gCount = await supabaseFetch("HEAD", TABLE_GROUPS, "?select=*");
+          document.getElementById("dashTotalGroups").textContent = gCount;
+
+          const qz = await supabaseFetch(
+            "GET",
+            TABLE_QUIZZES,
+            "?is_active=eq.true",
+          );
+          document.getElementById("dashActiveQuizzes").textContent = qz.length;
+        } catch (e) {
+          console.error(e);
+        }
+      }
+
+      // --- 2. QUIZZES ---
+      async function fetchQuizzes() {
+        const tb = document.getElementById("quizListTableBody");
+        tb.innerHTML =
+          '<tr><td colspan="6" class="text-center p-4">جاري التحميل...</td></tr>';
+        const qz = await supabaseFetch(
+          "GET",
+          TABLE_QUIZZES,
+          `?select=*,${TABLE_QUESTIONS}(count)&order=created_at.desc`,
+        );
+        tb.innerHTML = "";
+        qz.forEach((q, i) => {
+          const count =
+            q[TABLE_QUESTIONS] && q[TABLE_QUESTIONS][0]
+              ? q[TABLE_QUESTIONS][0].count
+              : 0;
+          tb.innerHTML += `<tr class="border-t hover:bg-gray-50"><td class="p-4 text-right">${i + 1}</td><td class="p-4 font-bold">${q.quiz_name}</td><td class="p-4 text-indigo-600">${q.class_name}</td><td class="p-4 text-center">${count}</td><td class="p-4 text-center">${q.is_active ? "✅" : "🔒"}</td><td class="p-4 text-center"><button onclick="toggleQuizStatus(${q.id},${q.is_active})" class="text-indigo-600 font-bold mx-2">حالة</button><button onclick="editQuiz(${q.id}, '${q.quiz_name}')" class="text-blue-600 font-bold">تعديل</button></td></tr>`;
+        });
+      }
+
+      function cancelNewQuiz() {
+        document.getElementById("newQuizSection").classList.add("hidden");
+        document.getElementById("quizListSection").classList.remove("hidden");
+      }
+      document.getElementById("showNewQuizFormBtn").onclick = () => {
+        document.getElementById("quizListSection").classList.add("hidden");
+        document.getElementById("newQuizSection").classList.remove("hidden");
+      };
+      document.getElementById("newQuizForm").onsubmit = async (e) => {
+        e.preventDefault();
+        const n = document.getElementById("newQuizName").value;
+        const c = {
+          g1: "أولى إعدادي",
+          g2: "تانية إعدادي",
+          g3: "تالتة إعدادي",
+          s1: "أولى ثانوي",
+          s2: "تانية ثانوي",
+          s3: "تالتة ثانوي",
+        }[document.getElementById("newQuizClass").value];
+        const res = await supabaseFetch("POST", TABLE_QUIZZES, "", {
+          quiz_name: n,
+          class_name: c,
+          is_active: false,
+        });
+        editQuiz(res[0].id, n);
+        document.getElementById("newQuizSection").classList.add("hidden");
+      };
+      async function toggleQuizStatus(id, s) {
+        await supabaseFetch("PATCH", TABLE_QUIZZES, `?id=eq.${id}`, {
+          is_active: !s,
+        });
+        fetchQuizzes();
+      }
+
+      function editQuiz(id, name) {
+        currentEditingQuizId = id;
+        document.getElementById("quizListSection").classList.add("hidden");
+        document
+          .getElementById("manageQuizDetailsSection")
+          .classList.remove("hidden");
+        document.getElementById("editingQuizName").textContent = name;
+        loadQuestions(id);
+      }
+
+      function closeEditMode() {
+        document
+          .getElementById("manageQuizDetailsSection")
+          .classList.add("hidden");
+        document.getElementById("quizListSection").classList.remove("hidden");
+        fetchQuizzes();
+      }
+      async function loadQuestions(qid) {
+        const c = document.getElementById("quizQuestionsContainer");
+        c.innerHTML = "تحميل...";
+        const qs = await supabaseFetch(
+          "GET",
+          TABLE_QUESTIONS,
+          `?quiz_id=eq.${qid}&order=id.asc`,
+        );
+        c.innerHTML = "";
+        qs.forEach((q, i) => {
+          const qJson = JSON.stringify(q).replace(/"/g, "&quot;");
+          c.innerHTML += `<div class="bg-white p-4 rounded shadow border flex justify-between"><div><span class="font-bold">س ${i + 1}</span> ${q.question_text}</div><div><button onclick="openEditQuestionModal(${qJson})" class="text-blue-600 mx-2">تعديل</button><button onclick="deleteQuestion(${q.id})" class="text-red-600">حذف</button></div></div>`;
+        });
+      }
+
+      function openAddQuestionModal() {
+        document.getElementById("questionEditModal").classList.remove("hidden");
+        document.getElementById("singleQuestionForm").reset();
+        document.getElementById("editQuestionId").value = "";
+        document.getElementById("editQuestionQuizId").value =
+          currentEditingQuizId;
+      }
+
+      function openEditQuestionModal(q) {
+        document.getElementById("questionEditModal").classList.remove("hidden");
+        document.getElementById("editQuestionId").value = q.id;
+        document.getElementById("editQuestionQuizId").value = q.quiz_id;
+        document.getElementById("editQuestionText").value = q.question_text;
+        document.getElementById("editChoiceA").value = q.choice_a;
+        document.getElementById("editChoiceB").value = q.choice_b;
+        document.getElementById("editChoiceC").value = q.choice_c;
+        document.getElementById("editChoiceD").value = q.choice_d;
+        document.getElementById("editCorrectAnswer").value = q.correct_answer;
+      }
+      document.getElementById("singleQuestionForm").onsubmit = async (e) => {
+        e.preventDefault();
+        const id = document.getElementById("editQuestionId").value;
+        const qid = document.getElementById("editQuestionQuizId").value;
+        const data = {
+          quiz_id: qid,
+          question_text: document.getElementById("editQuestionText").value,
+          choice_a: document.getElementById("editChoiceA").value,
+          choice_b: document.getElementById("editChoiceB").value,
+          choice_c: document.getElementById("editChoiceC").value,
+          choice_d: document.getElementById("editChoiceD").value,
+          correct_answer: document.getElementById("editCorrectAnswer").value,
+        };
+        await supabaseFetch(
+          id ? "PATCH" : "POST",
+          TABLE_QUESTIONS,
+          id ? `?id=eq.${id}` : "",
+          data,
+        );
+        document.getElementById("questionEditModal").classList.add("hidden");
+        loadQuestions(qid);
+      };
+      async function deleteQuestion(id) {
+        if (confirm("حذف؟")) {
+          await supabaseFetch("DELETE", TABLE_QUESTIONS, `?id=eq.${id}`);
+          loadQuestions(currentEditingQuizId);
+        }
+      }
+
+      // --- 3. STUDENTS & GROUPS ---
+      async function fetchGroups() {
+        groups = await supabaseFetch(
+          "GET",
+          TABLE_GROUPS,
+          "?order=class_name.asc,group_name.asc",
+        );
+        renderGroupsTable();
+        populateGroupSelects();
+      }
+
+      function renderGroupsTable() {
+        const tb = document.getElementById("groupsTableBody");
+        tb.innerHTML = "";
+        groups.forEach(
+          (g) =>
+            (tb.innerHTML += `<tr class="border-t hover:bg-gray-50"><td class="p-3 font-bold">${g.group_name}</td><td class="p-3 text-indigo-600">${g.class_name}</td><td class="p-3 text-center"><button onclick="editGroup(${g.id})" class="text-blue-600 font-bold">تعديل</button></td></tr>`),
+        );
+      }
+
+      function populateGroupSelects() {
+        const opts = groups
+          .map(
+            (g) =>
+              `<option value="${g.id}">${g.class_name} - ${g.group_name}</option>`,
+          )
+          .join("");
+        ["studentFilterGroup", "studentGroup", "rankingGroupFilter"].forEach(
+          (id) => {
+            const el = document.getElementById(id);
+            if (el)
+              el.innerHTML =
+                (id.includes("Filter")
+                  ? '<option value="all">الكل</option>'
+                  : '<option value="">اختر</option>') + opts;
+          },
+        );
+      }
+
+      function editGroup(id) {
+        const g = groups.find((x) => x.id === id);
+        document.getElementById("groupIdToEdit").value = g.id;
+        document.getElementById("groupName").value = g.group_name;
+        document.getElementById("groupClass").value = g.class_name;
+        document.getElementById("addGroupBtn").textContent = "تحديث";
+      }
+      document.getElementById("newGroupForm").onsubmit = async (e) => {
+        e.preventDefault();
+        const id = document.getElementById("groupIdToEdit").value;
+        const data = {
+          group_name: document.getElementById("groupName").value,
+          class_name: document.getElementById("groupClass").value,
+        };
+        await supabaseFetch(
+          id ? "PATCH" : "POST",
+          TABLE_GROUPS,
+          id ? `?id=eq.${id}` : "",
+          data,
+        );
+        document.getElementById("newGroupForm").reset();
+        fetchGroups();
+      };
+
+      async function fetchStudents() {
+        const tb = document.getElementById("studentsTableBody");
+        tb.innerHTML =
+          '<tr><td colspan="6" class="text-center p-4">جاري التحميل...</td></tr>';
+        let q = `?select=*,${TABLE_GROUPS}(group_name,class_name)&order=student_name.asc`;
+        const fName = document.getElementById("studentFilterName").value;
+        const fCode = document.getElementById("studentFilterCode").value;
+        const fGrp = document.getElementById("studentFilterGroup").value;
+        if (fName) q += `&student_name=ilike.*${fName}*`;
+        if (fCode) q += `&student_code=ilike.*${fCode}*`;
+        if (fGrp && fGrp !== "all") q += `&group_id=eq.${fGrp}`;
+
+        try {
+          students = await supabaseFetch("GET", TABLE_STUDENTS, q);
+          renderStudentsTable();
+        } catch (e) {
+          tb.innerHTML = `<tr><td colspan="6" class="text-red-500 p-4">${e.message}</td></tr>`;
+        }
+      }
+
+      function renderStudentsTable() {
+        const tb = document.getElementById("studentsTableBody");
+        tb.innerHTML = "";
+        if (!students.length) {
+          tb.innerHTML =
+            '<tr><td colspan="6" class="text-center p-4">لا توجد نتائج</td></tr>';
+          return;
+        }
+        students.forEach((s) => {
+          const g = s[TABLE_GROUPS] || {
+            group_name: "?",
+            class_name: "",
+          };
+          tb.innerHTML += `<tr class="border-t hover:bg-gray-50"><td class="p-3"><input type="checkbox" class="student-chk" value="${s.id}"></td><td class="p-3 font-bold text-red-600">${s.student_code || "-"}</td><td class="p-3 font-bold">${s.student_name}</td><td class="p-3 text-sm">${g.class_name} - ${g.group_name}</td><td class="p-3 text-sm">${s.phone_student || "-"}</td><td class="p-3 text-center"><button onclick="viewStudentRecords(${s.id}, '${s.student_name}')" class="text-blue-600 font-bold text-sm mx-1">سجل</button><button onclick="editStudent(${s.id})" class="text-green-600 font-bold text-sm">تعديل</button></td></tr>`;
+        });
+        document
+          .querySelectorAll(".student-chk")
+          .forEach((c) =>
+            c.addEventListener("change", (e) =>
+              e.target.checked
+                ? selectedStudentIds.add(parseInt(e.target.value))
+                : selectedStudentIds.delete(parseInt(e.target.value)),
+            ),
+          );
+      }
+
+      function showStudentForm(s = null) {
+        document
+          .getElementById("studentFormSection")
+          .classList.remove("hidden");
+        if (s) {
+          document.getElementById("studentIdToEdit").value = s.id;
+          document.getElementById("studentName").value = s.student_name;
+          document.getElementById("studentCode").value = s.student_code;
+          document.getElementById("studentGroup").value = s.group_id;
+          document.getElementById("studentPhone").value = s.phone_student;
+          document.getElementById("parentPhone").value = s.phone_parent;
+          document.getElementById("addStudentBtn").textContent = "تحديث";
+        } else {
+          document.getElementById("newStudentForm").reset();
+          document.getElementById("studentIdToEdit").value = "";
+          document.getElementById("addStudentBtn").textContent = "حفظ";
+        }
+      }
+
+      function editStudent(id) {
+        showStudentForm(students.find((x) => x.id === id));
+      }
+      document.getElementById("newStudentForm").onsubmit = async (e) => {
+        e.preventDefault();
+        const id = document.getElementById("studentIdToEdit").value;
+        const data = {
+          student_name: document.getElementById("studentName").value,
+          student_code: document.getElementById("studentCode").value,
+          group_id: document.getElementById("studentGroup").value,
+          phone_student: document.getElementById("studentPhone").value,
+          phone_parent: document.getElementById("parentPhone").value,
+        };
+        await supabaseFetch(
+          id ? "PATCH" : "POST",
+          TABLE_STUDENTS,
+          id ? `?id=eq.${id}` : "",
+          data,
+        );
+        document.getElementById("studentFormSection").classList.add("hidden");
+        fetchStudents();
+      };
+
+      function printStudentCards() {
+        const div = document.getElementById("cardsToPrint");
+        div.innerHTML = "";
+        if (selectedStudentIds.size === 0) {
+          alert("اختر طلاب للطباعة");
+          return;
+        }
+        students
+          .filter((s) => selectedStudentIds.has(s.id))
+          .forEach((s) => {
+            const g = groups.find((x) => x.id === s.group_id) || {};
+            div.innerHTML += `<div class="student-card"><div style="font-weight:bold;margin-bottom:5px;">كارت الطالب</div><hr><p style="font-size:16pt;margin:5px 0;">${s.student_name}</p><p>${g.group_name || ""}</p><p style="font-size:14pt;font-weight:bold;color:#c00;">${s.student_code || s.id}</p></div>`;
+          });
+        div.classList.remove("hidden");
+        window.print();
+        setTimeout(() => div.classList.add("hidden"), 500);
+      }
+
+      // Records
+      async function viewStudentRecords(sid, name) {
+        currentViewingStudent = {
+          id: sid,
+          name: name,
+        };
+        document
+          .getElementById("studentRecordsView")
+          .classList.remove("hidden");
+        document.getElementById("recordsStudentName").textContent = name;
+        document.getElementById("studentRecordsView").scrollIntoView();
+        const tb = document.getElementById("recordsTableBody");
+        tb.innerHTML =
+          '<tr><td colspan="9" class="text-center">جاري التحميل...</td></tr>';
+        const recs = await supabaseFetch(
+          "GET",
+          TABLE_RECORDS,
+          `?student_id=eq.${sid}&order=lesson_date.desc`,
+        );
+        tb.innerHTML = "";
+        if (!recs.length)
+          tb.innerHTML =
+            '<tr><td colspan="9" class="text-center">لا توجد سجلات</td></tr>';
+        recs.forEach((r) => {
+          const rData = JSON.stringify(r).replace(/"/g, "&quot;");
+          tb.innerHTML += `<tr class="border-t"><td class="p-2">${r.lesson_date}</td><td class="p-2">${r.lesson_number}</td><td class="p-2 font-bold ${r.attendance === "حضر" ? "text-green-600" : "text-red-600"}">${r.attendance}</td><td class="p-2">${r.homework_degree || "-"}</td><td class="p-2">${r.recitation_degree || "-"}</td><td class="p-2">${r.exam_degree || "-"}</td><td class="p-2">${r.comprehensive_exam_degree || "-"}</td><td class="p-2 text-center"><button onclick="editRecord(${rData})" class="text-blue-600 text-xs font-bold">تعديل</button> <button onclick="deleteRecord(${r.id})" class="text-red-600 text-xs">X</button></td></tr>`;
+        });
+      }
+
+      function closeRecordsView() {
+        document.getElementById("studentRecordsView").classList.add("hidden");
+      }
+
+      function openAddRecordForm() {
+        document.getElementById("recordModal").classList.remove("hidden");
+        document.getElementById("recordForm").reset();
+        document.getElementById("recordStudentId").value =
+          currentViewingStudent.id;
+        document.getElementById("recordIdToEdit").value = "";
+        document.getElementById("recordDate").valueAsDate = new Date();
+        document.getElementById("recordMonth").value =
+          monthNames[new Date().getMonth()];
+        document.getElementById("recordDate").onchange = (e) => {
+          document.getElementById("recordMonth").value = getMonthNameFromDate(
+            e.target.value,
+          );
+        };
+      }
+
+      function editRecord(r) {
+        openAddRecordForm();
+        document.getElementById("recordIdToEdit").value = r.id;
+        document.getElementById("recordDate").value = r.lesson_date;
+        document.getElementById("recordMonth").value = r.lesson_month;
+        document.getElementById("recordLessonNumber").value = r.lesson_number;
+        document.getElementById("recordAttendance").value = r.attendance;
+        document.getElementById("recordHomework").value = r.homework_degree;
+        document.getElementById("recordRecitationDegree").value =
+          r.recitation_degree;
+        document.getElementById("recordExamDegree").value = r.exam_degree;
+        document.getElementById("recordComprehensiveExam").value =
+          r.comprehensive_exam_degree;
+      }
+      document.getElementById("recordForm").onsubmit = async (e) => {
+        e.preventDefault();
+        const rid = document.getElementById("recordIdToEdit").value;
+        const data = {
+          student_id: document.getElementById("recordStudentId").value,
+          lesson_date: document.getElementById("recordDate").value,
+          lesson_month: document.getElementById("recordMonth").value,
+          lesson_number: document.getElementById("recordLessonNumber").value,
+          attendance: document.getElementById("recordAttendance").value,
+          homework_degree: document.getElementById("recordHomework").value || 0,
+          recitation_degree:
+            document.getElementById("recordRecitationDegree").value || null,
+          exam_degree:
+            document.getElementById("recordExamDegree").value || null,
+          comprehensive_exam_degree:
+            document.getElementById("recordComprehensiveExam").value || null,
+        };
+        await supabaseFetch(
+          rid ? "PATCH" : "POST",
+          TABLE_RECORDS,
+          rid ? `?id=eq.${rid}` : "",
+          data,
+        );
+        document.getElementById("recordModal").classList.add("hidden");
+        viewStudentRecords(
+          currentViewingStudent.id,
+          currentViewingStudent.name,
+        );
+      };
+      async function deleteRecord(rid) {
+        if (confirm("حذف؟")) {
+          await supabaseFetch("DELETE", TABLE_RECORDS, `?id=eq.${rid}`);
+          viewStudentRecords(
+            currentViewingStudent.id,
+            currentViewingStudent.name,
+          );
+        }
+      }
+
+      // Bulk
+      async function loadGroupStudentsForBulk() {
+        const gid = document.getElementById("bulkGroupSelect").value;
+        const tb = document.getElementById("bulkStudentsBody");
+        if (!gid) return;
+        const sts = await supabaseFetch(
+          "GET",
+          TABLE_STUDENTS,
+          `?group_id=eq.${gid}&order=student_name.asc`,
+        );
+        tb.innerHTML = "";
+        if (!sts.length) {
+          tb.innerHTML =
+            '<tr><td colspan="7" class="text-center py-6">لا يوجد طلاب</td></tr>';
+          return;
+        }
+        sts.forEach((s, i) => {
+          tb.innerHTML += `<tr class="border-t bg-white" data-sid="${s.id}"><td class="p-2 font-bold">${s.student_name}</td><td class="p-2 text-center"><input type="checkbox" onchange="toggleRowInputs(this)" class="w-5 h-5"></td><td class="p-2"><input type="number" class="w-12 p-1 border rounded text-center"></td><td class="p-2"><input type="number" class="w-12 p-1 border rounded text-center"></td><td class="p-2"><input type="number" class="w-12 p-1 border rounded text-center"></td><td class="p-2 comp-col ${document.getElementById("hasCompExam").checked ? "" : "hidden"}"><input type="number" class="w-12 p-1 border border-red-200 bg-red-50 rounded text-center"></td></tr>`;
+        });
+      }
+
+      function toggleCompExamColumn() {
+        const show = document.getElementById("hasCompExam").checked;
+        document
+          .querySelectorAll(".comp-col")
+          .forEach((c) =>
+            show ? c.classList.remove("hidden") : c.classList.add("hidden"),
+          );
+      }
+
+      function toggleRowInputs(chk) {
+        const row = chk.closest("tr");
+        const inps = row.querySelectorAll('input[type="number"]');
+        if (chk.checked) {
+          row.classList.add("bg-gray-100", "opacity-50");
+          inps.forEach((i) => {
+            i.value = 0;
+            i.disabled = true;
+          });
+        } else {
+          row.classList.remove("bg-gray-100", "opacity-50");
+          inps.forEach((i) => {
+            i.value = "";
+            i.disabled = false;
+          });
+        }
+      }
+      async function saveBulkAttendance() {
+        const gid = document.getElementById("bulkGroupSelect").value;
+        const date = document.getElementById("bulkDate").value;
+        const sess = document.getElementById("bulkSessionNum").value;
+        if (!gid || !date) {
+          alert("أدخل البيانات الأساسية");
+          return;
+        }
+        const records = [];
+        document.querySelectorAll("#bulkStudentsBody tr").forEach((tr) => {
+          if (!tr.dataset.sid) return;
+          const inps = tr.querySelectorAll('input[type="number"]');
+          const absent = tr.querySelector('input[type="checkbox"]').checked;
+          records.push({
+            student_id: tr.dataset.sid,
+            lesson_date: date,
+            lesson_month: getMonthNameFromDate(date),
+            lesson_number: sess,
+            attendance: absent ? "غاب" : "حضر",
+            homework_degree: absent ? 0 : inps[0].value || 0,
+            recitation_degree: absent ? 0 : inps[1].value || null,
+            exam_degree: absent ? 0 : inps[2].value || null,
+            comprehensive_exam_degree: document.getElementById("hasCompExam")
+              .checked
+              ? inps[3].value || null
+              : null,
+          });
+        });
+        await supabaseFetch("POST", TABLE_RECORDS, "", records);
+        alert("تم الحفظ");
+        document.getElementById("bulkStudentsBody").innerHTML = "";
+      }
+
+      // --- 4. RESULTS LOGIC ---
+      async function fetchResults() {
+        const tb = document.getElementById("resultsTableBody");
+        tb.innerHTML =
+          '<tr><td colspan="5" class="text-center p-4">جاري البحث...</td></tr>';
+
+        let q = `?select=*&order=submission_time.desc`;
+        const code = document.getElementById("resCodeSearch").value.trim();
+        const name = document.getElementById("resNameSearch").value.trim();
+        const phone = document.getElementById("resPhoneSearch").value.trim();
+        const cls = document.getElementById("resClassFilter").value;
+        const classNamesMap = {
+          g1: "أولى إعدادي",
+          g2: "تانية إعدادي",
+          g3: "تالتة إعدادي",
+          s1: "أولى ثانوي",
+          s2: "تانية ثانوي",
+          s3: "تالتة ثانوي",
+        };
+
+        // 1. If Code search, get name first from Students table
+        if (code) {
+          const st = await supabaseFetch(
+            "GET",
+            TABLE_STUDENTS,
+            `?student_code=eq.${code}&select=student_name`,
+          );
+          if (st.length) q += `&student_name=eq.${st[0].student_name}`;
+          else {
+            tb.innerHTML =
+              '<tr><td colspan="5" class="text-center p-4 text-red-500">كود غير موجود</td></tr>';
+            return;
+          }
+        } else {
+          if (name) q += `&student_name=ilike.*${name}*`;
+          if (phone) q += `&student_phone=ilike.*${phone}*`;
+          if (cls !== "all") q += `&class_name=eq.${classNamesMap[cls]}`;
+        }
+
+        const res = await supabaseFetch("GET", TABLE_RESULTS, q);
+        tb.innerHTML = "";
+        if (!res.length)
+          tb.innerHTML =
+            '<tr><td colspan="5" class="text-center p-4">لا توجد نتائج</td></tr>';
+
+        // Match codes for display
+        const names = [...new Set(res.map((r) => r.student_name))];
+        let codeMap = {};
+        if (names.length) {
+          // Fetch codes for these names (Simplified approach)
+          const stData = await supabaseFetch(
+            "GET",
+            TABLE_STUDENTS,
+            `?select=student_name,student_code`,
+          );
+          stData.forEach((s) => (codeMap[s.student_name] = s.student_code));
+        }
+
+        res.forEach((r, i) => {
+          const cd =
+            codeMap[r.student_name] ||
+            '<span class="text-red-500 text-xs">No Code</span>';
+          tb.innerHTML += `<tr class="border-t hover:bg-gray-50"><td class="p-3">${i + 1}</td><td class="p-3 font-bold text-indigo-600">${cd}</td><td class="p-3 font-medium">${r.student_name}</td><td class="p-3 font-bold text-green-600">${r.score}/${r.total_questions}</td><td class="p-3 text-sm text-gray-500">${new Date(r.submission_time).toLocaleString("ar-EG")}</td></tr>`;
+        });
+      }
+
+      // --- 5. RANKING LOGIC ---
+      async function fetchGroupsForFilter() {
+        const grps = await supabaseFetch(
+          "GET",
+          TABLE_GROUPS,
+          "?select=id,group_name,class_name",
+        );
+        const sel = document.getElementById("rankingGroupFilter");
+        sel.innerHTML = '<option value="all">كل المجموعات</option>';
+        grps.forEach(
+          (g) =>
+            (sel.innerHTML += `<option value="${g.id}">${g.class_name} - ${g.group_name}</option>`),
+        );
+      }
+
+      function populateMonthFilter() {
+        const sel = document.getElementById("rankingMonthFilter");
+        sel.innerHTML = '<option value="all">كل الأشهر</option>';
+        monthNames.forEach(
+          (m) => (sel.innerHTML += `<option value="${m}">${m}</option>`),
+        );
+        sel.value = monthNames[new Date().getMonth()];
+      }
+      async function fetchRankingData() {
+        const tb = document.getElementById("rankingTableBody");
+        tb.innerHTML =
+          '<tr><td colspan="5" class="text-center p-4">جاري الحساب...</td></tr>';
+
+        const sts = await supabaseFetch(
+          "GET",
+          TABLE_STUDENTS,
+          `?select=id,student_name,group_id,${TABLE_GROUPS}(group_name)`,
+        );
+        const recs = await supabaseFetch(
+          "GET",
+          TABLE_RECORDS,
+          `?select=student_id,lesson_month,attendance,homework_degree,recitation_degree,exam_degree,comprehensive_exam_degree`,
+        );
+
+        // Calculate
+        const map = new Map();
+        sts.forEach((s) => map.set(s.id, { ...s, score: 0, att: 0 }));
+
+        const mFilter = document.getElementById("rankingMonthFilter").value;
+        const gFilter = document.getElementById("rankingGroupFilter").value;
+
+        recs.forEach((r) => {
+          if (mFilter !== "all" && r.lesson_month !== mFilter) return;
+          if (map.has(r.student_id)) {
+            const s = map.get(r.student_id);
+            if (r.attendance === "حضر") s.att++;
+            s.score +=
+              (r.attendance === "حضر" ? 1 : 0) +
+              (r.homework_degree || 0) +
+              (r.recitation_degree || 0) +
+              (r.comprehensive_exam_degree || r.exam_degree || 0);
+          }
+        });
+
+        let arr = Array.from(map.values());
+        if (gFilter !== "all") arr = arr.filter((s) => s.group_id == gFilter);
+        arr.sort((a, b) => b.score - a.score);
+
+        tb.innerHTML = "";
+        arr.slice(0, 50).forEach((s, i) => {
+          // Top 50
+          const medal =
+            i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : i + 1;
+          const gName = s[TABLE_GROUPS] ? s[TABLE_GROUPS].group_name : "-";
+          tb.innerHTML += `<tr class="border-t hover:bg-yellow-50"><td class="p-3 font-bold text-center">${medal}</td><td class="p-3 font-bold">${s.student_name}</td><td class="p-3">${gName}</td><td class="p-3 text-center">${s.att}</td><td class="p-3 font-extrabold text-red-600 text-center">${s.score}</td></tr>`;
+        });
+      }
+
+      // Init
+      switchTab("dashboard");
+    </script>
+  </body>
+</html>
+
+
+
+

@@ -535,7 +535,26 @@
             document.getElementById("contactsModal").classList.add("hidden");
             document.getElementById("contactsModal").style.display = "none";
         }
+// ********************* ضبط الشهر التلقائي *********************
+        document.addEventListener('DOMContentLoaded', () => {
+            const months = ["يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"];
+            const currentMonthIndex = new Date().getMonth(); // يجلب رقم الشهر من 0 إلى 11
+            const currentMonthName = months[currentMonthIndex]; // يحوله للاسم العربي
+
+            const monthSelect = document.getElementById("monthFilter");
+            if (monthSelect) {
+                // 1. تحديد الشهر الحالي
+                monthSelect.value = currentMonthName;
+                
+                // 2. قفل القائمة لمنع التغيير
+                monthSelect.disabled = true; 
+                
+                // 3. تغيير الشكل ليدل على أنه مغلق (تغميق اللون)
+                monthSelect.classList.add("opacity-60", "cursor-not-allowed", "bg-slate-700");
+            }
+        });
     </script>
 </body>
 
 </html>
+

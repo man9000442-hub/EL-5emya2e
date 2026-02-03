@@ -4,155 +4,251 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام متابعة الطلاب - منصة الخيميائي</title>
+    <title>منصة الخيميائي | الإصدار المستقر</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
-        body {
-            font-family: 'Cairo', sans-serif;
-            background-color: #f7f9fb;
-        }
-        
-        .grid {
-            display: grid;
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap');
+         :root {
+            --primary: #06b6d4;
+            --secondary: #0f172a;
         }
         
         body {
-            background-image: url('bg.png');
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-            background-size: cover;
-            background-position: center;
+            font-family: 'Tajawal', sans-serif;
+            background-color: var(--secondary);
+            color: #fff;
+            overflow-x: hidden;
+            margin: 0;
+            min-height: 100vh;
+        }
+        /* الخلفية */
+        
+        .video-bg {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            z-index: -10;
+            object-fit: cover;
+            filter: brightness(0.3) hue-rotate(190deg);
+        }
+        /* الزجاج */
+        
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+        }
+        /* المستر العائم */
+        
+        .teacher-container {
+            position: fixed;
+            bottom: -500px;
+            left: 20px;
+            z-index: 9999;
+            display: flex;
+            align-items: flex-end;
+            transition: bottom 0.8s ease-in-out;
+            pointer-events: none;
         }
         
-        #videosContainer {
-            scrollbar-width: thin;
-            scrollbar-color: #4f46e5 #e0e7ff;
+        .teacher-container.show {
+            bottom: -10px;
         }
         
-        #videosContainer::-webkit-scrollbar {
-            width: 8px;
+        .teacher-img {
+            width: 160px;
+            height: auto;
+            filter: drop-shadow(0 0 15px rgba(6, 182, 212, 0.6));
+            z-index: 2;
         }
         
-        #videosContainer::-webkit-scrollbar-track {
-            background: #e0e7ff;
-            border-radius: 10px;
+        .speech-bubble {
+            background: #fff;
+            color: #000;
+            padding: 12px 18px;
+            border-radius: 20px 20px 20px 0;
+            margin-bottom: 110px;
+            margin-left: -30px;
+            max-width: 220px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            position: relative;
+            z-index: 3;
+            opacity: 0;
+            transform: scale(0);
+            transition: all 0.4s ease 0.5s;
+            border: 3px solid var(--primary);
+            text-align: center;
         }
         
-        #videosContainer::-webkit-scrollbar-thumb {
-            background-color: #4f46e5;
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            border-width: 10px 10px 0;
+            border-style: solid;
+            border-color: var(--primary) transparent;
+            display: block;
+            width: 0;
+        }
+        
+        .teacher-container.show .speech-bubble {
+            opacity: 1;
+            transform: scale(1);
+        }
+        /* تنسيقات */
+        
+        .input-glow:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(6, 182, 212, 0.5);
+        }
+        
+        .nav-card {
+            background: linear-gradient(160deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95));
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s;
+        }
+        
+        .nav-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 30px rgba(6, 182, 212, 0.2);
+        }
+        
+         ::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+         ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        
+         ::-webkit-scrollbar-thumb {
+            background: #334155;
             border-radius: 10px;
         }
     </style>
 </head>
 
-<body class="bg-fixed bg-cover bg-center text-gray-900 min-h-screen p-4">
+<body class="flex flex-col items-center pt-10 pb-20">
 
-    <div class="bg-white/90 backdrop-blur-sm shadow-xl rounded-3xl p-6 w-full max-w-lg mx-auto text-center mb-8 animate__animated animate__fadeInDown border-t-4 border-indigo-600">
-        <h1 class="text-4xl font-extrabold text-indigo-800 mb-1">
-            <span class="text-5xl">🧪</span> منصة الخيميائي
-        </h1>
-        <p class="text-xl font-semibold text-gray-600">
-            📘 نظام متابعة الطلاب
-        </p>
+    <video autoplay muted loop playsinline class="video-bg">
+        <source src="https://static.videezy.com/system/resources/previews/000/038/636/original/chemical-reaction.mp4" type="video/mp4">
+    </video>
+
+    <div class="teacher-container" id="teacherPopup">
+        <img src="stick.png" alt="Mr. Momen" class="teacher-img">
+        <div class="speech-bubble" id="teacherMessage">جاهز للتحدي؟ 💪</div>
     </div>
 
-    <div class="bg-white shadow-2xl rounded-3xl p-6 w-full max-w-lg mx-auto mb-8 animate__animated animate__fadeInUp">
-        <label for="studentCode" class="block mb-3 text-xl font-bold text-gray-700">أدخل كود الطالب:</label>
-        <input id="studentCode" type="text" placeholder="مثال: 12345" class="w-full border-2 border-indigo-300 bg-indigo-50 rounded-xl p-3 text-lg focus:ring-4 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition duration-300 mb-4 text-center placeholder-gray-500"
-            onkeypress="if(event.key === 'Enter') searchStudent()">
+    <div class="glass-panel w-11/12 max-w-lg rounded-3xl p-6 text-center animate__animated animate__fadeInDown border-t-4 border-cyan-500 mb-8 mt-4">
+        <h1 class="text-3xl font-black mb-2 tracking-wide text-cyan-400">
+            الخيميائي <span class="text-white text-lg font-normal block mt-1 opacity-90">علوم & علوم متكاملة</span>
+        </h1>
+        <p class="text-slate-300 text-sm">نظام المتابعة الذكي للطلاب 🚀</p>
+    </div>
 
-        <label for="monthFilter" class="block mb-3 text-xl font-bold text-gray-700">اختر الشهر:</label>
-        <select id="monthFilter" class="w-full border-2 border-green-300 bg-green-50 rounded-xl p-3 text-lg focus:ring-4 focus:ring-green-500 focus:border-green-500 focus:outline-none transition duration-300 mb-4 text-center">
-            <option value="">-- جميع الأشهر --</option>
-            <option value="يناير">يناير</option>
-            <option value="فبراير">فبراير</option>
-            <option value="مارس">مارس</option>
-            <option value="أبريل">أبريل</option>
-            <option value="مايو">مايو</option>
-            <option value="يونيو">يونيو</option>
-            <option value="يوليو">يوليو</option>
-            <option value="أغسطس">أغسطس</option>
-            <option value="سبتمبر">سبتمبر</option>
-            <option value="أكتوبر">أكتوبر</option>
-            <option value="نوفمبر">نوفمبر</option>
-            <option value="ديسمبر">ديسمبر</option>
-        </select>
+    <div class="glass-panel w-11/12 max-w-lg rounded-3xl p-6 mb-8 animate__animated animate__fadeInUp">
+        <div class="space-y-4">
+            <div class="relative">
+                <i class="fa-solid fa-user-graduate absolute right-4 top-4 text-cyan-500 text-lg"></i>
+                <input id="studentCode" type="number" placeholder="أدخل كود الطالب" class="w-full bg-slate-900/80 text-white pl-4 pr-12 py-3.5 rounded-xl border border-slate-600 input-glow transition-all placeholder-slate-500 text-lg font-bold text-center" onkeypress="checkEnter(event)">
+            </div>
 
-        <button onclick="searchStudent()" class="w-full bg-indigo-600 text-white font-bold text-lg py-3 rounded-xl hover:bg-indigo-700 transition duration-300 transform hover:scale-[1.01] shadow-lg shadow-indigo-300">
-            <span class="ml-2">🔍</span> بحث
+            <div class="relative">
+                <i class="fa-solid fa-calendar-check absolute right-4 top-4 text-purple-500 text-lg"></i>
+                <select id="monthFilter" class="w-full bg-slate-900/80 text-white pl-4 pr-12 py-3.5 rounded-xl border border-slate-600 input-glow transition-all appearance-none cursor-pointer text-center font-bold">
+                    <option value="">-- عرض كل الشهور --</option>
+                    <option value="أكتوبر">أكتوبر</option><option value="نوفمبر">نوفمبر</option>
+                    <option value="ديسمبر">ديسمبر</option><option value="يناير">يناير</option>
+                    <option value="فبراير">فبراير</option><option value="مارس">مارس</option>
+                    <option value="أبريل">أبريل</option><option value="مايو">مايو</option>
+                </select>
+                <i class="fa-solid fa-chevron-down absolute left-4 top-5 text-slate-500 text-xs"></i>
+            </div>
+
+            <button onclick="searchStudent()" class="w-full bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold py-3.5 rounded-xl shadow-lg transform transition hover:scale-[1.02] flex items-center justify-center gap-2">
+                <i class="fa-solid fa-rocket"></i> عرض النتيجة
+            </button>
+        </div>
+    </div>
+
+    <div id="studentInfo" class="w-11/12 max-w-4xl mb-8"></div>
+
+    <div class="grid grid-cols-2 gap-4 w-11/12 max-w-lg">
+        <a href="quiz.html" class="nav-card p-5 rounded-2xl text-center group cursor-pointer col-span-2 relative overflow-hidden">
+            <div class="w-12 h-12 bg-cyan-900/50 rounded-full flex items-center justify-center mx-auto mb-2 group-hover:bg-cyan-600 transition-colors">
+                <i class="fa-solid fa-flask-vial text-2xl text-cyan-400 group-hover:text-white"></i>
+            </div>
+            <h3 class="font-bold text-gray-100 text-lg">منصة الاختبارات</h3>
+        </a>
+
+        <button onclick="openVideosModal()" class="nav-card p-4 rounded-2xl text-center group cursor-pointer">
+            <div class="w-10 h-10 bg-purple-900/50 rounded-full flex items-center justify-center mx-auto mb-2 group-hover:bg-purple-600 transition-colors">
+                <i class="fa-solid fa-clapperboard text-xl text-purple-400 group-hover:text-white"></i>
+            </div>
+            <h3 class="font-bold text-sm text-gray-200">المحاضرات</h3>
+        </button>
+
+        <button onclick="openContactsModal()" class="nav-card p-4 rounded-2xl text-center group cursor-pointer">
+            <div class="w-10 h-10 bg-green-900/50 rounded-full flex items-center justify-center mx-auto mb-2 group-hover:bg-green-600 transition-colors">
+                <i class="fa-brands fa-whatsapp text-xl text-green-400 group-hover:text-white"></i>
+            </div>
+            <h3 class="font-bold text-sm text-gray-200">الدعم الفني</h3>
         </button>
     </div>
 
-    <div id="studentInfo" class="w-full max-w-4xl bg-white shadow-2xl rounded-3xl p-6 mx-auto mb-8 animate__animated animate__zoomIn"></div>
-
-    <a href="quiz.html" class="bg-white shadow-xl rounded-3xl p-5 w-full max-w-lg mx-auto text-center mt-8 mb-4 hover:bg-indigo-50 transition duration-300 transform hover:translate-y-[-2px] block border-r-8 border-indigo-500">
-        <h2 class="text-2xl font-extrabold text-indigo-700">صفحه الاختبارات</h2>
-    </a>
-
-    <button onclick="openVideosModal()" class="bg-white shadow-xl rounded-3xl p-5 w-full max-w-lg mx-auto text-center mt-8 mb-4 hover:bg-indigo-50 transition duration-300 transform hover:translate-y-[-2px] block border-r-8 border-indigo-500">
-        <h2 class="text-2xl font-extrabold text-indigo-700">🎬 الفيديوهات التعليمية</h2>
-    </button>
-
-    <button onclick="openContactsModal()" class="bg-white shadow-xl rounded-3xl p-5 w-full max-w-lg mx-auto text-center mt-4 mb-8 hover:bg-green-50 transition duration-300 transform hover:translate-y-[-2px] block border-r-8 border-green-500">
-        <h2 class="text-2xl font-extrabold text-green-700">📞 وسائل التواصل والدعم</h2>
-    </button>
-
-    <div id="videosModal" class="fixed inset-0 bg-black bg-opacity-70 hidden items-center justify-center z-50 p-4">
-        <div class="bg-white rounded-3xl p-8 w-full max-w-2xl shadow-2xl relative animate__animated animate__fadeInDown max-h-[90vh] overflow-hidden border-t-8 border-indigo-600">
-            <button onclick="closeVideosModal()" class="absolute top-4 left-4 text-red-600 hover:text-red-800 font-bold text-2xl transition"><span class="inline-block transform hover:rotate-90 duration-300">✖</span></button>
-            <h2 class="text-3xl font-extrabold text-indigo-800 mb-6 text-center">📽️ الفيديوهات</h2>
-            <select id="videoClassSelect" class="w-full border-2 border-indigo-300 bg-indigo-50 p-3 rounded-xl mb-4 text-gray-700 focus:ring-2 focus:ring-indigo-400 focus:outline-none transition" onchange="filterVideosByClass()">
-                <option value="">اختر الصف لعرض الفيديوهات</option>
-            </select>
-            <div id="videosContainer" class="grid gap-4 overflow-y-auto max-h-80 pr-2"></div>
-        </div>
-    </div>
-
-    <div id="contactsModal" class="fixed inset-0 bg-black bg-opacity-70 hidden items-center justify-center z-50 p-4">
-        <div class="bg-white rounded-3xl p-8 w-full max-w-2xl shadow-2xl relative animate__animated animate__fadeInDown border-t-8 border-green-600">
-            <button onclick="closeContactsModal()" class="absolute top-4 left-4 text-red-600 hover:text-red-800 font-bold text-2xl transition"><span class="inline-block transform hover:rotate-90 duration-300">✖</span></button>
-            <h2 class="text-3xl font-extrabold text-green-800 mb-6 text-center">📞 وسائل التواصل</h2>
-            <div id="contactsContainer" class="grid gap-4"></div>
-        </div>
-    </div>
-
-    <footer>
-        <div class="max-w-4xl mx-auto text-center" style="padding: 40px 0; margin-top: 50px;">
-            <div style="background: rgba(255, 255, 255, 0.95); color: #111; max-width: 400px; margin: 0 auto; border-radius: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); border: 1px solid #ddd; padding: 25px;">
-                <p style="font-weight: 600; margin-bottom: 15px; font-size: 16px;">صُمّم بواسطة <span style="color: #2563eb; font-weight: 700;">Abdelrahman Tarek</span></p>
-                <a href="https://wa.me/201094724932" target="_blank" style="display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(to right, #2563eb, #3b82f6); color: #fff; font-weight: 600; font-size: 14px; padding: 10px 18px; border-radius: 9999px; text-decoration: none; box-shadow: 0 2px 10px rgba(0,0,0,0.2); transition: all 0.3s;"
-                    onmouseover="this.style.background='linear-gradient(to right,#3b82f6,#60a5fa)'" onmouseout="this.style.background='linear-gradient(to right,#2563eb,#3b82f6)'"><i class="fa-solid fa-envelope"></i> تواصل معنا</a>
-            </div>
-        </div>
+    <footer class="mt-12 text-slate-500 text-sm pb-8 font-mono">
+        <p>Created by Abdelrahman Tarek</p>
     </footer>
 
+    <div id="videosModal" class="fixed inset-0 bg-black/90 backdrop-blur-md hidden items-center justify-center z-50 p-4">
+        <div class="glass-panel w-full max-w-2xl rounded-2xl p-6 relative border-t-4 border-purple-500 animate__animated animate__fadeInDown">
+            <button onclick="closeVideosModal()" class="absolute top-4 left-4 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-2xl"></i></button>
+            <h2 class="text-2xl font-bold text-center mb-6 text-purple-400">مكتبة الفيديو</h2>
+            <select id="videoClassSelect" class="w-full bg-slate-800 text-white p-3 rounded-lg border border-slate-600 mb-4 focus:ring-2 focus:ring-purple-500 outline-none" onchange="filterVideosByClass()">
+                <option value="">عرض كل الصفوف</option>
+            </select>
+            <div id="videosContainer" class="grid gap-3 max-h-[60vh] overflow-y-auto pr-2"></div>
+        </div>
+    </div>
+
+    <div id="contactsModal" class="fixed inset-0 bg-black/90 backdrop-blur-md hidden items-center justify-center z-50 p-4">
+        <div class="glass-panel w-full max-w-md rounded-2xl p-6 relative border-t-4 border-green-500 animate__animated animate__fadeInDown">
+            <button onclick="closeContactsModal()" class="absolute top-4 left-4 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-2xl"></i></button>
+            <h2 class="text-2xl font-bold text-center mb-6 text-green-400">تواصل معنا</h2>
+            <div id="contactsContainer" class="space-y-3"></div>
+        </div>
+    </div>
+
     <script>
-        // *************************************************************
-        // ** 🚨 بيانات الاتصال بـ Supabase (يجب ملء المفاتيح هنا) 🚨 **
-        // *************************************************************
         const SUPABASE_URL = "https://arbbxmnjviryxkmhwdgk.supabase.co";
+        // ✅ استخدام المفتاح الصحيح وتصحيح الخطأ الإملائي في service role
+        // مفتاح الـ Anon Key الصحيح (مأخوذ من الأكواد السابقة)
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyYmJ4bW5qdmlyeXhrbWh3ZGdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI2OTU1NDEsImV4cCI6MjA3ODI3MTU0MX0.G-MsJtbQ1LlPZO-Vob6nKzdClHmOYu6RFOKi62FKKNk";
 
         const TABLE_STUDENTS = "alchemiya_students";
         const TABLE_RECORDS = "alchemiya_records";
         const TABLE_GROUPS = "alchemiya_groups";
 
+        // ✅ استخدام بروكسي لتجاوز CORS
+        const CORS_PROXY = "https://api.allorigins.win/raw?url=";
         const SHEET_VIDEOS = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRj2ajSLPIBsAwHwv8qSVX7_5q5I_LATlqKEWkzOIdF_3Em9PmTTWZ8BnXNau0yCNeF1XAx9KX3PLrN/pub?gid=849351073&single=true&output=csv";
         const SHEET_CONTACTS = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRj2ajSLPIBsAwHwv8qSVX7_5q5I_LATlqKEWkzOIdF_3Em9PmTTWZ8BnXNau0yCNeF1XAx9KX3PLrN/pub?gid=218257892&single=true&output=csv";
 
-        async function supabaseFetchAnon(table, query = '') {
-            const url = `${SUPABASE_URL}/rest/v1/${table}${query}`;
-            const response = await fetch(url, {
-                method: 'GET',
-                headers: {
-                    'apikey': SUPABASE_ANON_KEY,
-                    'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
-                }
-            });
-            if (!response.ok) throw new Error("Connection Error");
-            return response.json();
+        // دوال مساعدة
+        function checkEnter(event) {
+            if (event.key === 'Enter') searchStudent();
         }
 
         function safeNumber(val) {
@@ -163,309 +259,271 @@
             return val === null || val === undefined || (typeof val === 'string' && val.trim() === '');
         }
 
-        async function fetchCSV(url) {
-            const res = await fetch(url);
-            const text = await res.text();
-            const rows = text.trim().split("\n").map(r => r.split(","));
-            const headers = rows[0].map(h => h.trim());
-            return rows.slice(1).map(row => {
-                let obj = {};
-                headers.forEach((h, i) => obj[h] = row[i] ? row[i].trim() : "");
-                return obj;
-            });
+        async function supabaseFetchAnon(table, query) {
+            try {
+                const url = SUPABASE_URL + '/rest/v1/' + table + (query || '');
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+                    }
+                });
+                if (!response.ok) return [];
+                return await response.json();
+            } catch (e) {
+                console.error("Supabase Error", e);
+                return [];
+            }
         }
 
+        async function fetchCSV(url) {
+            try {
+                // ✅ استخدام البروكسي لتجاوز الحظر
+                const res = await fetch(CORS_PROXY + encodeURIComponent(url));
+                if (!res.ok) return [];
+                const text = await res.text();
+                const rows = text.trim().split("\n").map(function(r) {
+                    return r.split(",");
+                });
+                const headers = rows[0].map(function(h) {
+                    return h.trim();
+                });
+                return rows.slice(1).map(function(row) {
+                    let obj = {};
+                    headers.forEach(function(h, i) {
+                        obj[h] = row[i] ? row[i].trim() : "";
+                    });
+                    return obj;
+                });
+            } catch (e) {
+                console.error("CSV Error", e);
+                return [];
+            }
+        }
+
+        // المستر العائم
+        const quotes = ["عافر حلمك يستاهل! 💪", "الكيمياء لعبتنا 🧪", "متخافش من الغلط 🚀", "ركز في هدفك 😉", "الاستمرارية سر النجاح 🌟"];
+
+        function triggerTeacherPopup() {
+            const popup = document.getElementById('teacherPopup');
+            const msgBox = document.getElementById('teacherMessage');
+            if (popup && msgBox) {
+                msgBox.textContent = quotes[Math.floor(Math.random() * quotes.length)];
+                popup.classList.add('show');
+                setTimeout(function() {
+                    popup.classList.remove('show');
+                }, 8000);
+            }
+        }
+        setTimeout(triggerTeacherPopup, 3000);
+        setInterval(triggerTeacherPopup, 60000);
+
+        // البحث
         async function searchStudent() {
             const code = document.getElementById("studentCode").value.trim();
             const selectedMonth = document.getElementById("monthFilter").value.trim();
             const infoDiv = document.getElementById("studentInfo");
 
-            infoDiv.classList.remove("animate__zoomIn");
-            infoDiv.classList.add("animate__pulse");
-            infoDiv.innerHTML = `<p class="text-indigo-600 font-bold text-center">جاري البحث...</p>`;
-
+            infoDiv.innerHTML = '<div class="glass-panel p-6 rounded-2xl text-center"><i class="fa-solid fa-atom fa-spin text-cyan-500 text-3xl mb-2"></i><p>جاري البحث...</p></div>';
 
             if (!code) {
-                infoDiv.innerHTML = `<p class="text-red-600 font-bold text-center">⚠️ يرجى إدخال كود الطالب</p>`;
+                infoDiv.innerHTML = '<div class="glass-panel p-4 rounded-xl border border-red-500/50 text-red-300 text-center font-bold">⚠️ أدخل كود الطالب</div>';
                 return;
             }
 
-            let student;
-            try {
-                const studentQuery = `?select=id,student_name,group_id,phone_parent,student_code,${TABLE_GROUPS}(group_name,class_name)&student_code=eq.${code}&limit=1`;
-                const studentData = await supabaseFetchAnon(TABLE_STUDENTS, studentQuery);
+            const studentData = await supabaseFetchAnon(TABLE_STUDENTS, '?select=id,student_name,group_id,phone_parent,student_code,' + TABLE_GROUPS + '(group_name,class_name)&student_code=eq.' + code + '&limit=1');
 
-                if (studentData.length === 0) throw new Error("Not Found");
-                student = studentData[0];
-            } catch (error) {
-                infoDiv.innerHTML = `<p class="text-red-600 font-bold text-center">🚫 الطالب غير موجود. تأكد من إدخال الكود الصحيح.</p>`;
+            if (studentData.length === 0) {
+                infoDiv.innerHTML = '<div class="glass-panel p-4 rounded-xl border border-red-500/50 text-red-300 text-center font-bold">🚫 الطالب غير موجود</div>';
                 return;
             }
 
-            const studentId = student.id;
+            const student = studentData[0];
+            let records = await supabaseFetchAnon(TABLE_RECORDS, '?select=lesson_number,attendance,homework_degree,exam_degree,recitation_degree,comprehensive_exam_degree,lesson_month,lesson_date&student_id=eq.' + student.id + '&order=lesson_date.desc');
 
-            // 2. جلب سجلات الأداء (النتائج)
-            // 🛑 [تم التعديل] تم استبدال homework_done بـ homework_degree
-            let records = [];
-            try {
-                const recordsQuery = `?select=lesson_number,attendance,homework_degree,exam_degree,recitation_degree,comprehensive_exam_degree,lesson_month,lesson_date&student_id=eq.${studentId}&order=lesson_date.desc`;
-                records = await supabaseFetchAnon(TABLE_RECORDS, recordsQuery);
-            } catch (error) {
-                console.error("Failed to fetch records:", error);
-            }
-
-            // تصفية السجلات حسب الشهر المختار
             if (selectedMonth) {
-                records = records.filter(r => r.lesson_month === selectedMonth);
+                records = records.filter(function(r) {
+                    return r.lesson_month === selectedMonth;
+                });
             }
 
-            infoDiv.classList.remove("animate__pulse");
-
-            // إذا لم يكن هناك سجلات بعد التصفية
             if (records.length === 0 && selectedMonth) {
-                infoDiv.innerHTML = `<p class="text-yellow-600 font-bold text-center">⚠️ لا توجد سجلات للطالب في شهر ${selectedMonth}</p>`;
+                infoDiv.innerHTML = '<div class="glass-panel p-4 rounded-xl border border-amber-500/50 text-amber-300 text-center font-bold">📂 لا توجد سجلات في ' + selectedMonth + '</div>';
                 return;
             }
 
-            // 3. تجميع البيانات وتحليلها للعرض
-            let totalScoreObtained = 0;
-            let totalMaxScore = 0;
-            let totalAttendance = 0;
+            let totalScore = 0,
+                totalMax = 0,
+                attendanceCount = 0;
+            let rowsHtml = '';
 
-            records.forEach(r => {
-                const exam = safeNumber(r.exam_degree);
-                const recitation = safeNumber(r.recitation_degree);
-                const homework = safeNumber(r.homework_degree); // 🆕 [تم التعديل] استلام درجة الواجب
-                const comprehensive = safeNumber(r.comprehensive_exam_degree);
+            records.forEach(function(r, i) {
+                const ex = safeNumber(r.exam_degree);
+                const rec = safeNumber(r.recitation_degree);
+                const hw = safeNumber(r.homework_degree);
+                const comp = safeNumber(r.comprehensive_exam_degree);
 
-                // 🆕 [تم التعديل] إضافة الواجب للمجموع
-                totalScoreObtained += (exam + recitation + homework + comprehensive);
+                totalScore += (ex + rec + hw + comp);
 
-                // حساب النهاية العظمى (Max Score) لهذه الحصة
-                let currentSessionMax = 0;
-                if (exam > 0 || exam === 0) currentSessionMax += 10; 
-                if (recitation > 0 || recitation === 0) currentSessionMax += 10; 
-                if (homework > 0 || homework === 0) currentSessionMax += 10; // 🆕 [تم التعديل] نفترض أن درجة الواجب من 10
+                if (ex >= 0) totalMax += 10;
+                if (rec >= 0) totalMax += 10;
+                if (hw >= 0) totalMax += 10;
+                if (r.comprehensive_exam_degree != null && r.comprehensive_exam_degree !== "") totalMax += 20;
 
-                if (!isEmptyCell(r.comprehensive_exam_degree)) {
-                    currentSessionMax += 20;
-                }
+                if (r.attendance === 'حضر') attendanceCount++;
 
-                totalMaxScore += currentSessionMax;
+                const rowClass = i % 2 === 0 ? 'bg-slate-800/30' : 'bg-slate-800/10';
 
-                if (r.attendance === 'حضر') totalAttendance += 1;
+                let hwVal = '<span class="text-slate-600">-</span>';
+                if (r.homework_degree != null && r.homework_degree !== "") hwVal = '<span class="text-green-400 font-bold">' + r.homework_degree + '</span>';
+
+                let recVal = '<span class="text-slate-600">-</span>';
+                if (r.recitation_degree != null) recVal = r.recitation_degree;
+
+                let exVal = '<span class="text-slate-600">-</span>';
+                if (r.exam_degree != null) exVal = r.exam_degree;
+
+                let compVal = '<span class="text-slate-600">-</span>';
+                if (r.comprehensive_exam_degree != null && r.comprehensive_exam_degree !== "") compVal = '<span class="text-amber-400 font-bold">' + r.comprehensive_exam_degree + '</span>';
+
+                rowsHtml += '<tr class="' + rowClass + ' border-b border-slate-700/50"><td class="p-3 font-mono text-cyan-500">' + r.lesson_number + '</td><td class="p-3">' + hwVal + '</td><td class="p-3">' + recVal + '</td><td class="p-3">' + exVal + '</td><td class="p-3">' + compVal + '</td></tr>';
             });
 
-            const groupInfo = student[TABLE_GROUPS] || {
-                group_name: "—",
-                class_name: "—"
-            };
+            const percent = totalMax > 0 ? ((totalScore / totalMax) * 100).toFixed(1) : 0;
+            let pColor = "text-red-400";
+            if (percent >= 85) pColor = "text-green-400";
+            else if (percent >= 60) pColor = "text-amber-400";
 
-            const percent = totalMaxScore > 0 ? ((totalScoreObtained / totalMaxScore) * 100).toFixed(1) : 0;
-
-            const percentClass = percent >= 85 ? "text-green-600 bg-green-100" : percent >= 60 ? "text-yellow-600 bg-yellow-100" : "text-red-600 bg-red-100";
-
-            const recordsHtml = buildRecordsTable(records);
-
-            // 🆕 حساب ترتيب الطالب في المجموعة
-            let rankingHtml = '';
-            try {
-                const groupId = student.group_id;
-
-                // جلب جميع الطلاب في نفس المجموعة
-                const groupStudentsQuery = `?select=id,student_name&group_id=eq.${groupId}`;
-                const groupStudents = await supabaseFetchAnon(TABLE_STUDENTS, groupStudentsQuery);
-
-                if (groupStudents.length > 0) {
-                    // حساب النسبة لكل طالب
-                    const studentScores = [];
-
-                    for (const gs of groupStudents) {
-                        try {
-                            // 🛑 [تم التعديل] طلبنا هنا أيضاً homework_degree
-                            const gsRecordsQuery = `?select=exam_degree,recitation_degree,homework_degree,comprehensive_exam_degree&student_id=eq.${gs.id}&order=lesson_date.desc`;
-                            const gsRecords = await supabaseFetchAnon(TABLE_RECORDS, gsRecordsQuery);
-
-                            let filteredGsRecords = gsRecords;
-                            if (selectedMonth) {
-                                // 🛑 [تم التعديل] وهنا أيضاً
-                                const gsMonthQuery = `?select=exam_degree,recitation_degree,homework_degree,comprehensive_exam_degree,lesson_month&student_id=eq.${gs.id}&lesson_month=eq.${selectedMonth}`;
-                                filteredGsRecords = await supabaseFetchAnon(TABLE_RECORDS, gsMonthQuery);
-                            }
-
-                            let gsTotalScore = 0;
-                            let gsMaxScore = 0;
-
-                            filteredGsRecords.forEach(r => {
-                                const exam = safeNumber(r.exam_degree);
-                                const recitation = safeNumber(r.recitation_degree);
-                                const homework = safeNumber(r.homework_degree); // 🆕
-                                const comprehensive = safeNumber(r.comprehensive_exam_degree);
-                                
-                                gsTotalScore += (exam + recitation + homework + comprehensive);
-
-                                let currentMax = 0;
-                                if (exam > 0 || exam === 0) currentMax += 10;
-                                if (recitation > 0 || recitation === 0) currentMax += 10;
-                                if (homework > 0 || homework === 0) currentMax += 10; // 🆕
-                                if (!isEmptyCell(r.comprehensive_exam_degree)) currentMax += 20;
-
-                                gsMaxScore += currentMax;
-                            });
-
-                            const gsPercent = gsMaxScore > 0 ? ((gsTotalScore / gsMaxScore) * 100).toFixed(1) : 0;
-                            studentScores.push({
-                                name: gs.student_name,
-                                percent: parseFloat(gsPercent),
-                                isCurrentStudent: gs.id === studentId
-                            });
-                        } catch (error) {
-                            console.error('Error calculating score for student:', error);
-                        }
-                    }
-
-                    // ترتيب الطلاب
-                    studentScores.sort((a, b) => b.percent - a.percent);
-
-                    // إيجاد ترتيب الطالب الحالي
-                    const currentStudentRank = studentScores.findIndex(s => s.isCurrentStudent) + 1;
-                    const totalStudentsInGroup = studentScores.length;
-
-                    rankingHtml = `
-                        <div class="mt-6 bg-gradient-to-r from-blue-50 to-indigo-50 p-5 rounded-xl shadow-lg border-l-4 border-blue-600">
-                            <h3 class="text-2xl font-bold text-blue-800 mb-4">🏆 الترتيب في المجموعة</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                                <div class="bg-white p-4 rounded-lg shadow text-center">
-                                    <p class="text-gray-600 font-semibold mb-1">ترتيبك</p>
-                                    <p class="text-4xl font-bold text-indigo-600">${currentStudentRank}</p>
-                                    <p class="text-sm text-gray-500">من ${totalStudentsInGroup} طالب</p>
-                                </div>
-                                <div class="bg-white p-4 rounded-lg shadow text-center">
-                                    <p class="text-gray-600 font-semibold mb-1">نسبتك</p>
-                                    <p class="${percentClass} text-3xl font-bold px-2 py-1 rounded">${percent}%</p>
-                                </div>
-                                <div class="bg-white p-4 rounded-lg shadow text-center">
-                                    <p class="text-gray-600 font-semibold mb-1">الفرق عن الأول</p>
-                                    <p class="text-2xl font-bold ${percent >= studentScores[0].percent ? 'text-green-600' : 'text-orange-600'}">
-                                        ${Math.abs((studentScores[0].percent - percent).toFixed(1))}%
-                                    </p>
-                                </div>
-                            </div>
-                            
-                            <details class="bg-white p-3 rounded-lg shadow">
-                                <summary class="cursor-pointer font-bold text-indigo-700 hover:text-indigo-900">📊 عرض ترتيب جميع الطلاب في المجموعة</summary>
-                                <div class="mt-3 space-y-2">
-                                    ${studentScores.map((s, idx) => `
-                                        <div class="flex justify-between items-center p-2 ${s.isCurrentStudent ? 'bg-yellow-100 border-l-4 border-yellow-500' : 'bg-gray-50'} rounded">
-                                            <span class="font-semibold">${idx + 1}. ${s.name}</span>
-                                            <span class="font-bold ${s.percent >= 85 ? 'text-green-600' : s.percent >= 60 ? 'text-yellow-600' : 'text-red-600'}">${s.percent}%</span>
-                                        </div>
-                                    `).join('')}
-                                </div>
-                            </details>
-                        </div>
-                    `;
-                }
-            } catch (error) {
-                console.error('Error calculating rankings:', error);
-                rankingHtml = `<p class="text-yellow-600 text-center mt-4">لم يتمكن من حساب الترتيب</p>`;
-            }
+            const grp = student[TABLE_GROUPS] || {};
+            const cName = grp.class_name || '-';
+            const gName = grp.group_name || '-';
 
             infoDiv.innerHTML = `
-                <h2 class="text-3xl font-extrabold text-indigo-800 mb-4 border-b-2 pb-2 border-indigo-200">✨ بيانات الطالب</h2>
-                <div class="grid grid-cols-2 gap-4 text-lg mb-4">
-                    <p><strong>الاسم:</strong> <span class="text-gray-700 font-semibold">${student.student_name || "—"}</span></p>
-                    <p><strong>الصف:</strong> <span class="text-gray-700 font-semibold">${groupInfo.class_name || "—"}</span></p>
-                    <p><strong>المجموعة:</strong> <span class="text-gray-700 font-semibold">${groupInfo.group_name || "—"}</span></p>
-                    <p><strong>الكود:</strong> <span class="text-indigo-600 font-bold">${student.student_code || student.id}</span></p>
-                    
-                </div>
-
-                <h3 class="text-2xl font-bold text-gray-700 mt-6 mb-3 border-b pb-1">📚 سجل الحضور والدرجات</h3>
-                <div class="overflow-x-auto shadow-md rounded-xl mb-4">
-                    ${recordsHtml}
-                </div>
-                
-                <div class="mt-6 flex flex-col md:flex-row justify-between items-center bg-indigo-50 p-4 rounded-xl shadow-inner gap-4">
-                    <p class="font-bold text-lg text-indigo-700">مجموع الدرجات: <span class="text-xl text-black">${totalScoreObtained.toFixed(0)}</span> <span class="text-sm text-gray-500">من ${totalMaxScore.toFixed(0)}</span></p>
-                    <p class="font-bold text-lg text-indigo-700">عدد الحضور: <span class="text-xl text-black">${totalAttendance}</span></p>
-                    <p class="font-bold text-lg text-gray-700">النسبة العامة: <span class="${percentClass} px-2 py-1 rounded-lg text-xl font-bold">${percent}%</span></p>
-                </div>
-
-                ${rankingHtml}
-            `;
-            infoDiv.classList.add("animate__zoomIn");
+                <div class="glass-panel rounded-3xl p-6 animate__animated animate__zoomIn border-t-4 border-cyan-500">
+                    <div class="flex flex-col md:flex-row justify-between items-center border-b border-slate-700 pb-4 mb-4">
+                        <div>
+                            <h2 class="text-2xl font-bold text-white">${student.student_name}</h2>
+                            <p class="text-cyan-400 text-sm">${cName} | ${gName}</p>
+                        </div>
+                        <div class="bg-slate-800 px-4 py-2 rounded-lg border border-slate-600">
+                            <span class="text-xl font-mono font-bold text-white">${student.student_code}</span>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-3 gap-3 mb-6">
+                        <div class="bg-slate-800/60 p-3 rounded-xl text-center border border-slate-700">
+                            <p class="text-slate-400 text-xs">المجموع</p>
+                            <p class="text-lg font-bold text-white">${totalScore} / ${totalMax}</p>
+                        </div>
+                        <div class="bg-slate-800/60 p-3 rounded-xl text-center border border-slate-700">
+                            <p class="text-slate-400 text-xs">النسبة</p>
+                            <p class="text-xl font-bold ${pColor}">${percent}%</p>
+                        </div>
+                        <div class="bg-slate-800/60 p-3 rounded-xl text-center border border-slate-700">
+                            <p class="text-slate-400 text-xs">الحضور</p>
+                            <p class="text-lg font-bold text-blue-400">${attendanceCount}</p>
+                        </div>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-300 mb-2">التفاصيل</h3>
+                    <div class="overflow-x-auto rounded-xl border border-slate-700 max-h-64 overflow-y-auto">
+                        <table class="w-full text-center text-sm">
+                            <thead class="bg-slate-900 text-slate-300 sticky top-0">
+                                <tr><th class="p-3">#</th><th class="p-3">واجب</th><th class="p-3">تسميع</th><th class="p-3">امتحان</th><th class="p-3">شامل</th></tr>
+                            </thead>
+                            <tbody class="text-slate-200">${rowsHtml}</tbody>
+                        </table>
+                    </div>
+                </div>`;
         }
 
-        function buildRecordsTable(records) {
-            if (records.length === 0) return `<p class="text-gray-500 p-4 text-center">لا توجد سجلات.</p>`;
-
-            let tableHtml = `
-                <table class="w-full border-collapse text-center text-sm">
-                    <thead class="bg-indigo-700 text-white shadow-lg">
-                        <tr>
-                            <th class="p-3">حصة</th>
-                            <th class="p-3">واجب (10)</th>
-                            <th class="p-3">تسميع (10)</th>
-                            <th class="p-3">امتحان (10)</th>
-                            <th class="p-3">شامل (20)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            `;
-
-            let rowCounter = 0;
-
-            records.forEach(record => {
-                // عرض درجة الواجب بدلاً من العلامة
-                const homeworkDisplay = !isEmptyCell(record.homework_degree) ? `<span class="font-bold text-blue-600">${record.homework_degree}</span>` : '—';
-
-                const recDegree = !isEmptyCell(record.recitation_degree) ? record.recitation_degree : '—';
-                const examDegree = !isEmptyCell(record.exam_degree) ? record.exam_degree : '—';
-                const compDegree = !isEmptyCell(record.comprehensive_exam_degree) ? `<span class="text-purple-700 font-bold">${record.comprehensive_exam_degree}</span>` : '—';
-
-                rowCounter++;
-                const rowClass = rowCounter % 2 === 0 ? 'bg-gray-50' : 'bg-white';
-
-                tableHtml += `
-                    <tr class="border-b ${rowClass} hover:bg-indigo-50 transition">
-                        <td class="p-2">${record.lesson_number || '—'}</td>
-                        <td class="p-2">${homeworkDisplay}</td>
-                        <td class="p-2 font-medium">${recDegree}</td>
-                        <td class="p-2 font-medium">${examDegree}</td>
-                        <td class="p-2">${compDegree}</td>
-                    </tr>
-                `;
-            });
-
-            tableHtml += `</tbody></table>`;
-            return tableHtml;
-        }
-
-        // ... [باقي كود الفيديوهات والاتصال كما هو بدون تغيير] ...
-        
+        // الفيديوهات والتواصل
         let videosData = [];
+
         async function openVideosModal() {
             document.getElementById("videosModal").classList.remove("hidden");
             document.getElementById("videosModal").style.display = "flex";
+            const container = document.getElementById("videosContainer");
+
             if (videosData.length === 0) {
-                document.getElementById("videosContainer").innerHTML = `<p class="text-indigo-600 text-center mt-4 font-semibold">جاري التحميل...</p>`;
-                try {
-                    const videos = await fetchCSV(SHEET_VIDEOS);
-                    videosData = videos;
-                    const uniqueClasses = [...new Set(videos.map(v => v.class ? v.class.trim() : "").filter(c => c !== ""))];
-                    let optionsHtml = `<option value="">عرض جميع الفيديوهات</option>`;
-                    uniqueClasses.forEach(cls => {
-                        optionsHtml += `<option value="${cls}">${cls}</option>`;
+                container.innerHTML = '<p class="text-center text-slate-400 mt-4">جاري التحميل...</p>';
+                const data = await fetchCSV(SHEET_VIDEOS);
+                if (data.length > 0) {
+                    videosData = data;
+                    const classes = [];
+                    data.forEach(function(v) {
+                        if (v.class && !classes.includes(v.class.trim())) classes.push(v.class.trim());
                     });
-                    document.getElementById("videoClassSelect").innerHTML = optionsHtml;
+
+                    const select = document.getElementById("videoClassSelect");
+                    select.innerHTML = '<option value="">عرض الكل</option>';
+                    classes.forEach(function(c) {
+                        select.innerHTML += '<option value="' + c + '">' + c + '</option>';
+                    });
                     filterVideosByClass();
-                } catch (error) {
-                    document.getElementById("videosContainer").innerHTML = `<p class="text-red-500 text-center mt-4">حدث خطأ في تحميل الفيديوهات. تأكد من رابط الشيت.</p>`;
+                } else {
+                    container.innerHTML = '<p class="text-red-400 text-center">لا توجد بيانات</p>';
                 }
-            } else {
-                filterVideosByClass();
             }
+        }
+
+        function filterVideosByClass() {
+            const cls = document.getElementById("videoClassSelect").value;
+            const container = document.getElementById("videosContainer");
+            let filtered = videosData;
+
+            if (cls) {
+                filtered = videosData.filter(function(v) {
+                    return v.class && v.class.trim() === cls;
+                });
+            }
+
+            if (filtered.length === 0) {
+                container.innerHTML = '<p class="text-slate-500 text-center">لا توجد فيديوهات</p>';
+                return;
+            }
+
+            let html = '';
+            filtered.forEach(function(v) {
+                html += `
+                <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex justify-between items-center hover:border-purple-500 transition mb-2">
+                    <div>
+                        <h4 class="font-bold text-white text-sm">${v.title}</h4>
+                        <p class="text-xs text-slate-400">${v.note || ''}</p>
+                    </div>
+                    <a href="${v.link}" target="_blank" class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded text-xs font-bold flex items-center gap-1">
+                        مشاهدة <i class="fa-solid fa-play"></i>
+                    </a>
+                </div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        async function openContactsModal() {
+            document.getElementById("contactsModal").classList.remove("hidden");
+            document.getElementById("contactsModal").style.display = "flex";
+            const container = document.getElementById("contactsContainer");
+            container.innerHTML = '<p class="text-center text-slate-400">جاري التحميل...</p>';
+
+            const contacts = await fetchCSV(SHEET_CONTACTS);
+            if (contacts.length === 0) {
+                container.innerHTML = '<p class="text-red-400 text-center">خطأ في التحميل</p>';
+                return;
+            }
+
+            let html = '';
+            contacts.forEach(function(c) {
+                const isWa = c.type === 'whatsapp';
+                const link = isWa ? 'https://wa.me/' + c.number : 'tel:' + c.number;
+                const icon = isWa ? 'fa-whatsapp' : 'fa-phone';
+                const color = isWa ? 'text-green-400' : 'text-blue-400';
+
+                html += `
+                <a href="${link}" target="_blank" class="block bg-slate-800 p-4 rounded-xl border border-slate-700 hover:bg-slate-700 transition flex justify-between items-center mb-3">
+                    <span class="font-bold text-slate-200">${c.label}</span>
+                    <span class="${color} text-xl"><i class="fa-brands ${icon}"></i></span>
+                </a>`;
+            });
+            container.innerHTML = html;
         }
 
         function closeVideosModal() {
@@ -473,42 +531,11 @@
             document.getElementById("videosModal").style.display = "none";
         }
 
-        function filterVideosByClass() {
-            const selected = document.getElementById("videoClassSelect").value;
-            const container = document.getElementById("videosContainer");
-            const filtered = selected === "" ?
-                videosData :
-                videosData.filter(v => v.class && v.class.trim() === selected);
-            if (filtered.length === 0) {
-                container.innerHTML = `<p class="text-gray-500 text-center mt-4">لا توجد فيديوهات.</p>`;
-                return;
-            }
-            container.innerHTML = filtered.map(v => `<div class="bg-indigo-50 shadow p-4 rounded-xl border hover:bg-indigo-100 transition"><p class="font-bold text-indigo-700">${v.title}</p><p class="text-sm text-gray-600 mb-2">${v.note || ""}</p><a href="${v.link}" target="_blank" class="text-blue-600 font-bold">مشاهدة 📺</a></div>`).join("");
-        }
-
-        async function openContactsModal() {
-            document.getElementById("contactsModal").classList.remove("hidden");
-            document.getElementById("contactsModal").style.display = "flex";
-            const container = document.getElementById("contactsContainer");
-            container.innerHTML = `<p class="text-green-600 text-center">جاري التحميل...</p>`;
-            const contacts = await fetchCSV(SHEET_CONTACTS);
-            container.innerHTML = contacts.map(c => {
-                let link = (c.type === "whatsapp") ? `https://wa.me/${c.number}` : `tel:${c.number}`;
-                return `<div class="bg-gray-50 shadow p-4 rounded-xl hover:bg-green-50 transition"><p class="font-bold text-gray-700 mb-1">${c.label}</p><a href="${link}" target="_blank" class="text-green-600 font-bold">${(c.type === "whatsapp") ? 'واتساب 💬' : 'اتصال 📞'}</a></div>`;
-            }).join("");
-        }
-
         function closeContactsModal() {
             document.getElementById("contactsModal").classList.add("hidden");
             document.getElementById("contactsModal").style.display = "none";
         }
-
-        document.addEventListener('DOMContentLoaded', () => {
-        });
     </script>
 </body>
 
 </html>
-
-
-<!--new-->>

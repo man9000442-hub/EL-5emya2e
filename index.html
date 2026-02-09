@@ -125,15 +125,15 @@
             box-shadow: 0 10px 30px rgba(6, 182, 212, 0.2);
         }
         
-         ::-webkit-scrollbar {
+        ::-webkit-scrollbar {
             width: 6px;
         }
         
-         ::-webkit-scrollbar-track {
+        ::-webkit-scrollbar-track {
             background: #0f172a;
         }
         
-         ::-webkit-scrollbar-thumb {
+        ::-webkit-scrollbar-thumb {
             background: #334155;
             border-radius: 10px;
         }
@@ -335,6 +335,7 @@
                 return;
             }
 
+            // جلب بيانات الطالب
             const studentData = await supabaseFetchAnon(TABLE_STUDENTS, '?select=id,student_name,group_id,phone_parent,student_code,' + TABLE_GROUPS + '(group_name,class_name)&student_code=eq.' + code + '&limit=1');
 
             if (studentData.length === 0) {
@@ -343,6 +344,7 @@
             }
 
             const student = studentData[0];
+            // جلب سجلات الطالب
             let records = await supabaseFetchAnon(TABLE_RECORDS, '?select=lesson_number,attendance,homework_degree,exam_degree,recitation_degree,comprehensive_exam_degree,lesson_month,lesson_date&student_id=eq.' + student.id + '&order=lesson_date.desc');
 
             if (selectedMonth) {
@@ -356,6 +358,7 @@
                 return;
             }
 
+            // حساب درجات الطالب
             let totalScore = 0,
                 totalMax = 0,
                 attendanceCount = 0;
@@ -398,10 +401,79 @@
             if (percent >= 85) pColor = "text-green-400";
             else if (percent >= 60) pColor = "text-amber-400";
 
+            // ***************************
+            // منطق حساب الترتيب (Ranking Logic)
+            // ***************************
+            let rankingHtml = '';
+            let myRank = '-';
+            let rankBadgeColor = 'text-slate-400';
+
+            if (selectedMonth && student.group_id) {
+                // جلب درجات كل طلاب المجموعة في هذا الشهر
+                const groupRecords = await supabaseFetchAnon(TABLE_RECORDS, 
+                    `?select=homework_degree,recitation_degree,exam_degree,comprehensive_exam_degree,student_id,${TABLE_STUDENTS}!inner(student_name,group_id)&lesson_month=eq.${selectedMonth}&${TABLE_STUDENTS}.group_id=eq.${student.group_id}`
+                );
+
+                // تجميع الدرجات لكل طالب
+                const studentScores = {}; // student_id -> {name, score}
+                
+                groupRecords.forEach(r => {
+                    const sId = r.student_id;
+                    const sName = r[TABLE_STUDENTS].student_name;
+                    // حساب المجموع بنفس الطريقة
+                    const score = safeNumber(r.homework_degree) + safeNumber(r.recitation_degree) + safeNumber(r.exam_degree) + safeNumber(r.comprehensive_exam_degree);
+                    
+                    if (!studentScores[sId]) {
+                        studentScores[sId] = { id: sId, name: sName, score: 0 };
+                    }
+                    studentScores[sId].score += score;
+                });
+
+                // تحويلها لمصفوفة وترتيبها تنازلياً
+                const leaderboard = Object.values(studentScores).sort((a, b) => b.score - a.score);
+                
+                // تحديد ترتيب الطالب الحالي
+                const myIndex = leaderboard.findIndex(s => s.id === student.id);
+                if (myIndex !== -1) {
+                    myRank = `#${myIndex + 1}`;
+                    if (myIndex === 0) rankBadgeColor = 'text-yellow-400'; // الأول
+                    else if (myIndex === 1) rankBadgeColor = 'text-gray-300'; // الثاني
+                    else if (myIndex === 2) rankBadgeColor = 'text-orange-400'; // الثالث
+                }
+
+                // بناء HTML لقائمة الأوائل (Top 5)
+                rankingHtml = `
+                <div class="mt-6 bg-slate-900/60 rounded-xl border border-slate-700 p-4">
+                    <h3 class="text-yellow-400 font-bold mb-3 flex items-center gap-2 text-sm">
+                        <i class="fa-solid fa-trophy"></i> لوحة شرف المجموعة (${selectedMonth})
+                    </h3>
+                    <div class="space-y-2">
+                `;
+                
+                // عرض أول 5 طلاب
+                leaderboard.slice(0, 5).forEach((s, idx) => {
+                    const isMe = s.id === student.id;
+                    const rowStyle = isMe ? "bg-cyan-900/40 border-cyan-500/50" : "bg-slate-800/40 border-transparent";
+                    const medal = idx === 0 ? "🥇" : idx === 1 ? "🥈" : idx === 2 ? "🥉" : `<span class="font-mono text-slate-500 text-xs">#${idx+1}</span>`;
+                    
+                    rankingHtml += `
+                        <div class="flex justify-between items-center px-3 py-2 rounded-lg border ${rowStyle} transition hover:bg-slate-700/50">
+                            <div class="flex items-center gap-3">
+                                <span class="w-6 text-center text-lg">${medal}</span>
+                                <span class="text-sm ${isMe ? 'font-bold text-cyan-300' : 'text-slate-300'}">${s.name}</span>
+                            </div>
+                            <span class="font-mono font-bold text-yellow-500 text-sm">${s.score}</span>
+                        </div>
+                    `;
+                });
+                rankingHtml += `</div></div>`;
+            }
+
             const grp = student[TABLE_GROUPS] || {};
             const cName = grp.class_name || '-';
             const gName = grp.group_name || '-';
 
+            // عرض البيانات النهائية مع الترتيب
             infoDiv.innerHTML = `
                 <div class="glass-panel rounded-3xl p-6 animate__animated animate__zoomIn border-t-4 border-cyan-500">
                     <div class="flex flex-col md:flex-row justify-between items-center border-b border-slate-700 pb-4 mb-4">
@@ -409,11 +481,12 @@
                             <h2 class="text-2xl font-bold text-white">${student.student_name}</h2>
                             <p class="text-cyan-400 text-sm">${cName} | ${gName}</p>
                         </div>
-                        <div class="bg-slate-800 px-4 py-2 rounded-lg border border-slate-600">
+                        <div class="bg-slate-800 px-4 py-2 rounded-lg border border-slate-600 mt-2 md:mt-0">
                             <span class="text-xl font-mono font-bold text-white">${student.student_code}</span>
                         </div>
                     </div>
-                    <div class="grid grid-cols-3 gap-3 mb-6">
+                    
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
                         <div class="bg-slate-800/60 p-3 rounded-xl text-center border border-slate-700">
                             <p class="text-slate-400 text-xs">المجموع</p>
                             <p class="text-lg font-bold text-white">${totalScore} / ${totalMax}</p>
@@ -423,11 +496,18 @@
                             <p class="text-xl font-bold ${pColor}">${percent}%</p>
                         </div>
                         <div class="bg-slate-800/60 p-3 rounded-xl text-center border border-slate-700">
+                            <p class="text-slate-400 text-xs">الترتيب</p>
+                            <p class="text-xl font-bold ${rankBadgeColor}">${myRank}</p>
+                        </div>
+                        <div class="bg-slate-800/60 p-3 rounded-xl text-center border border-slate-700">
                             <p class="text-slate-400 text-xs">الحضور</p>
                             <p class="text-lg font-bold text-blue-400">${attendanceCount}</p>
                         </div>
                     </div>
-                    <h3 class="text-lg font-bold text-slate-300 mb-2">التفاصيل</h3>
+
+                    ${rankingHtml}
+
+                    <h3 class="text-lg font-bold text-slate-300 mb-2 mt-6">التفاصيل</h3>
                     <div class="overflow-x-auto rounded-xl border border-slate-700 max-h-64 overflow-y-auto">
                         <table class="w-full text-center text-sm">
                             <thead class="bg-slate-900 text-slate-300 sticky top-0">
@@ -560,7 +640,3 @@
 </body>
 
 </html>
-
-
-
-

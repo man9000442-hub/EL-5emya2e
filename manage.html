@@ -6,7 +6,7 @@
     <title>لوحة إدارة الأستاذ الخيميائي - النظام الشامل</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
-      href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" 
+      href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap"
       rel="stylesheet"
     />
     <style>
@@ -133,7 +133,7 @@
             class="tab-btn bg-white text-gray-600 hover:bg-gray-50 px-4 py-2 rounded-lg font-bold text-sm whitespace-nowrap"
           >
             🏆 الترتيب
-          </button> 
+          </button>
         </div>
       </div>
     </div>
@@ -425,7 +425,7 @@
                 <th class="p-2">الكود</th>
                 <th class="p-2">الاسم</th>
                 <th class="p-2">المجموعة</th>
-                <th class="p-2">هاتف</th>
+                <th class="p-2">هاتف ولي الأمر</th>
                 <th class="p-2">تحكم</th>
               </tr>
             </thead>
@@ -1163,7 +1163,12 @@
             group_name: "?",
             class_name: "",
           };
-          tb.innerHTML += `<tr class="border-t hover:bg-gray-50"><td class="p-3"><input type="checkbox" class="student-chk" value="${s.id}"></td><td class="p-3 font-bold text-red-600">${s.student_code || "-"}</td><td class="p-3 font-bold">${s.student_name}</td><td class="p-3 text-sm">${g.class_name} - ${g.group_name}</td><td class="p-3 text-sm">${s.phone_student || "-"}</td><td class="p-3 text-center"><button onclick="viewStudentRecords(${s.id}, '${s.student_name}')" class="text-blue-600 font-bold text-sm mx-1">سجل</button><button onclick="editStudent(${s.id})" class="text-green-600 font-bold text-sm">تعديل</button></td></tr>`;
+          let parentBtn = "-";
+          if (s.phone_parent) {
+            parentBtn = `<button onclick="sendWhatsAppReport(${s.id})" class="text-green-600 hover:text-green-800 font-bold flex items-center justify-center gap-1 bg-green-50 px-2 py-1 rounded border border-green-200 shadow-sm w-full"><span class="text-lg">📱</span> ${s.phone_parent}</button>`;
+          }
+
+          tb.innerHTML += `<tr class="border-t hover:bg-gray-50"><td class="p-3"><input type="checkbox" class="student-chk" value="${s.id}"></td><td class="p-3 font-bold text-red-600">${s.student_code || "-"}</td><td class="p-3 font-bold">${s.student_name}</td><td class="p-3 text-sm">${g.class_name} - ${g.group_name}</td><td class="p-3 text-sm text-center">${parentBtn}</td><td class="p-3 text-center"><button onclick="viewStudentRecords(${s.id}, '${s.student_name}')" class="text-blue-600 font-bold text-sm mx-1">سجل</button><button onclick="editStudent(${s.id})" class="text-green-600 font-bold text-sm">تعديل</button></td></tr>`;
         });
         document
           .querySelectorAll(".student-chk")
@@ -1174,6 +1179,118 @@
                 : selectedStudentIds.delete(parseInt(e.target.value)),
             ),
           );
+      }
+
+      async function sendWhatsAppReport(studentId) {
+        const student = students.find((s) => s.id === studentId);
+        if (!student || !student.phone_parent) return;
+
+        // Get Current Month
+        const date = new Date();
+        const currentMonth = monthNames[date.getMonth()];
+        const btn = document.activeElement;
+        const originalText = btn.innerText;
+        btn.innerText = "⏳ جاري التجهيز...";
+
+        try {
+          // 1. My Records
+          const myRecords = await supabaseFetch(
+            "GET",
+            TABLE_RECORDS,
+            `?student_id=eq.${studentId}&lesson_month=eq.${currentMonth}`,
+          );
+
+          // 2. Group Records (for Ranking)
+          // We fetch needed fields only for the whole group in this month
+          const groupRecords = await supabaseFetch(
+            "GET",
+            TABLE_RECORDS,
+            `?lesson_month=eq.${currentMonth}&select=student_id,attendance,homework_degree,recitation_degree,exam_degree,comprehensive_exam_degree,${TABLE_STUDENTS}!inner(group_id)`,
+          );
+
+          // Filter only this group
+          const currentGroupRecords = groupRecords.filter(
+            (r) => r.alchemiya_students.group_id === student.group_id,
+          );
+
+          // Calculate Stats
+          let attended = 0;
+          let absent = 0;
+          let myTotalScore = 0;
+
+          myRecords.forEach((r) => {
+            if (r.attendance === "حضر") {
+              attended++;
+              myTotalScore += 1; // Point for attendance
+            } else {
+              absent++;
+            }
+            myTotalScore +=
+              (r.homework_degree || 0) +
+              (r.recitation_degree || 0) +
+              (r.exam_degree || 0) +
+              (r.comprehensive_exam_degree || 0);
+          });
+
+          // Calculate Rank & Max Score
+          const studentScores = {};
+          currentGroupRecords.forEach((r) => {
+            if (!studentScores[r.student_id]) studentScores[r.student_id] = 0;
+            if (r.attendance === "حضر") studentScores[r.student_id] += 1;
+            studentScores[r.student_id] +=
+              (r.homework_degree || 0) +
+              (r.recitation_degree || 0) +
+              (r.exam_degree || 0) +
+              (r.comprehensive_exam_degree || 0);
+          });
+
+          // Sort scores descending
+          const sortedScores = Object.entries(studentScores).sort(
+            ([, a], [, b]) => b - a,
+          );
+          const maxScoreInGroup =
+            sortedScores.length > 0 ? sortedScores[0][1] : myTotalScore;
+
+          // Find my rank
+          const myRankIndex = sortedScores.findIndex(
+            ([id]) => id == studentId,
+          );
+          const myRank = myRankIndex !== -1 ? myRankIndex + 1 : "-";
+
+          // Calculate Percentage relative to Top Student (Percentile Performance)
+          let percentage = 0;
+          if (maxScoreInGroup > 0) {
+            percentage = Math.round((myTotalScore / maxScoreInGroup) * 100);
+          } else if (myTotalScore > 0) {
+            percentage = 100;
+          }
+
+          // Format Phone
+          let phone = student.phone_parent.replace(/\D/g, "");
+          if (phone.startsWith("01")) phone = "2" + phone;
+
+          // Build Message
+          const msg = `*تقرير مستوى الطالب: ${student.student_name}*
+📅 *شهر:* ${currentMonth}
+
+✅ *عدد حصص الحضور:* ${attended}
+❌ *عدد حصص الغياب:* ${absent}
+📊 *مجموع الدرجات:* ${myTotalScore}
+📈 *النسبة المئوية:* ${percentage}%
+🏆 *الترتيب على المجموعة:* ${myRank}
+
+*إدارة الأستاذ الخيميائي*`;
+
+          const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+          window.open(url, "_blank");
+        } catch (err) {
+          console.error(err);
+          alert("حدث خطأ أثناء إعداد التقرير");
+        } finally {
+          btn.innerText = originalText;
+          // Optional: Reload to reset UI properly if needed, but text restore is usually enough
+          fetchStudents();
+        }
       }
 
       function showStudentForm(s = null) {
@@ -1562,7 +1679,3 @@
     </script>
   </body>
 </html>
-
-
-
-

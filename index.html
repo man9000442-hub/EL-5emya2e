@@ -619,24 +619,25 @@
             document.getElementById("contactsModal").style.display = "none";
         }
 // ********************* ضبط الشهر التلقائي *********************
-        document.addEventListener('DOMContentLoaded', () => {
-            const months = ["يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"];
-            const currentMonthIndex = new Date().getMonth(); // يجلب رقم الشهر من 0 إلى 11
-            const currentMonthName = months[currentMonthIndex]; // يحوله للاسم العربي
-
-            const monthSelect = document.getElementById("monthFilter");
-            if (monthSelect) {
-                // 1. تحديد الشهر الحالي
-                monthSelect.value = currentMonthName;
-                
-                // 2. قفل القائمة لمنع التغيير
-                monthSelect.disabled = true; 
-                
-                // 3. تغيير الشكل ليدل على أنه مغلق (تغميق اللون)
-                monthSelect.classList.add("opacity-60", "cursor-not-allowed", "bg-slate-700");
-            }
-        });
+// ********************* ضبط الشهر من الأدمن أو تلقائياً *********************
+            document.addEventListener('DOMContentLoaded', () => {
+                const monthSelect = document.getElementById('searchMonth');
+                if (monthSelect) {
+                    // 1. محاولة جلب الشهر المثبت من الأدمن
+                    const adminFixedMonth = localStorage.getItem('sys_active_month');
+                    
+                    if (adminFixedMonth) {
+                        // إذا وجد شهراً مثبتاً نستخدمه
+                        monthSelect.value = adminFixedMonth;
+                    } else {
+                        // 2. إذا لم يوجد (الحالة الافتراضية) نستخدم الشهر الحالي
+                        const currentMonth = new Date().getMonth() + 1;
+                        monthSelect.value = currentMonth.toString();
+                    }
+                }
+            });
     </script>
 </body>
 
 </html>
+

@@ -269,6 +269,42 @@
       </div>
 
       <div id="students-section" class="section-content hidden">
+        <div class="bg-white p-6 rounded-xl shadow-md mb-6">
+            <h3 class="text-lg font-bold mb-4 text-indigo-900">إعدادات النظام (الشهر النشط)</h3>
+            <div class="flex items-center gap-4">
+                <select id="activeMonthSetter" class="border p-2 rounded-lg bg-gray-50">
+                    <option value="1">يناير</option>
+                    <option value="2">فبراير</option>
+                    <option value="3">مارس</option>
+                    <option value="4">أبريل</option>
+                    <option value="5">مايو</option>
+                    <option value="6">يونيو</option>
+                    <option value="7">يوليو</option>
+                    <option value="8">أغسطس</option>
+                    <option value="9">سبتمبر</option>
+                    <option value="10">أكتوبر</option>
+                    <option value="11">نوفمبر</option>
+                    <option value="12">ديسمبر</option>
+                </select>
+                <button onclick="saveActiveMonth()" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700">
+                    تثبيت الشهر للطلاب
+                </button>
+            </div>
+        </div>
+
+        <script>
+        // دالة حفظ الشهر في قاعدة البيانات (أو localStorage للتبسيط حالياً)
+        async function saveActiveMonth() {
+            const month = document.getElementById('activeMonthSetter').value;
+            // يفضل حفظها في جدول إعدادات في Supabase، ولكن هنا سنحفظها بشكل عام
+            localStorage.setItem('admin_fixed_month', month);
+            
+            // إذا كنت تستخدم Supabase فعلياً كما في كودك:
+            // await supabaseFetch("PATCH", "settings", "?id=eq.1", { active_month: month });
+            
+            Swal.fire('تم التحديث', `تم تثبيت شهر ${month} كشهر افتراضي للبحث`, 'success');
+        }
+        </script>
         <div class="flex flex-wrap gap-2 mb-6">
           <button
             onclick="showStudentView('list')"

@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
@@ -7,75 +8,117 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
-    
+
     <style>
-        :root {
+         :root {
             --primary: #4f46e5;
             --primary-hover: #4338ca;
             --bg-color: #f8fafc;
         }
-
+        
         body {
             font-family: "Cairo", sans-serif;
             background-color: var(--bg-color);
             color: #1e293b;
             -webkit-tap-highlight-color: transparent;
         }
-
         /* Scrollbar Styling */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
         
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-        /* Animations */
-        .fade-in-up { animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+         ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
         }
-
+        
+         ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+         ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+        
+         ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        /* Animations */
+        
+        .fade-in-up {
+            animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
         /* Glass Cards */
+        
         .glass-panel {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
         }
-
         /* Navigation Styles */
+        
         .desktop-tab.active-nav {
             background-color: #e0e7ff;
             color: var(--primary);
             border-bottom: 3px solid var(--primary);
         }
+        
         .mobile-tab.active-nav {
             color: var(--primary);
         }
+        
         .mobile-tab.active-nav .icon-bg {
             background-color: #e0e7ff;
             transform: translateY(-4px);
         }
-
         /* Sub-tabs */
-        .sub-tab-btn { transition: all 0.3s ease; }
+        
+        .sub-tab-btn {
+            transition: all 0.3s ease;
+        }
+        
         .sub-tab-btn.active-sub {
             background-color: white;
             color: var(--primary);
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
-
         /* Modals */
-        .modal-enter { animation: modalIn 0.3s ease-out forwards; }
-        @keyframes modalIn {
-            from { opacity: 0; transform: scale(0.95) translateY(10px); }
-            to { opacity: 1; transform: scale(1) translateY(0); }
+        
+        .modal-enter {
+            animation: modalIn 0.3s ease-out forwards;
         }
-
+        
+        @keyframes modalIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95) translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
         /* Form Inputs */
+        
         .modern-input {
             width: 100%;
             background-color: #f1f5f9;
@@ -86,22 +129,47 @@
             outline: none;
             font-weight: 600;
         }
+        
         .modern-input:focus {
             background-color: #fff;
             border-color: var(--primary);
             box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
         }
-
+        
         @media print {
-            body * { visibility: hidden; }
-            #cardsToPrint, #cardsToPrint * { visibility: visible; }
-            #cardsToPrint { position: absolute; left: 0; top: 0; width: 100%; padding: 10mm; }
-            .student-card { width: 80mm; height: 50mm; border: 1px solid #333; margin: 5mm; padding: 5mm; box-sizing: border-box; page-break-inside: avoid; text-align: center; display: block; float: left; border-radius: 10px; }
+            body * {
+                visibility: hidden;
+            }
+            #cardsToPrint,
+            #cardsToPrint * {
+                visibility: visible;
+            }
+            #cardsToPrint {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                padding: 10mm;
+            }
+            .student-card {
+                width: 80mm;
+                height: 50mm;
+                border: 1px solid #333;
+                margin: 5mm;
+                padding: 5mm;
+                box-sizing: border-box;
+                page-break-inside: avoid;
+                text-align: center;
+                display: block;
+                float: left;
+                border-radius: 10px;
+            }
         }
     </style>
 </head>
 
-<body class="pb-24 md:pb-8"> <header class="bg-white shadow-sm sticky top-0 z-30 hidden md:block border-b border-slate-200">
+<body class="pb-24 md:pb-8">
+    <header class="bg-white shadow-sm sticky top-0 z-30 hidden md:block border-b border-slate-200">
         <div class="container mx-auto px-6">
             <div class="flex justify-between items-center py-4">
                 <div class="flex items-center gap-3">
@@ -175,7 +243,7 @@
     </nav>
 
     <main class="container mx-auto p-4 md:p-6 lg:max-w-6xl mt-2 md:mt-6">
-        
+
         <div id="dashboard-section" class="section-content fade-in-up">
             <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6 md:mb-8">
                 <div class="col-span-2 md:col-span-1 bg-gradient-to-br from-indigo-600 to-indigo-800 text-white p-6 rounded-3xl shadow-xl shadow-indigo-200 relative overflow-hidden">
@@ -339,7 +407,7 @@
                         <div><label class="text-xs font-bold text-slate-500 ml-2">المجموعة</label><select id="studentGroup" required class="modern-input"><option value="">اختر</option></select></div>
                         <div><label class="text-xs font-bold text-slate-500 ml-2">هاتف الطالب</label><input type="tel" id="studentPhone" class="modern-input text-left" dir="ltr" /></div>
                         <div class="md:col-span-2"><label class="text-xs font-bold text-slate-500 ml-2">هاتف ولي الأمر (للواتساب)</label><input type="tel" id="parentPhone" class="modern-input text-left" dir="ltr" /></div>
-                        
+
                         <div class="md:col-span-2 flex gap-3 mt-2">
                             <button type="submit" id="addStudentBtn" class="flex-1 bg-emerald-500 text-white py-3 rounded-xl font-bold shadow-lg">حفظ البيانات</button>
                             <button type="button" onclick="document.getElementById('studentFormSection').classList.add('hidden')" class="bg-slate-200 text-slate-700 px-6 rounded-xl font-bold">إلغاء</button>
@@ -411,7 +479,16 @@
                 <div class="overflow-x-auto no-scrollbar">
                     <table class="w-full text-center text-sm whitespace-nowrap">
                         <thead class="bg-slate-50 text-slate-500">
-                            <tr><th>التاريخ</th><th>حصة</th><th>حالة</th><th>واجب</th><th>تسميع</th><th>امتحان</th><th>شامل</th><th>إجراء</th></tr>
+                            <tr>
+                                <th>التاريخ</th>
+                                <th>حصة</th>
+                                <th>حالة</th>
+                                <th>واجب</th>
+                                <th>تسميع</th>
+                                <th>امتحان</th>
+                                <th>شامل</th>
+                                <th>إجراء</th>
+                            </tr>
                         </thead>
                         <tbody id="recordsTableBody" class="divide-y divide-slate-100"></tbody>
                     </table>
@@ -437,7 +514,13 @@
                 <div class="overflow-x-auto no-scrollbar">
                     <table class="min-w-full text-right whitespace-nowrap text-sm md:text-base">
                         <thead class="bg-slate-50 text-slate-500 border-b">
-                            <tr><th class="p-4">#</th><th class="p-4">الكود</th><th class="p-4">الاسم</th><th class="p-4 text-center">الدرجة</th><th class="p-4 text-left">التاريخ</th></tr>
+                            <tr>
+                                <th class="p-4">#</th>
+                                <th class="p-4">الكود</th>
+                                <th class="p-4">الاسم</th>
+                                <th class="p-4 text-center">الدرجة</th>
+                                <th class="p-4 text-left">التاريخ</th>
+                            </tr>
                         </thead>
                         <tbody id="resultsTableBody" class="divide-y divide-slate-50"></tbody>
                     </table>
@@ -462,8 +545,15 @@
             <div class="glass-panel rounded-3xl overflow-hidden shadow-sm">
                 <div class="overflow-x-auto no-scrollbar">
                     <table class="min-w-full text-right whitespace-nowrap">
-                        <thead class="bg-slate-50 text-slate-500 text-sm">
-                            <tr><th class="p-4 text-center">🏆</th><th class="p-4 font-bold">الاسم</th><th class="p-4">المجموعة</th><th class="p-4 text-center">حضور</th><th class="p-4 text-center font-bold">المجموع</th></tr>
+                        <thead class="bg-slate-50 text-slate-500 text-sm border-b">
+                            <tr>
+                                <th class="p-4 text-center">🏆</th>
+                                <th class="p-4 font-bold">الاسم</th>
+                                <th class="p-4">المجموعة</th>
+                                <th class="p-4 text-center">الحضور الفعلي</th>
+                                <th class="p-4 text-center font-bold">مجموع الدرجات</th>
+                                <th class="p-4 text-center font-black">النسبة</th>
+                            </tr>
                         </thead>
                         <tbody id="rankingTableBody" class="divide-y divide-slate-50"></tbody>
                     </table>
@@ -536,42 +626,48 @@
             // إعادة تعيين أزرار التاب
             document.querySelectorAll(".tab-btn").forEach(btn => {
                 btn.classList.remove("active-nav", "text-indigo-600", "bg-indigo-50");
-                if(btn.classList.contains('desktop-tab')) btn.classList.add("text-slate-500");
-                if(btn.classList.contains('mobile-tab')) btn.classList.add("text-slate-400");
-                // إرجاع الأيقونة في الموبايل
+                if (btn.classList.contains('desktop-tab')) btn.classList.add("text-slate-500");
+                if (btn.classList.contains('mobile-tab')) btn.classList.add("text-slate-400");
                 let iconBg = btn.querySelector('.icon-bg');
-                if(iconBg) { iconBg.classList.remove("bg-indigo-100", "-translate-y-1", "text-indigo-600"); }
+                if (iconBg) {
+                    iconBg.classList.remove("bg-indigo-100", "-translate-y-1", "text-indigo-600");
+                }
             });
 
-            // تفعيل الزر المختار (للموبايل والكمبيوتر)
+            // تفعيل الزر المختار
             document.querySelectorAll(`.tab-btn[data-target="${tabName}"]`).forEach(btn => {
                 btn.classList.add("active-nav", "text-indigo-600");
                 btn.classList.remove("text-slate-500", "text-slate-400");
-                
-                if(btn.classList.contains('desktop-tab')) {
+                if (btn.classList.contains('desktop-tab')) {
                     btn.classList.add("bg-indigo-50");
                 }
-                
                 let iconBg = btn.querySelector('.icon-bg');
-                if(iconBg) {
+                if (iconBg) {
                     iconBg.classList.add("bg-indigo-100", "-translate-y-1", "text-indigo-600");
                 }
             });
 
             // تنفيذ دوال الجلب حسب القسم
             if (tabName === "quizzes") fetchQuizzes();
-            if (tabName === "students") { fetchGroups(); showStudentView("list"); }
+            if (tabName === "students") {
+                fetchGroups();
+                showStudentView("list");
+            }
             if (tabName === "dashboard") loadDashboard();
             if (tabName === "results") fetchResults();
-            if (tabName === "ranking") { fetchGroupsForFilter(); populateMonthFilter(); fetchRankingData(); }
+            if (tabName === "ranking") {
+                fetchGroupsForFilter();
+                populateMonthFilter();
+                fetchRankingData();
+            }
         }
 
         // دالة تبديل الساب-تاب في قسم الطلاب
         function showStudentView(viewName, element = null) {
             ["view-list", "view-groups", "view-bulk"].forEach(v => document.getElementById(v).classList.add("hidden"));
             document.getElementById("view-" + viewName).classList.remove("hidden");
-            
-            if(element) {
+
+            if (element) {
                 document.querySelectorAll('.sub-tab-btn').forEach(btn => {
                     btn.classList.remove('active-sub', 'bg-white', 'text-indigo-600', 'shadow-sm');
                     btn.classList.add('text-slate-500');
@@ -586,36 +682,68 @@
                 document.getElementById("bulkDate").valueAsDate = new Date();
                 const sel = document.getElementById("bulkGroupSelect");
                 sel.innerHTML = '<option value="">-- اختر المجموعة --</option>';
-                groups.forEach(g => { sel.innerHTML += `<option value="${g.id}">${g.group_name} (${g.class_name})</option>`; });
+                groups.forEach(g => {
+                    sel.innerHTML += `<option value="${g.id}">${g.group_name} (${g.class_name})</option>`;
+                });
             }
         }
 
-        // Config & DB (نفس الكود الخاص بك تماماً لضمان العمل 100%)
+        // Config & DB
         const SUPABASE_URL = "https://arbbxmnjviryxkmhwdgk.supabase.co";
         const SUPABASE_SERVICE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyYmJ4bW5qdmlyeXhrbWh3ZGdrIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MjY5NTU0MSwiZXhwIjoyMDc4MjcxNTQxfQ.W5_c_-VqSUhvHmApF_Y4usZfuCwXz0Ci1hxgfO0u8sc";
-        const TABLE_GROUPS = "alchemiya_groups"; const TABLE_STUDENTS = "alchemiya_students"; const TABLE_RECORDS = "alchemiya_records"; const TABLE_QUIZZES = "alchemiya_quizzes"; const TABLE_QUESTIONS = "alchemiya_questions"; const TABLE_RESULTS = "alchemiya_results"; const TABLE_SETTINGS = "alchemiya_settings";
-        const monthNames = ["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"];
-        let groups = []; let students = []; let selectedStudentIds = new Set();
-        let currentViewingStudent = { id: null, name: null }; let currentEditingQuizId = null;
+        const TABLE_GROUPS = "alchemiya_groups";
+        const TABLE_STUDENTS = "alchemiya_students";
+        const TABLE_RECORDS = "alchemiya_records";
+        const TABLE_QUIZZES = "alchemiya_quizzes";
+        const TABLE_QUESTIONS = "alchemiya_questions";
+        const TABLE_RESULTS = "alchemiya_results";
+        const TABLE_SETTINGS = "alchemiya_settings";
+        const monthNames = ["يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"];
+
+        let groups = [];
+        let students = [];
+        let selectedStudentIds = new Set();
+        let currentViewingStudent = {
+            id: null,
+            name: null
+        };
+        let currentEditingQuizId = null;
 
         async function supabaseFetch(method, table, query = "", data = null) {
             const url = `${SUPABASE_URL}/rest/v1/${table}${query}`;
-            const headers = { "Content-Type": "application/json", apikey: SUPABASE_SERVICE_KEY, Authorization: `Bearer ${SUPABASE_SERVICE_KEY}` };
+            const headers = {
+                "Content-Type": "application/json",
+                apikey: SUPABASE_SERVICE_KEY,
+                Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`
+            };
             if (method === "HEAD") {
                 headers["Prefer"] = "count=exact";
-                const response = await fetch(url, { method: "GET", headers });
+                const response = await fetch(url, {
+                    method: "GET",
+                    headers
+                });
                 const range = response.headers.get("content-range");
                 if (range) return parseInt(range.split("/")[1]);
                 return 0;
             }
             if (method === "POST" || method === "PATCH") headers["Prefer"] = "return=representation";
-            const response = await fetch(url, { method, headers, body: data ? JSON.stringify(data) : null });
-            if (!response.ok) { const txt = await response.text(); throw new Error(txt); }
-            if (method === "DELETE") return { success: true };
+            const response = await fetch(url, {
+                method,
+                headers,
+                body: data ? JSON.stringify(data) : null
+            });
+            if (!response.ok) {
+                throw new Error(await response.text());
+            }
+            if (method === "DELETE") return {
+                success: true
+            };
             return response.json();
         }
 
-        function getMonthNameFromDate(dateStr) { return monthNames[new Date(dateStr).getMonth()]; }
+        function getMonthNameFromDate(dateStr) {
+            return monthNames[new Date(dateStr).getMonth()];
+        }
 
         // --- DASHBOARD ---
         async function loadDashboard() {
@@ -624,224 +752,651 @@
                 document.getElementById("dashTotalGroups").textContent = await supabaseFetch("HEAD", TABLE_GROUPS, "?select=*");
                 const qz = await supabaseFetch("GET", TABLE_QUIZZES, "?is_active=eq.true");
                 document.getElementById("dashActiveQuizzes").textContent = qz.length;
-                
+
                 const settings = await supabaseFetch("GET", TABLE_SETTINGS, "?setting_key=eq.active_month");
                 if (settings.length > 0) document.getElementById("adminActiveMonth").value = settings[0].setting_value;
-            } catch (e) { console.error(e); }
+            } catch (e) {
+                console.error(e);
+            }
         }
-        
+
         async function saveActiveMonth() {
             const val = document.getElementById("adminActiveMonth").value;
-            const btn = document.activeElement; const originalText = btn.innerHTML;
+            const btn = document.activeElement;
+            const originalText = btn.innerHTML;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
             try {
-                await supabaseFetch("PATCH", TABLE_SETTINGS, "?setting_key=eq.active_month", { setting_value: val });
-                // يمكن إضافة مكتبة SweetAlert هنا لاحقاً، حالياً Alert عادي
+                await supabaseFetch("PATCH", TABLE_SETTINGS, "?setting_key=eq.active_month", {
+                    setting_value: val
+                });
                 alert("✅ تم تثبيت شهر " + val + " بنجاح ليظهر لجميع الطلاب!");
-            } catch (e) { alert("حدث خطأ أثناء حفظ الشهر."); console.error(e); } 
-            finally { btn.innerHTML = originalText; }
+            } catch (e) {
+                alert("حدث خطأ أثناء حفظ الشهر.");
+                console.error(e);
+            } finally {
+                btn.innerHTML = originalText;
+            }
         }
 
         // --- QUIZZES ---
         async function fetchQuizzes() {
-            const tb = document.getElementById("quizListTableBody"); tb.innerHTML = '<tr><td colspan="5" class="text-center p-4 text-slate-400"><i class="fas fa-circle-notch fa-spin text-2xl"></i></td></tr>';
+            const tb = document.getElementById("quizListTableBody");
+            tb.innerHTML = '<tr><td colspan="5" class="text-center p-4 text-slate-400"><i class="fas fa-circle-notch fa-spin text-2xl"></i></td></tr>';
             const qz = await supabaseFetch("GET", TABLE_QUIZZES, `?select=*,${TABLE_QUESTIONS}(count)&order=created_at.desc`);
-            tb.innerHTML = "";
+
+            let html = "";
             qz.forEach((q) => {
                 const count = q[TABLE_QUESTIONS] && q[TABLE_QUESTIONS][0] ? q[TABLE_QUESTIONS][0].count : 0;
                 const statusBadge = q.is_active ? `<span class="bg-emerald-100 text-emerald-700 px-2 py-1 rounded text-xs font-bold">مفعل</span>` : `<span class="bg-slate-200 text-slate-600 px-2 py-1 rounded text-xs font-bold">مغلق</span>`;
-                tb.innerHTML += `<tr><td class="px-6 py-4 font-black text-indigo-900">${q.quiz_name}</td><td class="px-6 py-4 text-slate-600 font-bold">${q.class_name}</td><td class="px-6 py-4 text-center"><span class="bg-indigo-50 text-indigo-600 px-2 py-1 rounded font-bold text-xs">${count}</span></td><td class="px-6 py-4 text-center cursor-pointer" onclick="toggleQuizStatus(${q.id},${q.is_active})">${statusBadge}</td><td class="px-6 py-4 text-center"><button onclick="editQuiz(${q.id}, '${q.quiz_name}')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 w-8 h-8 rounded-full transition"><i class="fas fa-pen text-sm"></i></button></td></tr>`;
+                html += `<tr><td class="px-6 py-4 font-black text-indigo-900">${q.quiz_name}</td><td class="px-6 py-4 text-slate-600 font-bold">${q.class_name}</td><td class="px-6 py-4 text-center"><span class="bg-indigo-50 text-indigo-600 px-2 py-1 rounded font-bold text-xs">${count}</span></td><td class="px-6 py-4 text-center cursor-pointer" onclick="toggleQuizStatus(${q.id},${q.is_active})">${statusBadge}</td><td class="px-6 py-4 text-center"><button onclick="editQuiz(${q.id}, '${q.quiz_name}')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 w-8 h-8 rounded-full transition"><i class="fas fa-pen text-sm"></i></button></td></tr>`;
             });
+            tb.innerHTML = html;
         }
-        function cancelNewQuiz() { document.getElementById("newQuizSection").classList.add("hidden"); document.getElementById("quizListSection").classList.remove("hidden"); }
-        document.getElementById("showNewQuizFormBtn").onclick = () => { document.getElementById("quizListSection").classList.add("hidden"); document.getElementById("newQuizSection").classList.remove("hidden"); };
+
+        function cancelNewQuiz() {
+            document.getElementById("newQuizSection").classList.add("hidden");
+            document.getElementById("quizListSection").classList.remove("hidden");
+        }
+        document.getElementById("showNewQuizFormBtn").onclick = () => {
+            document.getElementById("quizListSection").classList.add("hidden");
+            document.getElementById("newQuizSection").classList.remove("hidden");
+        };
         document.getElementById("newQuizForm").onsubmit = async(e) => {
             e.preventDefault();
             const n = document.getElementById("newQuizName").value;
-            const c = { g1: "أولى إعدادي", g2: "تانية إعدادي", g3: "تالتة إعدادي", s1: "أولى ثانوي", s2: "تانية ثانوي", s3: "تالتة ثانوي" }[document.getElementById("newQuizClass").value];
-            const res = await supabaseFetch("POST", TABLE_QUIZZES, "", { quiz_name: n, class_name: c, is_active: false });
-            editQuiz(res[0].id, n); document.getElementById("newQuizSection").classList.add("hidden");
+            const c = document.getElementById("newQuizClass").options[document.getElementById("newQuizClass").selectedIndex].text;
+            const res = await supabaseFetch("POST", TABLE_QUIZZES, "", {
+                quiz_name: n,
+                class_name: c,
+                is_active: false
+            });
+            editQuiz(res[0].id, n);
+            document.getElementById("newQuizSection").classList.add("hidden");
         };
-        async function toggleQuizStatus(id, s) { await supabaseFetch("PATCH", TABLE_QUIZZES, `?id=eq.${id}`, { is_active: !s }); fetchQuizzes(); }
-        function editQuiz(id, name) {
-            currentEditingQuizId = id; document.getElementById("quizListSection").classList.add("hidden");
-            document.getElementById("manageQuizDetailsSection").classList.remove("hidden");
-            document.getElementById("editingQuizName").textContent = name; loadQuestions(id);
+        async function toggleQuizStatus(id, s) {
+            await supabaseFetch("PATCH", TABLE_QUIZZES, `?id=eq.${id}`, {
+                is_active: !s
+            });
+            fetchQuizzes();
         }
-        function closeEditMode() { document.getElementById("manageQuizDetailsSection").classList.add("hidden"); document.getElementById("quizListSection").classList.remove("hidden"); fetchQuizzes(); }
+
+        function editQuiz(id, name) {
+            currentEditingQuizId = id;
+            document.getElementById("quizListSection").classList.add("hidden");
+            document.getElementById("manageQuizDetailsSection").classList.remove("hidden");
+            document.getElementById("editingQuizName").textContent = name;
+            loadQuestions(id);
+        }
+
+        function closeEditMode() {
+            document.getElementById("manageQuizDetailsSection").classList.add("hidden");
+            document.getElementById("quizListSection").classList.remove("hidden");
+            fetchQuizzes();
+        }
+
         async function loadQuestions(qid) {
-            const c = document.getElementById("quizQuestionsContainer"); c.innerHTML = '<div class="text-center p-4 text-slate-400"><i class="fas fa-circle-notch fa-spin text-2xl"></i></div>';
+            const c = document.getElementById("quizQuestionsContainer");
+            c.innerHTML = '<div class="text-center p-4 text-slate-400"><i class="fas fa-circle-notch fa-spin text-2xl"></i></div>';
             const qs = await supabaseFetch("GET", TABLE_QUESTIONS, `?quiz_id=eq.${qid}&order=id.asc`);
-            c.innerHTML = "";
+
+            let html = "";
             qs.forEach((q, i) => {
                 const qJson = JSON.stringify(q).replace(/"/g, "&quot;");
-                c.innerHTML += `<div class="bg-white p-4 md:p-5 rounded-2xl shadow-sm border border-slate-100 flex flex-col md:flex-row justify-between md:items-center gap-3"><div class="font-bold text-slate-700"><span class="text-indigo-500 ml-1">س${i+1}:</span> ${q.question_text}</div><div class="flex gap-2"><button onclick="openEditQuestionModal(${qJson})" class="flex-1 md:flex-none bg-blue-50 text-blue-600 px-3 py-1.5 rounded-lg text-sm font-bold"><i class="fas fa-pen"></i> تعديل</button><button onclick="deleteQuestion(${q.id})" class="flex-1 md:flex-none bg-red-50 text-red-600 px-3 py-1.5 rounded-lg text-sm font-bold"><i class="fas fa-trash"></i></button></div></div>`;
+                html += `<div class="bg-white p-4 md:p-5 rounded-2xl shadow-sm border border-slate-100 flex flex-col md:flex-row justify-between md:items-center gap-3"><div class="font-bold text-slate-700"><span class="text-indigo-500 ml-1">س${i+1}:</span> ${q.question_text}</div><div class="flex gap-2"><button onclick="openEditQuestionModal(${qJson})" class="flex-1 md:flex-none bg-blue-50 text-blue-600 px-3 py-1.5 rounded-lg text-sm font-bold"><i class="fas fa-pen"></i> تعديل</button><button onclick="deleteQuestion(${q.id})" class="flex-1 md:flex-none bg-red-50 text-red-600 px-3 py-1.5 rounded-lg text-sm font-bold"><i class="fas fa-trash"></i></button></div></div>`;
             });
+            c.innerHTML = html;
         }
-        function openAddQuestionModal() { document.getElementById("questionEditModal").classList.remove("hidden"); document.getElementById("singleQuestionForm").reset(); document.getElementById("editQuestionId").value = ""; document.getElementById("editQuestionQuizId").value = currentEditingQuizId; }
-        function openEditQuestionModal(q) { document.getElementById("questionEditModal").classList.remove("hidden"); document.getElementById("editQuestionId").value = q.id; document.getElementById("editQuestionQuizId").value = q.quiz_id; document.getElementById("editQuestionText").value = q.question_text; document.getElementById("editChoiceA").value = q.choice_a; document.getElementById("editChoiceB").value = q.choice_b; document.getElementById("editChoiceC").value = q.choice_c; document.getElementById("editChoiceD").value = q.choice_d; document.getElementById("editCorrectAnswer").value = q.correct_answer; }
+
+        function openAddQuestionModal() {
+            document.getElementById("questionEditModal").classList.remove("hidden");
+            document.getElementById("singleQuestionForm").reset();
+            document.getElementById("editQuestionId").value = "";
+            document.getElementById("editQuestionQuizId").value = currentEditingQuizId;
+        }
+
+        function openEditQuestionModal(q) {
+            document.getElementById("questionEditModal").classList.remove("hidden");
+            document.getElementById("editQuestionId").value = q.id;
+            document.getElementById("editQuestionQuizId").value = q.quiz_id;
+            document.getElementById("editQuestionText").value = q.question_text;
+            document.getElementById("editChoiceA").value = q.choice_a;
+            document.getElementById("editChoiceB").value = q.choice_b;
+            document.getElementById("editChoiceC").value = q.choice_c;
+            document.getElementById("editChoiceD").value = q.choice_d;
+            document.getElementById("editCorrectAnswer").value = q.correct_answer;
+        }
+
         document.getElementById("singleQuestionForm").onsubmit = async(e) => {
             e.preventDefault();
-            const id = document.getElementById("editQuestionId").value; const qid = document.getElementById("editQuestionQuizId").value;
-            const data = { quiz_id: qid, question_text: document.getElementById("editQuestionText").value, choice_a: document.getElementById("editChoiceA").value, choice_b: document.getElementById("editChoiceB").value, choice_c: document.getElementById("editChoiceC").value, choice_d: document.getElementById("editChoiceD").value, correct_answer: document.getElementById("editCorrectAnswer").value };
+            const id = document.getElementById("editQuestionId").value;
+            const qid = document.getElementById("editQuestionQuizId").value;
+            const data = {
+                quiz_id: qid,
+                question_text: document.getElementById("editQuestionText").value,
+                choice_a: document.getElementById("editChoiceA").value,
+                choice_b: document.getElementById("editChoiceB").value,
+                choice_c: document.getElementById("editChoiceC").value,
+                choice_d: document.getElementById("editChoiceD").value,
+                correct_answer: document.getElementById("editCorrectAnswer").value
+            };
             await supabaseFetch(id ? "PATCH" : "POST", TABLE_QUESTIONS, id ? `?id=eq.${id}` : "", data);
-            document.getElementById("questionEditModal").classList.add("hidden"); loadQuestions(qid);
+            document.getElementById("questionEditModal").classList.add("hidden");
+            loadQuestions(qid);
         };
-        async function deleteQuestion(id) { if (confirm("هل أنت متأكد من الحذف؟")) { await supabaseFetch("DELETE", TABLE_QUESTIONS, `?id=eq.${id}`); loadQuestions(currentEditingQuizId); } }
+
+        async function deleteQuestion(id) {
+            if (confirm("هل أنت متأكد من الحذف؟")) {
+                await supabaseFetch("DELETE", TABLE_QUESTIONS, `?id=eq.${id}`);
+                loadQuestions(currentEditingQuizId);
+            }
+        }
 
         // --- STUDENTS & GROUPS ---
-        async function fetchGroups() { groups = await supabaseFetch("GET", TABLE_GROUPS, "?order=class_name.asc,group_name.asc"); renderGroupsTable(); populateGroupSelects(); }
-        function renderGroupsTable() {
-            const tb = document.getElementById("groupsTableBody"); tb.innerHTML = "";
-            groups.forEach((g) => (tb.innerHTML += `<tr><td class="p-4 font-black text-slate-800">${g.group_name}</td><td class="p-4 text-indigo-600 font-bold text-sm">${g.class_name}</td><td class="p-4 text-left"><button onclick="editGroup(${g.id})" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg text-sm font-bold transition"><i class="fas fa-pen"></i></button></td></tr>`));
+        async function fetchGroups() {
+            groups = await supabaseFetch("GET", TABLE_GROUPS, "?order=class_name.asc,group_name.asc");
+            renderGroupsTable();
+            populateGroupSelects();
         }
+
+        function renderGroupsTable() {
+            const tb = document.getElementById("groupsTableBody");
+            let html = "";
+            groups.forEach((g) => (html += `<tr><td class="p-4 font-black text-slate-800">${g.group_name}</td><td class="p-4 text-indigo-600 font-bold text-sm">${g.class_name}</td><td class="p-4 text-left"><button onclick="editGroup(${g.id})" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg text-sm font-bold transition"><i class="fas fa-pen"></i></button></td></tr>`));
+            tb.innerHTML = html;
+        }
+
         function populateGroupSelects() {
             const opts = groups.map((g) => `<option value="${g.id}">${g.class_name} - ${g.group_name}</option>`).join("");
-            ["studentFilterGroup", "studentGroup", "rankingGroupFilter"].forEach((id) => { const el = document.getElementById(id); if (el) el.innerHTML = (id.includes("Filter") ? '<option value="all">الكل</option>' : '<option value="">اختر</option>') + opts; });
+            ["studentFilterGroup", "studentGroup", "rankingGroupFilter", "bulkGroupSelect"].forEach((id) => {
+                const el = document.getElementById(id);
+                if (el) el.innerHTML = (id.includes("Filter") || id.includes("Select") ? '<option value="all">الكل</option>' : '<option value="">اختر</option>') + opts;
+            });
         }
-        function editGroup(id) { const g = groups.find((x) => x.id === id); document.getElementById("groupIdToEdit").value = g.id; document.getElementById("groupName").value = g.group_name; document.getElementById("groupClass").value = g.class_name; document.getElementById("addGroupBtn").textContent = "تحديث"; }
-        document.getElementById("newGroupForm").onsubmit = async(e) => { e.preventDefault(); const id = document.getElementById("groupIdToEdit").value; const data = { group_name: document.getElementById("groupName").value, class_name: document.getElementById("groupClass").value }; await supabaseFetch(id ? "PATCH" : "POST", TABLE_GROUPS, id ? `?id=eq.${id}` : "", data); document.getElementById("newGroupForm").reset(); fetchGroups(); };
+
+        function editGroup(id) {
+            const g = groups.find((x) => x.id === id);
+            document.getElementById("groupIdToEdit").value = g.id;
+            document.getElementById("groupName").value = g.group_name;
+            document.getElementById("groupClass").value = g.class_name;
+            document.getElementById("addGroupBtn").textContent = "تحديث";
+        }
+
+        document.getElementById("newGroupForm").onsubmit = async(e) => {
+            e.preventDefault();
+            const id = document.getElementById("groupIdToEdit").value;
+            const data = {
+                group_name: document.getElementById("groupName").value,
+                class_name: document.getElementById("groupClass").value
+            };
+            await supabaseFetch(id ? "PATCH" : "POST", TABLE_GROUPS, id ? `?id=eq.${id}` : "", data);
+            document.getElementById("newGroupForm").reset();
+            fetchGroups();
+        };
 
         async function fetchStudents() {
-            const tb = document.getElementById("studentsTableBody"); tb.innerHTML = '<tr><td colspan="6" class="text-center p-4"><i class="fas fa-circle-notch fa-spin text-slate-400 text-2xl"></i></td></tr>';
+            const tb = document.getElementById("studentsTableBody");
+            tb.innerHTML = '<tr><td colspan="6" class="text-center p-8"><i class="fas fa-circle-notch fa-spin text-indigo-500 text-3xl"></i></td></tr>';
             let q = `?select=*,${TABLE_GROUPS}(group_name,class_name)&order=student_name.asc`;
-            const fName = document.getElementById("studentFilterName").value; const fCode = document.getElementById("studentFilterCode").value; const fGrp = document.getElementById("studentFilterGroup").value;
-            if (fName) q += `&student_name=ilike.*${fName}*`; if (fCode) q += `&student_code=ilike.*${fCode}*`; if (fGrp && fGrp !== "all") q += `&group_id=eq.${fGrp}`;
-            try { students = await supabaseFetch("GET", TABLE_STUDENTS, q); renderStudentsTable(); } catch (e) { tb.innerHTML = `<tr><td colspan="6" class="text-red-500 p-4 text-center font-bold">خطأ في التحميل</td></tr>`; }
+            const fName = document.getElementById("studentFilterName").value;
+            const fCode = document.getElementById("studentFilterCode").value;
+            const fGrp = document.getElementById("studentFilterGroup").value;
+
+            if (fName) q += `&student_name=ilike.*${fName}*`;
+            if (fCode) q += `&student_code=ilike.*${fCode}*`;
+            if (fGrp && fGrp !== "all") q += `&group_id=eq.${fGrp}`;
+
+            try {
+                students = await supabaseFetch("GET", TABLE_STUDENTS, q);
+                renderStudentsTable();
+            } catch (e) {
+                tb.innerHTML = `<tr><td colspan="6" class="text-red-500 p-4 text-center font-bold">خطأ في التحميل</td></tr>`;
+            }
         }
+
         function renderStudentsTable() {
-            const tb = document.getElementById("studentsTableBody"); tb.innerHTML = "";
-            if (!students.length) { tb.innerHTML = '<tr><td colspan="6" class="text-center p-6 text-slate-400 font-bold">لا توجد نتائج</td></tr>'; return; }
+            const tb = document.getElementById("studentsTableBody");
+            if (!students.length) {
+                tb.innerHTML = '<tr><td colspan="6" class="text-center p-6 text-slate-400 font-bold">لا توجد نتائج</td></tr>';
+                return;
+            }
+            let html = "";
             students.forEach((s) => {
-                const g = s[TABLE_GROUPS] || { group_name: "?", class_name: "" };
+                const g = s[TABLE_GROUPS] || {
+                    group_name: "?",
+                    class_name: ""
+                };
                 let parentBtn = s.phone_parent ? `<button onclick="sendWhatsAppReport(${s.id})" class="text-emerald-500 hover:bg-emerald-50 px-3 py-1 rounded-lg border border-emerald-100 transition font-bold flex justify-center items-center gap-1 mx-auto w-full max-w-[120px]"><i class="fab fa-whatsapp text-lg"></i> إرسال</button>` : `<span class="text-slate-300 text-xs">-</span>`;
-                tb.innerHTML += `<tr><td class="p-4"><input type="checkbox" class="student-chk w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" value="${s.id}"></td><td class="p-4 font-black text-rose-500 text-lg">${s.student_code || "-"}</td><td class="p-4 font-bold text-slate-800">${s.student_name}</td><td class="p-4"><div class="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded inline-block font-bold">${g.class_name}<br>${g.group_name}</div></td><td class="p-4 text-center">${parentBtn}</td><td class="p-4 text-center space-x-1 space-x-reverse"><button onclick="viewStudentRecords(${s.id}, '${s.student_name}')" class="bg-indigo-50 text-indigo-600 hover:bg-indigo-100 px-3 py-1.5 rounded-lg text-sm font-bold transition">سجل</button><button onclick="editStudent(${s.id})" class="bg-slate-100 text-slate-600 hover:bg-slate-200 px-3 py-1.5 rounded-lg text-sm font-bold transition"><i class="fas fa-pen"></i></button></td></tr>`;
+                html += `<tr><td class="p-4"><input type="checkbox" class="student-chk w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" value="${s.id}"></td><td class="p-4 font-black text-rose-500 text-lg">${s.student_code || "-"}</td><td class="p-4 font-bold text-slate-800">${s.student_name}</td><td class="p-4"><div class="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded inline-block font-bold">${g.class_name}<br>${g.group_name}</div></td><td class="p-4 text-center">${parentBtn}</td><td class="p-4 text-center space-x-1 space-x-reverse"><button onclick="viewStudentRecords(${s.id}, '${s.student_name}')" class="bg-indigo-50 text-indigo-600 hover:bg-indigo-100 px-3 py-1.5 rounded-lg text-sm font-bold transition">سجل</button><button onclick="editStudent(${s.id})" class="bg-slate-100 text-slate-600 hover:bg-slate-200 px-3 py-1.5 rounded-lg text-sm font-bold transition"><i class="fas fa-pen"></i></button></td></tr>`;
             });
+            tb.innerHTML = html;
+
             document.querySelectorAll(".student-chk").forEach((c) => c.addEventListener("change", (e) => e.target.checked ? selectedStudentIds.add(parseInt(e.target.value)) : selectedStudentIds.delete(parseInt(e.target.value))));
         }
 
-        // WhatsApp, Forms, Print (Logic intact)
+        // WhatsApp Report (تم التحديث ليتوافق مع الحسابات الصحيحة)
         async function sendWhatsAppReport(studentId) {
-            const student = students.find((s) => s.id === studentId); if (!student || !student.phone_parent) return;
-            const date = new Date(); const currentMonth = monthNames[date.getMonth()];
-            const btn = document.activeElement; const originalText = btn.innerHTML; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            const student = students.find((s) => s.id === studentId);
+            if (!student || !student.phone_parent) return;
+            const date = new Date();
+            const currentMonth = monthNames[date.getMonth()];
+            const btn = document.activeElement;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
             try {
-                const myRecords = await supabaseFetch("GET", TABLE_RECORDS, `?student_id=eq.${studentId}&lesson_month=eq.${currentMonth}`);
-                const groupRecords = await supabaseFetch("GET", TABLE_RECORDS, `?lesson_month=eq.${currentMonth}&select=student_id,attendance,homework_degree,recitation_degree,exam_degree,comprehensive_exam_degree,${TABLE_STUDENTS}!inner(group_id)`);
-                const currentGroupRecords = groupRecords.filter((r) => r.alchemiya_students.group_id === student.group_id);
-                let attended = 0; let absent = 0; let myTotalScore = 0;
-                myRecords.forEach((r) => { if (r.attendance === "حضر") { attended++; myTotalScore += 1; } else { absent++; } myTotalScore += (r.homework_degree || 0) + (r.recitation_degree || 0) + (r.exam_degree || 0) + (r.comprehensive_exam_degree || 0); });
-                const studentScores = {};
-                currentGroupRecords.forEach((r) => { if (!studentScores[r.student_id]) studentScores[r.student_id] = 0; if (r.attendance === "حضر") studentScores[r.student_id] += 1; studentScores[r.student_id] += (r.homework_degree || 0) + (r.recitation_degree || 0) + (r.exam_degree || 0) + (r.comprehensive_exam_degree || 0); });
-                const sortedScores = Object.entries(studentScores).sort(([, a], [, b]) => b - a);
-                const maxScoreInGroup = sortedScores.length > 0 ? sortedScores[0][1] : myTotalScore;
-                const myRankIndex = sortedScores.findIndex(([id]) => id == studentId); const myRank = myRankIndex !== -1 ? myRankIndex + 1 : "-";
-                let percentage = 0; if (maxScoreInGroup > 0) { percentage = Math.round((myTotalScore / maxScoreInGroup) * 100); } else if (myTotalScore > 0) { percentage = 100; }
-                let phone = student.phone_parent.replace(/\D/g, ""); if (phone.startsWith("01")) phone = "2" + phone;
-                const msg = `*تقرير الطالب: ${student.student_name}* 🧪\n📅 *شهر:* ${currentMonth}\n\n✅ *حضور:* ${attended} | ❌ *غياب:* ${absent}\n📊 *المجموع:* ${myTotalScore}\n📈 *النسبة:* ${percentage}%\n🏆 *الترتيب:* ${myRank}\n\n*الخيميائي للعلوم*`;
-                window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, "_blank");
-            } catch (err) { alert("حدث خطأ"); } finally { btn.innerHTML = originalText; }
-        }
-        function showStudentForm(s = null) { document.getElementById("studentFormSection").classList.remove("hidden"); if (s) { document.getElementById("studentIdToEdit").value = s.id; document.getElementById("studentName").value = s.student_name; document.getElementById("studentCode").value = s.student_code; document.getElementById("studentGroup").value = s.group_id; document.getElementById("studentPhone").value = s.phone_student; document.getElementById("parentPhone").value = s.phone_parent; document.getElementById("addStudentBtn").textContent = "تحديث"; } else { document.getElementById("newStudentForm").reset(); document.getElementById("studentIdToEdit").value = ""; document.getElementById("addStudentBtn").textContent = "حفظ"; } }
-        function editStudent(id) { showStudentForm(students.find((x) => x.id === id)); }
-        document.getElementById("newStudentForm").onsubmit = async(e) => { e.preventDefault(); const id = document.getElementById("studentIdToEdit").value; const data = { student_name: document.getElementById("studentName").value, student_code: document.getElementById("studentCode").value, group_id: document.getElementById("studentGroup").value, phone_student: document.getElementById("studentPhone").value, phone_parent: document.getElementById("parentPhone").value }; await supabaseFetch(id ? "PATCH" : "POST", TABLE_STUDENTS, id ? `?id=eq.${id}` : "", data); document.getElementById("studentFormSection").classList.add("hidden"); fetchStudents(); };
-        function printStudentCards() { const div = document.getElementById("cardsToPrint"); div.innerHTML = ""; if (selectedStudentIds.size === 0) { alert("اختر طلاب للطباعة"); return; } students.filter((s) => selectedStudentIds.has(s.id)).forEach((s) => { const g = groups.find((x) => x.id === s.group_id) || {}; div.innerHTML += `<div class="student-card"><div style="font-weight:bold;margin-bottom:5px;">كارت الطالب</div><hr><p style="font-size:16pt;margin:5px 0;">${s.student_name}</p><p>${g.group_name || ""}</p><p style="font-size:14pt;font-weight:bold;color:#c00;">${s.student_code || s.id}</p></div>`; }); div.classList.remove("hidden"); window.print(); setTimeout(() => div.classList.add("hidden"), 500); }
+                // جلب بيانات الطالب وبيانات المجموعة معاً
+                const [myRecords, groupRecords] = await Promise.all([
+                    supabaseFetch("GET", TABLE_RECORDS, `?student_id=eq.${studentId}&lesson_month=eq.${currentMonth}`),
+                    supabaseFetch("GET", TABLE_RECORDS, `?lesson_month=eq.${currentMonth}&select=student_id,attendance,homework_degree,recitation_degree,exam_degree,comprehensive_exam_degree,${TABLE_STUDENTS}!inner(group_id)`)
+                ]);
 
-        // Records view
+                const currentGroupRecords = groupRecords.filter((r) => r.alchemiya_students.group_id === student.group_id);
+
+                let attended = 0;
+                let absent = 0;
+                let myTotalScore = 0;
+
+                myRecords.forEach((r) => {
+                    if (r.attendance === "حضر") attended++;
+                    else absent++;
+                    // حساب الدرجات الفعلية فقط
+                    myTotalScore += (Number(r.homework_degree) || 0) + (Number(r.recitation_degree) || 0) + (Number(r.exam_degree) || 0) + (Number(r.comprehensive_exam_degree) || 0);
+                });
+
+                const studentScores = {};
+                currentGroupRecords.forEach((r) => {
+                    if (!studentScores[r.student_id]) studentScores[r.student_id] = 0;
+                    studentScores[r.student_id] += (Number(r.homework_degree) || 0) + (Number(r.recitation_degree) || 0) + (Number(r.exam_degree) || 0) + (Number(r.comprehensive_exam_degree) || 0);
+                });
+
+                const sortedScores = Object.entries(studentScores).sort(([, a], [, b]) => b - a);
+                const maxScoreInGroup = sortedScores.length > 0 && sortedScores[0][1] > 0 ? sortedScores[0][1] : (myTotalScore > 0 ? myTotalScore : 1);
+
+                const myRankIndex = sortedScores.findIndex(([id]) => id == studentId);
+                const myRank = myRankIndex !== -1 ? myRankIndex + 1 : "-";
+                const percentage = myTotalScore > 0 ? Math.round((myTotalScore / maxScoreInGroup) * 100) : 0;
+
+                let phone = student.phone_parent.replace(/\D/g, "");
+                if (phone.startsWith("01")) phone = "2" + phone;
+
+                const msg = `*تقرير الطالب: ${student.student_name}* 🧪\n📅 *شهر:* ${currentMonth}\n\n✅ *حضور:* ${attended} حصص\n❌ *غياب:* ${absent} حصص\n📊 *مجموع الدرجات:* ${myTotalScore}\n📈 *النسبة:* ${percentage}%\n🏆 *الترتيب ع المجموعة:* ${myRank}\n\n*الخيميائي للعلوم*`;
+
+                window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, "_blank");
+            } catch (err) {
+                alert("حدث خطأ أثناء التجهيز");
+                console.error(err);
+            } finally {
+                btn.innerHTML = originalText;
+            }
+        }
+
+        function showStudentForm(s = null) {
+            document.getElementById("studentFormSection").classList.remove("hidden");
+            if (s) {
+                document.getElementById("studentIdToEdit").value = s.id;
+                document.getElementById("studentName").value = s.student_name;
+                document.getElementById("studentCode").value = s.student_code;
+                document.getElementById("studentGroup").value = s.group_id;
+                document.getElementById("studentPhone").value = s.phone_student;
+                document.getElementById("parentPhone").value = s.phone_parent;
+                document.getElementById("addStudentBtn").textContent = "تحديث";
+            } else {
+                document.getElementById("newStudentForm").reset();
+                document.getElementById("studentIdToEdit").value = "";
+                document.getElementById("addStudentBtn").textContent = "حفظ";
+            }
+        }
+
+        function editStudent(id) {
+            showStudentForm(students.find((x) => x.id === id));
+        }
+
+        document.getElementById("newStudentForm").onsubmit = async(e) => {
+            e.preventDefault();
+            const id = document.getElementById("studentIdToEdit").value;
+            const data = {
+                student_name: document.getElementById("studentName").value,
+                student_code: document.getElementById("studentCode").value,
+                group_id: document.getElementById("studentGroup").value,
+                phone_student: document.getElementById("studentPhone").value,
+                phone_parent: document.getElementById("parentPhone").value
+            };
+            await supabaseFetch(id ? "PATCH" : "POST", TABLE_STUDENTS, id ? `?id=eq.${id}` : "", data);
+            document.getElementById("studentFormSection").classList.add("hidden");
+            fetchStudents();
+        };
+
+        function printStudentCards() {
+            const div = document.getElementById("cardsToPrint");
+            div.innerHTML = "";
+            if (selectedStudentIds.size === 0) {
+                alert("اختر طلاب للطباعة");
+                return;
+            }
+            let html = "";
+            students.filter((s) => selectedStudentIds.has(s.id)).forEach((s) => {
+                const g = groups.find((x) => x.id === s.group_id) || {};
+                html += `<div class="student-card"><div style="font-weight:bold;margin-bottom:5px;">كارت الطالب</div><hr><p style="font-size:16pt;margin:5px 0;">${s.student_name}</p><p>${g.group_name || ""}</p><p style="font-size:14pt;font-weight:bold;color:#c00;">${s.student_code || s.id}</p></div>`;
+            });
+            div.innerHTML = html;
+            div.classList.remove("hidden");
+            window.print();
+            setTimeout(() => div.classList.add("hidden"), 500);
+        }
+
+        // Records view (تسريع العرض)
         async function viewStudentRecords(sid, name) {
-            currentViewingStudent = { id: sid, name: name };
+            currentViewingStudent = {
+                id: sid,
+                name: name
+            };
             document.getElementById("studentRecordsView").classList.remove("hidden");
             document.getElementById("recordsStudentName").textContent = name;
-            document.getElementById("studentRecordsView").scrollIntoView({behavior: "smooth"});
-            const tb = document.getElementById("recordsTableBody"); tb.innerHTML = '<tr><td colspan="8" class="p-4"><i class="fas fa-spinner fa-spin"></i></td></tr>';
+            document.getElementById("studentRecordsView").scrollIntoView({
+                behavior: "smooth"
+            });
+            const tb = document.getElementById("recordsTableBody");
+            tb.innerHTML = '<tr><td colspan="8" class="p-4 text-center"><i class="fas fa-spinner fa-spin text-indigo-500"></i></td></tr>';
+
             const recs = await supabaseFetch("GET", TABLE_RECORDS, `?student_id=eq.${sid}&order=lesson_date.desc`);
-            tb.innerHTML = "";
-            if (!recs.length) tb.innerHTML = '<tr><td colspan="8" class="p-4 text-slate-400">لا توجد سجلات</td></tr>';
+            if (!recs.length) {
+                tb.innerHTML = '<tr><td colspan="8" class="p-4 text-center text-slate-400">لا توجد سجلات</td></tr>';
+                return;
+            }
+
+            let html = "";
             recs.forEach((r) => {
                 const rData = JSON.stringify(r).replace(/"/g, "&quot;");
                 const attClass = r.attendance === "حضر" ? "bg-emerald-100 text-emerald-700" : "bg-rose-100 text-rose-700";
-                tb.innerHTML += `<tr class="border-t hover:bg-slate-50"><td class="p-3 font-mono text-xs">${r.lesson_date}</td><td class="p-3 font-bold">${r.lesson_number}</td><td class="p-3"><span class="${attClass} px-2 py-0.5 rounded text-xs font-bold">${r.attendance}</span></td><td class="p-3">${r.homework_degree || "-"}</td><td class="p-3">${r.recitation_degree || "-"}</td><td class="p-3">${r.exam_degree || "-"}</td><td class="p-3 font-bold text-indigo-500">${r.comprehensive_exam_degree || "-"}</td><td class="p-3"><button onclick="editRecord(${rData})" class="text-blue-500 hover:bg-blue-50 px-2 py-1 rounded"><i class="fas fa-pen"></i></button> <button onclick="deleteRecord(${r.id})" class="text-rose-500 hover:bg-rose-50 px-2 py-1 rounded"><i class="fas fa-trash"></i></button></td></tr>`;
+                html += `<tr class="border-t hover:bg-slate-50"><td class="p-3 font-mono text-xs">${r.lesson_date}</td><td class="p-3 font-bold">${r.lesson_number}</td><td class="p-3"><span class="${attClass} px-2 py-0.5 rounded text-xs font-bold">${r.attendance}</span></td><td class="p-3">${r.homework_degree || "-"}</td><td class="p-3">${r.recitation_degree || "-"}</td><td class="p-3">${r.exam_degree || "-"}</td><td class="p-3 font-bold text-indigo-500">${r.comprehensive_exam_degree || "-"}</td><td class="p-3"><button onclick="editRecord(${rData})" class="text-blue-500 hover:bg-blue-50 px-2 py-1 rounded"><i class="fas fa-pen"></i></button> <button onclick="deleteRecord(${r.id})" class="text-rose-500 hover:bg-rose-50 px-2 py-1 rounded"><i class="fas fa-trash"></i></button></td></tr>`;
             });
+            tb.innerHTML = html;
         }
-        function closeRecordsView() { document.getElementById("studentRecordsView").classList.add("hidden"); }
-        function openAddRecordForm() { document.getElementById("recordModal").classList.remove("hidden"); document.getElementById("recordForm").reset(); document.getElementById("recordStudentId").value = currentViewingStudent.id; document.getElementById("recordIdToEdit").value = ""; document.getElementById("recordDate").valueAsDate = new Date(); document.getElementById("recordMonth").value = monthNames[new Date().getMonth()]; document.getElementById("recordDate").onchange = (e) => { document.getElementById("recordMonth").value = getMonthNameFromDate(e.target.value); }; }
-        function editRecord(r) { openAddRecordForm(); document.getElementById("recordIdToEdit").value = r.id; document.getElementById("recordDate").value = r.lesson_date; document.getElementById("recordMonth").value = r.lesson_month; document.getElementById("recordLessonNumber").value = r.lesson_number; document.getElementById("recordAttendance").value = r.attendance; document.getElementById("recordHomework").value = r.homework_degree; document.getElementById("recordRecitationDegree").value = r.recitation_degree; document.getElementById("recordExamDegree").value = r.exam_degree; document.getElementById("recordComprehensiveExam").value = r.comprehensive_exam_degree; }
-        document.getElementById("recordForm").onsubmit = async(e) => { e.preventDefault(); const rid = document.getElementById("recordIdToEdit").value; const data = { student_id: document.getElementById("recordStudentId").value, lesson_date: document.getElementById("recordDate").value, lesson_month: document.getElementById("recordMonth").value, lesson_number: document.getElementById("recordLessonNumber").value, attendance: document.getElementById("recordAttendance").value, homework_degree: document.getElementById("recordHomework").value || 0, recitation_degree: document.getElementById("recordRecitationDegree").value || null, exam_degree: document.getElementById("recordExamDegree").value || null, comprehensive_exam_degree: document.getElementById("recordComprehensiveExam").value || null }; await supabaseFetch(rid ? "PATCH" : "POST", TABLE_RECORDS, rid ? `?id=eq.${rid}` : "", data); document.getElementById("recordModal").classList.add("hidden"); viewStudentRecords(currentViewingStudent.id, currentViewingStudent.name); };
-        async function deleteRecord(rid) { if (confirm("حذف السجل؟")) { await supabaseFetch("DELETE", TABLE_RECORDS, `?id=eq.${rid}`); viewStudentRecords(currentViewingStudent.id, currentViewingStudent.name); } }
 
-        // Bulk
-        async function loadGroupStudentsForBulk() {
-            const gid = document.getElementById("bulkGroupSelect").value; const tb = document.getElementById("bulkStudentsBody"); if (!gid) return;
-            tb.innerHTML = '<tr><td colspan="6" class="p-6"><i class="fas fa-spinner fa-spin text-2xl text-slate-400"></i></td></tr>';
-            const sts = await supabaseFetch("GET", TABLE_STUDENTS, `?group_id=eq.${gid}&order=student_name.asc`);
-            tb.innerHTML = "";
-            if (!sts.length) { tb.innerHTML = '<tr><td colspan="6" class="text-center py-6 font-bold text-slate-400">لا يوجد طلاب</td></tr>'; return; }
-            sts.forEach((s) => {
-                tb.innerHTML += `<tr class="border-b bg-white transition-colors" data-sid="${s.id}"><td class="p-3 font-bold text-right">${s.student_name}</td><td class="p-3"><input type="checkbox" onchange="toggleRowInputs(this)" class="w-6 h-6 rounded text-rose-500 focus:ring-rose-500 cursor-pointer"></td><td class="p-2"><input type="number" class="w-14 p-1.5 border-2 rounded-lg text-center font-bold outline-none focus:border-indigo-400"></td><td class="p-2"><input type="number" class="w-14 p-1.5 border-2 rounded-lg text-center font-bold outline-none focus:border-indigo-400"></td><td class="p-2"><input type="number" class="w-14 p-1.5 border-2 rounded-lg text-center font-bold outline-none focus:border-indigo-400"></td><td class="p-2 comp-col ${document.getElementById("hasCompExam").checked ? "" : "hidden"}"><input type="number" class="w-14 p-1.5 border-2 border-indigo-200 bg-indigo-50 rounded-lg text-center font-bold outline-none"></td></tr>`;
-            });
+        function closeRecordsView() {
+            document.getElementById("studentRecordsView").classList.add("hidden");
         }
-        function toggleCompExamColumn() { const show = document.getElementById("hasCompExam").checked; document.querySelectorAll(".comp-col").forEach((c) => show ? c.classList.remove("hidden") : c.classList.add("hidden") ); }
-        function toggleRowInputs(chk) { const row = chk.closest("tr"); const inps = row.querySelectorAll('input[type="number"]'); if (chk.checked) { row.classList.add("bg-rose-50/50"); inps.forEach((i) => { i.value = 0; i.disabled = true; i.classList.add("opacity-30"); }); } else { row.classList.remove("bg-rose-50/50"); inps.forEach((i) => { i.value = ""; i.disabled = false; i.classList.remove("opacity-30"); }); } }
+
+        function openAddRecordForm() {
+            document.getElementById("recordModal").classList.remove("hidden");
+            document.getElementById("recordForm").reset();
+            document.getElementById("recordStudentId").value = currentViewingStudent.id;
+            document.getElementById("recordIdToEdit").value = "";
+            document.getElementById("recordDate").valueAsDate = new Date();
+            document.getElementById("recordMonth").value = monthNames[new Date().getMonth()];
+            document.getElementById("recordDate").onchange = (e) => {
+                document.getElementById("recordMonth").value = getMonthNameFromDate(e.target.value);
+            };
+        }
+
+        function editRecord(r) {
+            openAddRecordForm();
+            document.getElementById("recordIdToEdit").value = r.id;
+            document.getElementById("recordDate").value = r.lesson_date;
+            document.getElementById("recordMonth").value = r.lesson_month;
+            document.getElementById("recordLessonNumber").value = r.lesson_number;
+            document.getElementById("recordAttendance").value = r.attendance;
+            document.getElementById("recordHomework").value = r.homework_degree;
+            document.getElementById("recordRecitationDegree").value = r.recitation_degree;
+            document.getElementById("recordExamDegree").value = r.exam_degree;
+            document.getElementById("recordComprehensiveExam").value = r.comprehensive_exam_degree;
+        }
+
+        document.getElementById("recordForm").onsubmit = async(e) => {
+            e.preventDefault();
+            const rid = document.getElementById("recordIdToEdit").value;
+            const data = {
+                student_id: document.getElementById("recordStudentId").value,
+                lesson_date: document.getElementById("recordDate").value,
+                lesson_month: document.getElementById("recordMonth").value,
+                lesson_number: document.getElementById("recordLessonNumber").value,
+                attendance: document.getElementById("recordAttendance").value,
+                homework_degree: document.getElementById("recordHomework").value || 0,
+                recitation_degree: document.getElementById("recordRecitationDegree").value || null,
+                exam_degree: document.getElementById("recordExamDegree").value || null,
+                comprehensive_exam_degree: document.getElementById("recordComprehensiveExam").value || null
+            };
+            await supabaseFetch(rid ? "PATCH" : "POST", TABLE_RECORDS, rid ? `?id=eq.${id}` : "", data);
+            document.getElementById("recordModal").classList.add("hidden");
+            viewStudentRecords(currentViewingStudent.id, currentViewingStudent.name);
+        };
+
+        async function deleteRecord(rid) {
+            if (confirm("حذف السجل؟")) {
+                await supabaseFetch("DELETE", TABLE_RECORDS, `?id=eq.${rid}`);
+                viewStudentRecords(currentViewingStudent.id, currentViewingStudent.name);
+            }
+        }
+
+        // Bulk (تسريع العرض)
+        async function loadGroupStudentsForBulk() {
+            const gid = document.getElementById("bulkGroupSelect").value;
+            const tb = document.getElementById("bulkStudentsBody");
+            if (!gid) return;
+            tb.innerHTML = '<tr><td colspan="6" class="p-6 text-center"><i class="fas fa-spinner fa-spin text-2xl text-slate-400"></i></td></tr>';
+            const sts = await supabaseFetch("GET", TABLE_STUDENTS, `?group_id=eq.${gid}&order=student_name.asc`);
+
+            if (!sts.length) {
+                tb.innerHTML = '<tr><td colspan="6" class="text-center py-6 font-bold text-slate-400">لا يوجد طلاب</td></tr>';
+                return;
+            }
+            let html = "";
+            sts.forEach((s) => {
+                html += `<tr class="border-b bg-white transition-colors" data-sid="${s.id}"><td class="p-3 font-bold text-right">${s.student_name}</td><td class="p-3 text-center"><input type="checkbox" onchange="toggleRowInputs(this)" class="w-6 h-6 rounded text-rose-500 focus:ring-rose-500 cursor-pointer"></td><td class="p-2"><input type="number" class="w-14 p-1.5 border-2 rounded-lg text-center font-bold outline-none focus:border-indigo-400"></td><td class="p-2"><input type="number" class="w-14 p-1.5 border-2 rounded-lg text-center font-bold outline-none focus:border-indigo-400"></td><td class="p-2"><input type="number" class="w-14 p-1.5 border-2 rounded-lg text-center font-bold outline-none focus:border-indigo-400"></td><td class="p-2 comp-col ${document.getElementById("hasCompExam").checked ? "" : "hidden"}"><input type="number" class="w-14 p-1.5 border-2 border-indigo-200 bg-indigo-50 rounded-lg text-center font-bold outline-none"></td></tr>`;
+            });
+            tb.innerHTML = html;
+        }
+
+        function toggleCompExamColumn() {
+            const show = document.getElementById("hasCompExam").checked;
+            document.querySelectorAll(".comp-col").forEach((c) => show ? c.classList.remove("hidden") : c.classList.add("hidden"));
+        }
+
+        function toggleRowInputs(chk) {
+            const row = chk.closest("tr");
+            const inps = row.querySelectorAll('input[type="number"]');
+            if (chk.checked) {
+                row.classList.add("bg-rose-50/50");
+                inps.forEach((i) => {
+                    i.value = 0;
+                    i.disabled = true;
+                    i.classList.add("opacity-30");
+                });
+            } else {
+                row.classList.remove("bg-rose-50/50");
+                inps.forEach((i) => {
+                    i.value = "";
+                    i.disabled = false;
+                    i.classList.remove("opacity-30");
+                });
+            }
+        }
+
         async function saveBulkAttendance() {
-            const gid = document.getElementById("bulkGroupSelect").value; const date = document.getElementById("bulkDate").value; const sess = document.getElementById("bulkSessionNum").value;
-            if (!gid || !date) { alert("أدخل البيانات الأساسية"); return; }
+            const gid = document.getElementById("bulkGroupSelect").value;
+            const date = document.getElementById("bulkDate").value;
+            const sess = document.getElementById("bulkSessionNum").value;
+            if (!gid || !date) {
+                alert("أدخل البيانات الأساسية");
+                return;
+            }
             const records = [];
             document.querySelectorAll("#bulkStudentsBody tr").forEach((tr) => {
                 if (!tr.dataset.sid) return;
-                const inps = tr.querySelectorAll('input[type="number"]'); const absent = tr.querySelector('input[type="checkbox"]').checked;
-                records.push({ student_id: tr.dataset.sid, lesson_date: date, lesson_month: getMonthNameFromDate(date), lesson_number: sess, attendance: absent ? "غاب" : "حضر", homework_degree: absent ? 0 : inps[0].value || 0, recitation_degree: absent ? 0 : inps[1].value || null, exam_degree: absent ? 0 : inps[2].value || null, comprehensive_exam_degree: document.getElementById("hasCompExam").checked ? inps[3].value || null : null });
+                const inps = tr.querySelectorAll('input[type="number"]');
+                const absent = tr.querySelector('input[type="checkbox"]').checked;
+                records.push({
+                    student_id: tr.dataset.sid,
+                    lesson_date: date,
+                    lesson_month: getMonthNameFromDate(date),
+                    lesson_number: sess,
+                    attendance: absent ? "غاب" : "حضر",
+                    homework_degree: absent ? 0 : inps[0].value || 0,
+                    recitation_degree: absent ? 0 : inps[1].value || null,
+                    exam_degree: absent ? 0 : inps[2].value || null,
+                    comprehensive_exam_degree: document.getElementById("hasCompExam").checked ? inps[3].value || null : null
+                });
             });
-            await supabaseFetch("POST", TABLE_RECORDS, "", records); alert("تم الحفظ بنجاح!"); document.getElementById("bulkStudentsBody").innerHTML = "";
+            await supabaseFetch("POST", TABLE_RECORDS, "", records);
+            alert("تم الحفظ بنجاح!");
+            document.getElementById("bulkStudentsBody").innerHTML = "";
         }
 
-        // --- RESULTS LOGIC ---
+        // --- RESULTS LOGIC (تسريع العرض) ---
         async function fetchResults() {
-            const tb = document.getElementById("resultsTableBody"); tb.innerHTML = '<tr><td colspan="5" class="text-center p-6"><i class="fas fa-circle-notch fa-spin text-2xl text-slate-400"></i></td></tr>';
+            const tb = document.getElementById("resultsTableBody");
+            tb.innerHTML = '<tr><td colspan="5" class="text-center p-6"><i class="fas fa-circle-notch fa-spin text-2xl text-slate-400"></i></td></tr>';
             let q = `?select=*&order=submission_time.desc`;
-            const code = document.getElementById("resCodeSearch").value.trim(); const name = document.getElementById("resNameSearch").value.trim(); const phone = document.getElementById("resPhoneSearch").value.trim(); const cls = document.getElementById("resClassFilter").value;
-            const classNamesMap = { g1: "أولى إعدادي", g2: "تانية إعدادي", g3: "تالتة إعدادي", s1: "أولى ثانوي", s2: "تانية ثانوي", s3: "تالتة ثانوي" };
+            const code = document.getElementById("resCodeSearch").value.trim();
+            const name = document.getElementById("resNameSearch").value.trim();
+            const phone = document.getElementById("resPhoneSearch").value.trim();
+            const cls = document.getElementById("resClassFilter").value;
+            const classNamesMap = {
+                g1: "أولى إعدادي",
+                g2: "تانية إعدادي",
+                g3: "تالتة إعدادي",
+                s1: "أولى ثانوي",
+                s2: "تانية ثانوي",
+                s3: "تالتة ثانوي"
+            };
+
             if (code) {
                 const st = await supabaseFetch("GET", TABLE_STUDENTS, `?student_code=eq.${code}&select=student_name`);
-                if (st.length) q += `&student_name=eq.${st[0].student_name}`; else { tb.innerHTML = '<tr><td colspan="5" class="text-center p-4 text-rose-500 font-bold">كود غير موجود</td></tr>'; return; }
-            } else { if (name) q += `&student_name=ilike.*${name}*`; if (phone) q += `&student_phone=ilike.*${phone}*`; if (cls !== "all") q += `&class_name=eq.${classNamesMap[cls]}`; }
-            const res = await supabaseFetch("GET", TABLE_RESULTS, q); tb.innerHTML = "";
-            if (!res.length) { tb.innerHTML = '<tr><td colspan="5" class="text-center p-6 text-slate-400 font-bold">لا توجد نتائج</td></tr>'; return; }
-            const names = [...new Set(res.map((r) => r.student_name))]; let codeMap = {};
-            if (names.length) { const stData = await supabaseFetch("GET", TABLE_STUDENTS, `?select=student_name,student_code`); stData.forEach((s) => (codeMap[s.student_name] = s.student_code)); }
+                if (st.length) q += `&student_name=eq.${st[0].student_name}`;
+                else {
+                    tb.innerHTML = '<tr><td colspan="5" class="text-center p-4 text-rose-500 font-bold">كود غير موجود</td></tr>';
+                    return;
+                }
+            } else {
+                if (name) q += `&student_name=ilike.*${name}*`;
+                if (phone) q += `&student_phone=ilike.*${phone}*`;
+                if (cls !== "all") q += `&class_name=eq.${classNamesMap[cls]}`;
+            }
+
+            const res = await supabaseFetch("GET", TABLE_RESULTS, q);
+            if (!res.length) {
+                tb.innerHTML = '<tr><td colspan="5" class="text-center p-6 text-slate-400 font-bold">لا توجد نتائج</td></tr>';
+                return;
+            }
+
+            const names = [...new Set(res.map((r) => r.student_name))];
+            let codeMap = {};
+            if (names.length) {
+                const stData = await supabaseFetch("GET", TABLE_STUDENTS, `?select=student_name,student_code`);
+                stData.forEach((s) => (codeMap[s.student_name] = s.student_code));
+            }
+
+            let html = "";
             res.forEach((r, i) => {
                 const cd = codeMap[r.student_name] || '<span class="text-rose-400 text-xs">-</span>';
-                tb.innerHTML += `<tr class="hover:bg-slate-50 transition"><td class="p-4 font-mono text-slate-400">${i + 1}</td><td class="p-4 font-black text-rose-500">${cd}</td><td class="p-4 font-bold text-slate-800">${r.student_name}</td><td class="p-4 text-center"><span class="bg-indigo-50 text-indigo-700 px-3 py-1 rounded-lg font-black">${r.score}/${r.total_questions}</span></td><td class="p-4 text-xs font-mono text-slate-400 text-left">${new Date(r.submission_time).toLocaleString("ar-EG")}</td></tr>`;
+                html += `<tr class="hover:bg-slate-50 transition"><td class="p-4 font-mono text-slate-400">${i + 1}</td><td class="p-4 font-black text-rose-500">${cd}</td><td class="p-4 font-bold text-slate-800">${r.student_name}</td><td class="p-4 text-center"><span class="bg-indigo-50 text-indigo-700 px-3 py-1 rounded-lg font-black">${r.score}/${r.total_questions}</span></td><td class="p-4 text-xs font-mono text-slate-400 text-left">${new Date(r.submission_time).toLocaleString("ar-EG")}</td></tr>`;
             });
+            tb.innerHTML = html;
         }
 
-        // --- RANKING LOGIC ---
-        async function fetchGroupsForFilter() { const grps = await supabaseFetch("GET", TABLE_GROUPS, "?select=id,group_name,class_name"); const sel = document.getElementById("rankingGroupFilter"); sel.innerHTML = '<option value="all">كل المجموعات</option>'; grps.forEach((g) => (sel.innerHTML += `<option value="${g.id}">${g.class_name} - ${g.group_name}</option>`)); }
-        function populateMonthFilter() { const sel = document.getElementById("rankingMonthFilter"); sel.innerHTML = '<option value="all">كل الأشهر</option>'; monthNames.forEach((m) => (sel.innerHTML += `<option value="${m}">${m}</option>`)); sel.value = monthNames[new Date().getMonth()]; }
+        // --- RANKING LOGIC (الترتيب المطور والذكي) ---
+        async function fetchGroupsForFilter() {
+            const grps = await supabaseFetch("GET", TABLE_GROUPS, "?select=id,group_name,class_name");
+            const sel = document.getElementById("rankingGroupFilter");
+            sel.innerHTML = '<option value="all">كل المجموعات</option>';
+            grps.forEach((g) => (sel.innerHTML += `<option value="${g.id}">${g.class_name} - ${g.group_name}</option>`));
+        }
+
+        function populateMonthFilter() {
+            const sel = document.getElementById("rankingMonthFilter");
+            sel.innerHTML = '<option value="all">كل الأشهر</option>';
+            monthNames.forEach((m) => (sel.innerHTML += `<option value="${m}">${m}</option>`));
+            sel.value = monthNames[new Date().getMonth()];
+        }
+
         async function fetchRankingData() {
-            const tb = document.getElementById("rankingTableBody"); tb.innerHTML = '<tr><td colspan="5" class="text-center p-8"><i class="fas fa-trophy fa-bounce text-amber-400 text-3xl"></i></td></tr>';
-            const sts = await supabaseFetch("GET", TABLE_STUDENTS, `?select=id,student_name,group_id,${TABLE_GROUPS}(group_name)`);
-            const recs = await supabaseFetch("GET", TABLE_RECORDS, `?select=student_id,lesson_month,attendance,homework_degree,recitation_degree,exam_degree,comprehensive_exam_degree`);
-            const map = new Map(); sts.forEach((s) => map.set(s.id, {...s, score: 0, att: 0 }));
-            const mFilter = document.getElementById("rankingMonthFilter").value; const gFilter = document.getElementById("rankingGroupFilter").value;
-            recs.forEach((r) => {
-                if (mFilter !== "all" && r.lesson_month !== mFilter) return;
-                if (map.has(r.student_id)) {
-                    const s = map.get(r.student_id);
-                    if (r.attendance === "حضر") s.att++;
-                    s.score += (r.attendance === "حضر" ? 1 : 0) + (r.homework_degree || 0) + (r.recitation_degree || 0) + (r.comprehensive_exam_degree || r.exam_degree || 0);
-                }
-            });
-            let arr = Array.from(map.values()); if (gFilter !== "all") arr = arr.filter((s) => s.group_id == gFilter); arr.sort((a, b) => b.score - a.score);
-            tb.innerHTML = "";
-            arr.slice(0, 50).forEach((s, i) => {
-                const medal = i === 0 ? '<i class="fas fa-medal text-2xl text-yellow-500"></i>' : i === 1 ? '<i class="fas fa-medal text-2xl text-slate-400"></i>' : i === 2 ? '<i class="fas fa-medal text-2xl text-orange-600"></i>' : `<span class="font-black text-slate-400">#${i + 1}</span>`;
-                const gName = s[TABLE_GROUPS] ? s[TABLE_GROUPS].group_name : "-";
-                tb.innerHTML += `<tr class="border-b border-amber-50 hover:bg-amber-50/50 transition"><td class="p-4 text-center">${medal}</td><td class="p-4 font-black text-slate-800">${s.student_name}</td><td class="p-4 text-sm text-slate-500 font-bold">${gName}</td><td class="p-4 text-center"><span class="bg-slate-100 text-slate-600 px-2 py-1 rounded font-bold">${s.att}</span></td><td class="p-4 text-center font-black text-rose-600 text-lg">${s.score}</td></tr>`;
-            });
+            const tb = document.getElementById("rankingTableBody");
+            tb.innerHTML = '<tr><td colspan="6" class="text-center p-8"><i class="fas fa-circle-notch fa-spin text-amber-500 text-4xl mb-3 d-block"></i><br><span class="font-bold text-slate-500">جاري حساب الأوائل...</span></td></tr>';
+
+            try {
+                const mFilter = document.getElementById("rankingMonthFilter").value;
+                const gFilter = document.getElementById("rankingGroupFilter").value;
+
+                // فلترة البيانات من قاعدة البيانات مباشرة لتخفيف الحمل وجلبها معاً عبر Promise.all
+                let studentsQuery = `?select=id,student_name,group_id,${TABLE_GROUPS}(group_name)`;
+                if (gFilter !== "all") studentsQuery += `&group_id=eq.${gFilter}`;
+
+                let recordsQuery = `?select=student_id,lesson_month,attendance,homework_degree,recitation_degree,exam_degree,comprehensive_exam_degree`;
+                if (mFilter !== "all") recordsQuery += `&lesson_month=eq.${mFilter}`;
+
+                const [sts, recs] = await Promise.all([
+                    supabaseFetch("GET", TABLE_STUDENTS, studentsQuery),
+                    supabaseFetch("GET", TABLE_RECORDS, recordsQuery)
+                ]);
+
+                const map = new Map();
+                sts.forEach((s) => map.set(s.id, {...s,
+                    score: 0,
+                    att: 0
+                }));
+
+                recs.forEach((r) => {
+                    if (map.has(r.student_id)) {
+                        const s = map.get(r.student_id);
+
+                        // حساب الحضور الفعلي
+                        if (r.attendance === "حضر") s.att++;
+
+                        // حساب الدرجات الفعلية فقط (بدون إضافة نقطة للحضور)
+                        const hw = Number(r.homework_degree) || 0;
+                        const rec = Number(r.recitation_degree) || 0;
+                        const ex = Number(r.exam_degree) || 0;
+                        const comp = Number(r.comprehensive_exam_degree) || 0;
+
+                        s.score += (hw + rec + ex + comp);
+                    }
+                });
+
+                // الترتيب حسب الدرجات
+                let arr = Array.from(map.values());
+                arr.sort((a, b) => b.score - a.score);
+
+                // تحديد أعلى درجة لحساب النسبة المئوية (الأول = 100%)
+                const topScore = arr.length > 0 && arr[0].score > 0 ? arr[0].score : 1;
+
+                let html = "";
+                arr.slice(0, 50).forEach((s, i) => {
+                    // حساب النسبة المئوية وتحديد لونها
+                    const percentage = s.score > 0 ? Math.round((s.score / topScore) * 100) : 0;
+                    let percColor = percentage >= 85 ? 'text-emerald-600 bg-emerald-50' : (percentage >= 50 ? 'text-amber-600 bg-amber-50' : 'text-rose-600 bg-rose-50');
+
+                    const medal = i === 0 ? '<i class="fas fa-medal text-3xl text-yellow-500 drop-shadow-md"></i>' :
+                        i === 1 ? '<i class="fas fa-medal text-3xl text-slate-300 drop-shadow-md"></i>' :
+                        i === 2 ? '<i class="fas fa-medal text-3xl text-orange-700 drop-shadow-md"></i>' :
+                        `<span class="font-black text-slate-400 bg-slate-100 rounded-full w-8 h-8 d-inline-flex items-center justify-center">#${i + 1}</span>`;
+
+                    const gName = s[TABLE_GROUPS] ? s[TABLE_GROUPS].group_name : "-";
+
+                    html += `
+                    <tr class="border-b border-amber-50 hover:bg-amber-50/50 transition">
+                        <td class="p-4 text-center align-middle">${medal}</td>
+                        <td class="p-4 font-black text-slate-800 text-lg align-middle">${s.student_name}</td>
+                        <td class="p-4 text-sm text-slate-500 font-bold align-middle">${gName}</td>
+                        <td class="p-4 text-center align-middle">
+                            <span class="bg-indigo-50 text-indigo-700 px-3 py-1 rounded-lg font-bold">${s.att} حصص</span>
+                        </td>
+                        <td class="p-4 text-center font-black text-slate-700 text-xl align-middle">${s.score}</td>
+                        <td class="p-4 text-center align-middle" dir="ltr">
+                            <span class="px-3 py-1 rounded-lg font-black ${percColor}">${percentage}%</span>
+                        </td>
+                    </tr>`;
+                });
+
+                tb.innerHTML = html || '<tr><td colspan="6" class="text-center p-8 text-slate-500 font-bold">لا يوجد طلاب في هذا الفلتر</td></tr>';
+
+            } catch (error) {
+                console.error("Error generating ranking:", error);
+                tb.innerHTML = '<tr><td colspan="6" class="text-center p-8 text-rose-500 font-bold">حدث خطأ أثناء تحميل الترتيب</td></tr>';
+            }
         }
 
         // إقلاع النظام
         switchTab("dashboard");
     </script>
 </body>
+
 </html>

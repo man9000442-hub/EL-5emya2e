@@ -1144,20 +1144,39 @@
         document.getElementById("recordForm").onsubmit = async(e) => {
             e.preventDefault();
             const rid = document.getElementById("recordIdToEdit").value;
-            const data = {
-                student_id: document.getElementById("recordStudentId").value,
-                lesson_date: document.getElementById("recordDate").value,
-                lesson_month: document.getElementById("recordMonth").value,
-                lesson_number: document.getElementById("recordLessonNumber").value,
-                attendance: document.getElementById("recordAttendance").value,
-                homework_degree: document.getElementById("recordHomework").value || 0,
-                recitation_degree: document.getElementById("recordRecitationDegree").value || null,
-                exam_degree: document.getElementById("recordExamDegree").value || null,
-                comprehensive_exam_degree: document.getElementById("recordComprehensiveExam").value || null
-            };
-            await supabaseFetch(rid ? "PATCH" : "POST", TABLE_RECORDS, rid ? `?id=eq.${id}` : "", data);
-            document.getElementById("recordModal").classList.add("hidden");
-            viewStudentRecords(currentViewingStudent.id, currentViewingStudent.name);
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalText = btn.innerHTML;
+            
+            // تغيير شكل الزر أثناء التحميل
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الحفظ...';
+            btn.disabled = true;
+
+            try {
+                const data = {
+                    student_id: document.getElementById("recordStudentId").value,
+                    lesson_date: document.getElementById("recordDate").value,
+                    lesson_month: document.getElementById("recordMonth").value,
+                    lesson_number: document.getElementById("recordLessonNumber").value,
+                    attendance: document.getElementById("recordAttendance").value,
+                    homework_degree: document.getElementById("recordHomework").value || 0,
+                    recitation_degree: document.getElementById("recordRecitationDegree").value || null,
+                    exam_degree: document.getElementById("recordExamDegree").value || null,
+                    comprehensive_exam_degree: document.getElementById("recordComprehensiveExam").value || null
+                };
+                
+                // تم تصحيح المتغير هنا إلى ${rid}
+                await supabaseFetch(rid ? "PATCH" : "POST", TABLE_RECORDS, rid ? `?id=eq.${rid}` : "", data);
+                
+                document.getElementById("recordModal").classList.add("hidden");
+                viewStudentRecords(currentViewingStudent.id, currentViewingStudent.name);
+            } catch (err) {
+                console.error("Error saving record:", err);
+                alert("حدث خطأ أثناء الحفظ. تأكد من الاتصال بالإنترنت.");
+            } finally {
+                // إعادة الزر لشكله الطبيعي
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
         };
 
         async function deleteRecord(rid) {
